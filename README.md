@@ -3,6 +3,8 @@
 SysMLBuilder は、Markdown で書かれた要求仕様をそのまま直接 SysML に変換するのではなく、
 まず **Requirement Contract** に正規化し、その後で SysML v2 の成果物へ射影するためのリポジトリです。
 
+ライセンスは [Apache License 2.0](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/LICENSE) です。
+
 このリポジトリには 2 つの役割があります。
 
 - 変換方式そのものの実装
