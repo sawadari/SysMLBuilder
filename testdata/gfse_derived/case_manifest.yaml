@@ -1,0 +1,119 @@
+suite_id: gfse_strict_suite_v2
+description: GfSE の直接確認できた SysML v2 ファイルを根拠に逆生成した strict benchmark。
+cases:
+- case_id: case01_vehicle_explicit_high
+  title: VehicleModel 由来の高充足性・定量性能と IF ケース
+  target_satisfiability: high
+  source_model_trace:
+    repository: GfSE/SysML-v2-Models
+    source_path: models/SE_Models/VehicleModel.sysml
+    trace_quality: direct_file_grounded
+    observed_constructs:
+    - requirement def
+    - requirement usage
+    - satisfy
+    - port def
+    - interface def
+  expected_patterns:
+  - quantified_property_constraint
+  - contextual_quantified_performance
+  - interface_transfer
+  expected_artifacts:
+  - contracts
+  - expected_canonical
+  - expected_projection_manifest
+  scoring_profile: case01_vehicle_quantitative
+- case_id: case02_vehicle_ambiguous_low
+  title: VehicleModel 由来の低充足性・曖昧性能ケース
+  target_satisfiability: low
+  source_model_trace:
+    repository: GfSE/SysML-v2-Models
+    source_path: models/SE_Models/VehicleModel.sysml
+    trace_quality: direct_file_grounded
+    observed_constructs:
+    - quantitative requirements
+    - interface requirement
+  expected_patterns:
+  - ambiguous_quality_claim
+  - interface_transfer
+  expected_artifacts:
+  - contracts
+  - expected_review_overlay
+  scoring_profile: case02_vehicle_ambiguous
+- case_id: case03_mining_contextual_performance_high
+  title: MiningFrigateRequirementsDef 由来の高充足性・文脈別性能ケース
+  target_satisfiability: high
+  source_model_trace:
+    repository: GfSE/SysML-v2-Models
+    source_path: models/example_EveOnlineMiningFrigate/DomainModel/MiningFrigateRequirementsDef.sysml
+    trace_quality: direct_file_grounded
+    observed_constructs:
+    - contextual thresholds
+    - cargo capacity
+    - survivability requirement
+  expected_patterns:
+  - quantified_property_constraint
+  - contextual_quantified_performance
+  expected_artifacts:
+  - contracts
+  - expected_canonical
+  - expected_projection_manifest
+  scoring_profile: case03_mining_contextual
+- case_id: case04_mining_modular_interface_high
+  title: standardPortsAndInterfaces 由来の高充足性・モジュール IF ケース
+  target_satisfiability: high
+  source_model_trace:
+    repository: GfSE/SysML-v2-Models
+    source_path: models/example_EveOnlineMiningFrigate/LogicalArchitecture/standardPortsAndInterfaces.sysml
+    trace_quality: direct_file_grounded
+    observed_constructs:
+    - typed ports
+    - interface def
+    - flow
+    - slot-based module connections
+  expected_patterns:
+  - interface_transfer
+  - modular_slot_interface
+  expected_artifacts:
+  - contracts
+  - expected_canonical
+  - expected_projection_manifest
+  scoring_profile: case04_modular_interfaces
+- case_id: case05_mining_usecase_medium
+  title: UseCasesFrigate 由来の中充足性・運用目的ケース
+  target_satisfiability: medium
+  source_model_trace:
+    repository: GfSE/SysML-v2-Models
+    source_path: models/example_EveOnlineMiningFrigate/UseCases/UseCasesFrigate.sysml
+    trace_quality: direct_file_grounded
+    observed_constructs:
+    - use case def
+    - actor
+    - objective
+    - Main Flow
+    - Exception Flows
+  expected_patterns:
+  - operational_use_case_objective
+  expected_artifacts:
+  - contracts
+  - expected_canonical
+  - expected_review_overlay
+  scoring_profile: case05_usecase_medium
+- case_id: case06_mining_usecase_ambiguous_low
+  title: UseCasesFrigate 由来の低充足性・曖昧運用ケース
+  target_satisfiability: low
+  source_model_trace:
+    repository: GfSE/SysML-v2-Models
+    source_path: models/example_EveOnlineMiningFrigate/UseCases/UseCasesFrigate.sysml
+    trace_quality: direct_file_grounded
+    observed_constructs:
+    - use case narrative
+    - actor
+    - objective
+  expected_patterns:
+  - ambiguous_quality_claim
+  - operational_use_case_objective
+  expected_artifacts:
+  - contracts
+  - expected_review_overlay
+  scoring_profile: case06_usecase_ambiguous

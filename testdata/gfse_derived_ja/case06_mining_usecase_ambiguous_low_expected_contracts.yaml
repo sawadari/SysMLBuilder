@@ -1,0 +1,82 @@
+document:
+  document_id: GFSE-CASE06
+  document_name: 採掘フリゲートの曖昧な運用記述
+  language: en
+  domain: space_system
+contracts:
+- contract_id: C-UCL-001
+  source_requirement_id: REQ-UC-L-001
+  source_anchor:
+    document_id: GFSE-CASE06
+    section: Narrative requirements
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: ambiguous_quality_claim
+    confidence: 0.88
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  gaps:
+  - actors
+  - objective_text
+  - main_flow_steps
+  - success_thresholds
+  llm_proposals:
+  - proposal_id: P-UCL-001
+    missing_slot: actors
+    proposed_value: PilotPod and AsteroidBelt
+    confidence: 0.72
+    rationale: UseCasesFrigate pairs mining with pilot and asteroid belt actors.
+  evidence:
+    quote: The mining frigate should mine asteroids efficiently.
+- contract_id: C-UCL-002
+  source_requirement_id: REQ-UC-L-002
+  source_anchor:
+    document_id: GFSE-CASE06
+    section: Narrative requirements
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: ambiguous_quality_claim
+    confidence: 0.87
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  gaps:
+  - actors
+  - trigger_conditions
+  - exception_flow_steps
+  llm_proposals:
+  - proposal_id: P-UCL-002
+    missing_slot: actors
+    proposed_value: HostileShip and PilotPod
+    confidence: 0.71
+    rationale: 脅威対処ユースケースには敵対艦船とパイロットが含まれる。
+  evidence:
+    quote: The mining frigate should defend itself when threatened.
+- contract_id: C-UCL-003
+  source_requirement_id: REQ-UC-L-003
+  source_anchor:
+    document_id: GFSE-CASE06
+    section: Narrative requirements
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: ambiguous_quality_claim
+    confidence: 0.86
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  gaps:
+  - actors
+  - trigger_conditions
+  - completion_conditions
+  llm_proposals:
+  - proposal_id: P-UCL-003
+    missing_slot: actors
+    proposed_value: Station
+    confidence: 0.7
+    rationale: Offload and resupply use cases involve a station actor.
+  evidence:
+    quote: The mining frigate should resupply when needed.

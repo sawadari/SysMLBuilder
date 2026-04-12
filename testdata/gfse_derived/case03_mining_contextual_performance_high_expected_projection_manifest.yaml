@@ -1,0 +1,26 @@
+requirements:
+- sysml_name: cargoCapacityRequirement
+  source_contract: C-MF-001
+  pattern: CargoCapacityRequirement
+- sysml_name: survivabilityRequirement
+  source_contract: C-MF-002|C-MF-003
+  pattern: SurvivabilityRequirement
+allocations:
+- id: ALLOC-MF-001
+  contract: C-MF-001
+  allocated_to: Structure::miningFrigate_ref
+- id: ALLOC-MF-002
+  contract: C-MF-002
+  allocated_to: Structure::miningFrigate_ref
+- id: ALLOC-MF-003
+  contract: C-MF-003
+  allocated_to: Structure::miningFrigate_ref
+satisfy_claims:
+- requirement: Requirements::miningFrigateSpecification::cargoCapacityRequirement
+  by: Structure::miningFrigate_ref
+- requirement: Requirements::miningFrigateSpecification::survivabilityRequirement
+  by: Structure::miningFrigate_ref
+views:
+- id: VIEW-MF-001
+  target: Structure::miningFrigate_ref
+  rendering: structural_context

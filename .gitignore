@@ -1,0 +1,5 @@
+.generated_gfse_derived/
+.generated_gfse_derived_ja/
+__pycache__/
+*.pyc
+.vscode/

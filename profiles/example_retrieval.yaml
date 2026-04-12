@@ -1,0 +1,35 @@
+version: 3.0.0
+profile_id: gfse_example_retrieval_v1
+description: GfSE strict benchmark の例参照ポリシー。
+retrieval_policy:
+  example_repository: GfSE/SysML-v2-Models
+  ranking_priority:
+  - same_source_model
+  - same_pattern
+  - same_artifact_type
+  strict_suite_requires_direct_trace: true
+reference_examples:
+- id: vehicle_quantitative
+  source_path: models/SE_Models/VehicleModel.sysml
+  tags:
+  - requirement_def
+  - requirement_usage
+  - satisfy
+  - interface
+- id: mining_contextual
+  source_path: models/example_EveOnlineMiningFrigate/DomainModel/MiningFrigateRequirementsDef.sysml
+  tags:
+  - contextual_thresholds
+  - quantified_performance
+- id: slot_interfaces
+  source_path: models/example_EveOnlineMiningFrigate/LogicalArchitecture/standardPortsAndInterfaces.sysml
+  tags:
+  - port_def
+  - interface_def
+  - flow
+- id: use_cases
+  source_path: models/example_EveOnlineMiningFrigate/UseCases/UseCasesFrigate.sysml
+  tags:
+  - use_case_def
+  - actor
+  - objective

@@ -1,0 +1,12 @@
+version: 3.0.0
+profile_id: model_lints_v3
+description: expected SysML の静的検査ルール。
+canonical_rules:
+- requirement_def_must_have_subject
+- use_case_def_must_have_subject_and_objective
+- all_ports_must_be_typed
+- draft_packages_must_not_appear
+- arrow_placeholders_must_not_appear
+overlay_rules:
+- review_packages_must_exist
+- review_action_token_must_exist

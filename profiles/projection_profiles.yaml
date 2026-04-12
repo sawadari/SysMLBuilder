@@ -1,0 +1,68 @@
+version: 3.0.0
+profile_id: gfse_sysml_v2_projection_v3
+description: Requirement Contract から strict benchmark 用 SysML v2 artifact へ射影する設定。
+outputs:
+  canonical_model:
+    filename_pattern: '*_expected_canonical.sysml'
+    include_artifacts:
+    - DomainDefinitions
+    - RequirementDefinitions
+    - Requirements
+    - Structure
+    - Interfaces
+    - UseCases
+    - AllocationManifest
+    - SatisfactionManifest
+    - ViewTargets
+    exclude_artifacts:
+    - DraftRequirementContracts
+    - MissingSlots
+    - OpenQuestions
+    - Assumptions
+    - BehaviorCandidates
+    - TraceWeaknesses
+  review_overlay:
+    filename_pattern: '*_expected_review_overlay.sysml'
+    include_artifacts:
+    - DraftRequirementContracts
+    - MissingSlots
+    - OpenQuestions
+    - Assumptions
+    - BehaviorCandidates
+    - TraceWeaknesses
+    - ReviewGuide
+requirements:
+  emit_pattern_library: true
+  concrete_requirement_form: requirement_def_and_requirement_usage_by_pattern
+  subject_policy: explicit_always
+  contextual_threshold_mode: keep_contexts_explicit
+  doc_block_contains:
+  - source_requirement_id
+  - pattern_id
+  - evidence
+  - trace_quality
+structure:
+  typed_ports_required: true
+  allow_ref_parts_for_modular_slot_cases: true
+  module_hierarchy_policy: system_contains_modules
+interfaces:
+  typed_ports_required: true
+  use_interface_definitions_for_flows: true
+  render_as_interconnection_source: true
+use_cases:
+  auto_emit_use_cases: true
+  emit_subject_and_actor_explicitly: true
+  emit_objective_doc: true
+  emit_main_exception_flows: true
+  defer_missing_quantitative_slots_to_overlay: true
+allocations:
+  emit_form: manifest_and_doc_block
+  separate_from_satisfy_claims: true
+behavior:
+  auto_emit_states: false
+  auto_emit_transitions: false
+  accepted_candidates_only: true
+  default_destination: review_overlay
+benchmark:
+  strict_suite_requires_direct_file_grounded: true
+  score_against_case_rubric: true

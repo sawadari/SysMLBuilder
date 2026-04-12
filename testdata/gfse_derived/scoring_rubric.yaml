@@ -1,0 +1,64 @@
+rubric_id: gfse_strict_suite_rubric_v2
+description: case ごとに重みを変える採点基準。各 case は 100 点満点。
+fail_fast_rules:
+- canonical_contains_draft_package
+- requirement_def_missing_subject
+- untyped_port_in_canonical
+- use_case_def_missing_subject_or_objective
+- strict_case_trace_quality_not_direct_file_grounded
+case_profiles:
+  case01_vehicle_quantitative:
+    total: 100
+    dimensions:
+      contract_slot_completeness: 20
+      pattern_classification: 10
+      requirement_usage_parameterization: 20
+      typed_interface_fidelity: 15
+      satisfy_and_allocation_manifest: 15
+      provenance_traceability: 10
+      canonical_hygiene: 10
+  case02_vehicle_ambiguous:
+    total: 100
+    dimensions:
+      gap_detection: 30
+      proposal_reasonableness: 20
+      review_overlay_separation: 20
+      traceability: 10
+      no_false_canonical_commitment: 20
+  case03_mining_contextual:
+    total: 100
+    dimensions:
+      contextual_threshold_fidelity: 25
+      quantified_requirement_projection: 20
+      subject_and_context_binding: 10
+      projection_manifest_fidelity: 15
+      provenance_traceability: 10
+      canonical_hygiene: 10
+      review_abstinence: 10
+  case04_modular_interfaces:
+    total: 100
+    dimensions:
+      port_typing: 20
+      interface_definition_fidelity: 25
+      structure_slot_binding: 20
+      flow_retention: 10
+      projection_manifest_fidelity: 10
+      view_target_fidelity: 5
+      canonical_hygiene: 10
+  case05_usecase_medium:
+    total: 100
+    dimensions:
+      use_case_projection: 25
+      actor_and_subject_extraction: 15
+      main_and_exception_flow_retention: 20
+      requirement_group_fallback: 10
+      overlay_gap_capture: 20
+      provenance_traceability: 10
+  case06_usecase_ambiguous:
+    total: 100
+    dimensions:
+      ambiguity_detection: 30
+      use_case_candidate_proposals: 20
+      missing_threshold_capture: 20
+      overlay_separation: 20
+      traceability: 10

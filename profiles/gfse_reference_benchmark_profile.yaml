@@ -1,0 +1,16 @@
+version: 1.0.0
+profile_id: gfse_reference_benchmark_profile_v1
+description: GfSE strict benchmark のスコープ設定。
+strict_suite:
+  name: gfse_strict_suite
+  scored_cases:
+  - case01_vehicle_explicit_high
+  - case02_vehicle_ambiguous_low
+  - case03_mining_contextual_performance_high
+  - case04_mining_modular_interface_high
+  - case05_mining_usecase_medium
+  - case06_mining_usecase_ambiguous_low
+  trace_quality_required: direct_file_grounded
+exploratory_suite:
+  name: gfse_exploratory_suite
+  note: README 抽象ケースや weak trace ケースは将来ここへ入れる

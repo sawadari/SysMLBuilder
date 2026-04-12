@@ -1,0 +1,82 @@
+version: 3.0.0
+profile_id: requirement_contract_schema_v3
+description: Requirement Contract を主役にした中間表現のスキーマ。
+contract_schema:
+  required_fields:
+  - contract_id
+  - source_requirement_id
+  - source_anchor
+  - trace_quality
+  - classification
+  - subject
+  - evidence
+  source_anchor_required_fields:
+  - document_id
+  - section
+  - sentence_index
+  classification_required_fields:
+  - pattern_id
+  - confidence
+  subject_required_fields:
+  - kind
+  - canonical_name
+  evidence_required_fields:
+  - quote
+  first_class_slots:
+  - measured_property
+  - comparator
+  - threshold_value
+  - threshold_unit
+  - operating_contexts
+  - contextual_thresholds
+  - assumption_constraints
+  - interface_name
+  - interface_ends
+  - flows
+  - module_bindings
+  - actors
+  - objective_text
+  - main_flow_steps
+  - exception_flow_steps
+  - linked_requirement_ids
+  - gaps
+  - llm_proposals
+normalization:
+  primary_model: requirement_contract
+  allow_evidence_graph: true
+  term_resolution_priority:
+  - document_glossary
+  - domain_vocabulary
+  - review_decisions
+  - llm_proposal
+  gap_policy:
+    on_missing_required_slot: emit_to_review_overlay
+    allow_llm_draft: true
+    promote_to_canonical_only_after_accept: true
+trace_quality_enum:
+- direct_file_grounded
+- abstract_inference
+artifact_hints:
+  requirements_projector_reads:
+  - classification.pattern_id
+  - subject
+  - measured_property
+  - comparator
+  - threshold_value
+  - threshold_unit
+  - contextual_thresholds
+  interface_projector_reads:
+  - interface_name
+  - interface_ends
+  - flows
+  - module_bindings
+  use_case_projector_reads:
+  - subject
+  - actors
+  - objective_text
+  - main_flow_steps
+  - exception_flow_steps
+  review_overlay_reads:
+  - gaps
+  - llm_proposals
+  - trace_quality

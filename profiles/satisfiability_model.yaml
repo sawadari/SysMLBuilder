@@ -1,0 +1,21 @@
+version: 1.0.0
+profile_id: satisfiability_model_v1
+description: high / medium / low 充足性の定義。
+levels:
+  high:
+    meaning: 主要 slot が具体化され、canonical model を主成果物にできる
+    expected_artifacts:
+    - contracts
+    - expected_canonical
+    - expected_projection_manifest
+  medium:
+    meaning: canonical は部分的に出せるが、不足は overlay に残す
+    expected_artifacts:
+    - contracts
+    - expected_canonical
+    - expected_review_overlay
+  low:
+    meaning: canonical を無理に作らず、overlay で gaps を管理する
+    expected_artifacts:
+    - contracts
+    - expected_review_overlay

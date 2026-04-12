@@ -1,0 +1,50 @@
+version: 1.0.0
+profile_id: domain_vocabulary_benchmark_v1
+description: legacy auto backdoor と GfSE strict benchmark の語彙。
+terms:
+  components:
+    Vehicle:
+    - vehicle
+    - car
+    Engine:
+    - engine
+    Transmission:
+    - transmission
+    - gearbox
+    MiningFrigate:
+    - mining frigate
+    - frigate
+    MiningFrigateHull:
+    - hull
+    MiningLaserModule:
+    - mining laser
+    - laser module
+    ShieldHardenerModule:
+    - shield hardener
+    - hardener module
+    PilotPod:
+    - pilot
+    - pilot pod
+    AsteroidBelt:
+    - asteroid belt
+    Station:
+    - station
+  signals_items:
+    Torque:
+    - torque
+    PowerSupply:
+    - power
+    HighSlotCommand:
+    - activation command
+    - high slot command
+    MediumSlotCommand:
+    - medium slot command
+  contexts:
+    HighSec:
+    - High Sec
+    LowSec:
+    - Low Sec
+    CityNominal:
+    - city nominal
+    HighwayNominal:
+    - highway nominal

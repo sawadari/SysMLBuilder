@@ -1,0 +1,9 @@
+version: 1.0.0
+profile_id: benchmark_lints_v1
+description: strict benchmark 専用 lint。
+rules:
+- strict_cases_must_be_direct_file_grounded
+- high_cases_must_have_expected_canonical
+- low_cases_must_have_expected_review_overlay
+- medium_cases_must_have_both_canonical_and_overlay
+- every_strict_case_must_have_scoring_entry

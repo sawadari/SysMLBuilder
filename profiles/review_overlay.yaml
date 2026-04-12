@@ -1,0 +1,27 @@
+version: 3.0.0
+profile_id: review_overlay_sysml_v3
+description: 不足情報と LLM 仮案を canonical model から分離する review overlay の設定。
+packages:
+  draft_requirement_contracts: DraftRequirementContracts
+  missing_slots: MissingSlots
+  open_questions: OpenQuestions
+  assumptions: Assumptions
+  behavior_candidates: BehaviorCandidates
+  trace_weaknesses: TraceWeaknesses
+  review_guide: ReviewGuide
+rendering:
+  doc_lines:
+  - '[proposal-id] {proposal_id}'
+  - '[source-contract] {source_contract}'
+  - '[source-requirement] {source_requirement_id}'
+  - '[missing-slot] {missing_slot}'
+  - '[proposed-value] {proposed_value}'
+  - '[rationale] {rationale}'
+  - '[trace-quality] {trace_quality}'
+  - '[confidence] {confidence}'
+  - '[review-action] accept / modify / reject / defer'
+promotion_gate:
+  accept_promotes_to_canonical: true
+  modify_promotes_modified_value: true
+  reject_blocks_projection: true
+  defer_keeps_in_overlay: true

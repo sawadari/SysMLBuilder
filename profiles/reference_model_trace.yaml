@@ -1,0 +1,13 @@
+version: 1.0.0
+profile_id: reference_model_trace_v1
+description: 参照モデル trace の品質分類。
+trace_quality_enum:
+- direct_file_grounded
+- abstract_inference
+strict_scoring_accepts:
+- direct_file_grounded
+fields:
+- repository
+- source_path
+- trace_quality
+- observed_constructs

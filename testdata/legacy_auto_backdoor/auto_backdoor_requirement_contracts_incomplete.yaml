@@ -1,0 +1,139 @@
+document:
+  document_id: ABD-SRS-002
+  document_name: 自動バックドア制御 要求仕様書（不足情報ありテストデータ）
+  language: ja
+  domain: automotive_control
+contracts:
+- contract_id: RCI-ABD-101
+  source_requirement_id: ABD-REQ-101
+  source_anchor:
+    document_id: ABD-SRS-002
+    section: 4.1 開要求受付
+    sentence_index: 1
+  classification:
+    pattern_id: gated_capability
+    confidence: 0.9
+  subject:
+    kind: system
+    canonical_name: PowerBackDoorSystem
+  action:
+    canonical_name: accept_open_request
+  object: BackDoorOpenReq
+  preconditions:
+  - lhs: ShiftPos
+    operator: ==
+    rhs: P
+  gaps:
+  - VehSpd threshold
+  llm_proposals:
+  - proposal_id: ABD-PROP-001
+    missing_slot: VehSpd threshold
+    proposed_value: VehSpd < 3 km/h
+    rationale: 低速時のみという表現を停車近傍条件へ正規化した仮案。
+    confidence: 0.83
+  evidence:
+    quote: ShiftPos が P であり、車両が低速時のみ、BackDoorOpenReq を開要求として受け付けなければならない。
+- contract_id: RCI-ABD-103
+  source_requirement_id: ABD-REQ-103
+  source_anchor:
+    document_id: ABD-SRS-002
+    section: 4.2 開動作
+    sentence_index: 1
+  classification:
+    pattern_id: timed_command
+    confidence: 0.88
+  subject:
+    kind: module
+    canonical_name: BackDoorController
+  trigger: accepted_open_request
+  action:
+    canonical_name: issue_open_motor_command
+  object: MotorCommand
+  gaps:
+  - response limit
+  llm_proposals:
+  - proposal_id: ABD-PROP-002
+    missing_slot: response limit
+    proposed_value: 100 ms
+    rationale: 制御応答時間として既存サンプルで使いやすい初期仮案。
+    confidence: 0.86
+  evidence:
+    quote: 開要求を受け付けた場合、所定時間以内に駆動モータへ開方向駆動を指示しなければならない。
+- contract_id: RCI-ABD-104
+  source_requirement_id: ABD-REQ-104
+  source_anchor:
+    document_id: ABD-SRS-002
+    section: 4.2 開動作
+    sentence_index: 2
+  classification:
+    pattern_id: threshold_stop_or_transition
+    confidence: 0.87
+  subject:
+    kind: module
+    canonical_name: BackDoorController
+  action:
+    canonical_name: stop_motor_and_transition_to_opened
+  gaps:
+  - full open threshold
+  llm_proposals:
+  - proposal_id: ABD-PROP-003
+    missing_slot: full open threshold
+    proposed_value: BackDoorPos >= 95 %
+    rationale: 「ほぼ全開」をテスト可能な閾値へ正規化した仮案。
+    confidence: 0.81
+  evidence:
+    quote: バックドアがほぼ全開となった場合、駆動モータを停止し、状態を全開へ遷移しなければならない。
+- contract_id: RCI-ABD-105
+  source_requirement_id: ABD-REQ-105
+  source_anchor:
+    document_id: ABD-SRS-002
+    section: 3. 安全要求
+    sentence_index: 1
+  classification:
+    pattern_id: fault_reaction
+    confidence: 0.85
+  subject:
+    kind: module
+    canonical_name: BackDoorController
+  fault_condition: PinchDetected == true while state == Closing
+  safe_action: stop_close_motor_command
+  reaction_action: issue_reverse_open_motor_command
+  gaps:
+  - stop limit
+  - reverse limit
+  llm_proposals:
+  - proposal_id: ABD-PROP-004
+    missing_slot: stop limit
+    proposed_value: 50 ms
+    rationale: 安全反応時間の初期仮案。
+    confidence: 0.79
+  - proposal_id: ABD-PROP-005
+    missing_slot: reverse limit
+    proposed_value: 200 ms
+    rationale: 停止後の反転開始時間の初期仮案。
+    confidence: 0.79
+  evidence:
+    quote: 短時間で閉方向駆動を停止し、その後に開方向へ反転しなければならない。
+- contract_id: RCI-ABD-106
+  source_requirement_id: ABD-REQ-106
+  source_anchor:
+    document_id: ABD-SRS-002
+    section: 3. 安全要求
+    sentence_index: 2
+  classification:
+    pattern_id: fault_detection
+    confidence: 0.82
+  subject:
+    kind: module
+    canonical_name: BackDoorController
+  target_state: FaultStop
+  gaps:
+  - fault definition
+  llm_proposals:
+  - proposal_id: ABD-PROP-006
+    missing_slot: fault definition
+    proposed_value: 開度センサ更新停止 500 ms
+    rationale: センサ異常を最小限でテスト可能な形へ落とす仮案。
+    confidence: 0.74
+  evidence:
+    quote: センサ異常を検知した場合、異常停止状態へ遷移しなければならない。

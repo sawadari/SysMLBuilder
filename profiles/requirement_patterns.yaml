@@ -1,0 +1,149 @@
+version: 3.0.0
+profile_id: gfse_requirement_patterns_v3
+description: GfSE strict benchmark で使う要求パターン定義。
+patterns:
+  quantified_property_constraint:
+    detect:
+      markers:
+      - at least
+      - less than
+      - 以上
+      - 以下
+      - mass
+      - fuel economy
+      - cargo capacity
+      section_bias:
+      - Requirements
+      - Performance Requirements
+    required_slots:
+    - subject
+    - measured_property
+    - comparator
+    - threshold_value
+    - threshold_unit
+    optional_slots:
+    - assumption_constraints
+    projectors:
+      requirements: ParameterizedConstraintRequirement
+    review_policy:
+      llm_propose_missing: true
+  contextual_quantified_performance:
+    detect:
+      markers:
+      - High Sec
+      - Low Sec
+      - city
+      - highway
+      - operating context
+      - under nominal
+      section_bias:
+      - Requirements
+      - Operational Context
+    required_slots:
+    - subject
+    - measured_property
+    - contextual_thresholds
+    optional_slots:
+    - operating_contexts
+    - assumption_constraints
+    projectors:
+      requirements: ContextualPerformanceRequirement
+    review_policy:
+      llm_propose_missing: true
+      review_mandatory_if_missing:
+      - contextual_thresholds
+  interface_transfer:
+    detect:
+      markers:
+      - transfer
+      - interface
+      - through
+      - connect
+      - flow
+      section_bias:
+      - Interfaces
+      - Architecture Requirements
+    required_slots:
+    - subject
+    - interface_name
+    - interface_ends
+    optional_slots:
+    - flows
+    projectors:
+      interfaces: TypedInterfaceDefinition
+    review_policy:
+      llm_propose_missing: true
+      review_mandatory_if_missing:
+      - interface_ends
+  modular_slot_interface:
+    detect:
+      markers:
+      - slot
+      - module
+      - hull
+      - power
+      - activation
+      section_bias:
+      - Logical Architecture
+      - Interfaces
+    required_slots:
+    - subject
+    - slot_type
+    - interface_name
+    - interface_ends
+    - module_bindings
+    optional_slots:
+    - flows
+    - multiplicity
+    projectors:
+      interfaces: TypedInterfaceDefinition
+      structure: ModularSlotStructure
+    review_policy:
+      llm_propose_missing: true
+  operational_use_case_objective:
+    detect:
+      markers:
+      - Main Flow
+      - Exception Flows
+      - objective
+      - actor
+      - use case
+      section_bias:
+      - Use Cases
+      - Operational Scenarios
+    required_slots:
+    - subject
+    - actors
+    - objective_text
+    - main_flow_steps
+    optional_slots:
+    - exception_flow_steps
+    - linked_requirement_ids
+    projectors:
+      use_cases: UseCaseDefinition
+      requirements: OperationalObjectiveRequirementGroup
+      behavior: candidate_only
+    review_policy:
+      llm_propose_missing: true
+      always_review: true
+  ambiguous_quality_claim:
+    detect:
+      markers:
+      - lightweight
+      - fuel efficient
+      - reliably
+      - safely
+      - should support
+      section_bias:
+      - Requirements
+      - Narrative
+    required_slots:
+    - subject
+    optional_slots:
+    - gaps
+    - llm_proposals
+    projectors:
+      review_only: DraftRequirementContract
+    review_policy:
+      llm_propose_missing: true
+      always_review: true

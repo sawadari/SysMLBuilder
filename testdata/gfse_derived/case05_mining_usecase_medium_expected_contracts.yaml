@@ -1,0 +1,67 @@
+document:
+  document_id: GFSE-CASE05
+  document_name: Mining frigate operational use cases
+  language: en
+  domain: space_system
+contracts:
+- contract_id: C-UC-001
+  source_requirement_id: UC-MF-001
+  source_anchor:
+    document_id: GFSE-CASE05
+    section: UC-MF-001
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: operational_use_case_objective
+    confidence: 0.95
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  actors:
+  - PilotPod
+  - AsteroidBelt
+  objective_text: Mine asteroids and manage cargo.
+  main_flow_steps:
+  - Identify an asteroid target.
+  - Activate the mining laser.
+  - Extract ore and store it in the cargo hold.
+  - Suspend mining when the cargo hold becomes full.
+  exception_flow_steps:
+  - If the mining laser fails, halt mining and alert the pilot.
+  - If the target asteroid is depleted, reacquire a target.
+  gaps:
+  - success_thresholds
+  - time_limits
+  - trigger_conditions
+  evidence:
+    quote: 'Main Flow: Identify an asteroid target, activate the mining laser, extract
+      ore, and suspend mining when the cargo hold becomes full.'
+- contract_id: C-UC-002
+  source_requirement_id: UC-MF-002
+  source_anchor:
+    document_id: GFSE-CASE05
+    section: UC-MF-002
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: operational_use_case_objective
+    confidence: 0.94
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  actors:
+  - Station
+  objective_text: Offload ore and resupply essential systems.
+  main_flow_steps:
+  - Establish a docking connection with a station.
+  - Transfer ore to the station.
+  - Resupply essential systems.
+  exception_flow_steps:
+  - If docking fails, notify the pilot and abort the offload sequence.
+  - If cargo transfer fails, suspend operations and keep the ore on board.
+  gaps:
+  - success_thresholds
+  - completion_conditions
+  evidence:
+    quote: 'Main Flow: Establish a docking connection with a station, transfer ore,
+      and resupply essential systems.'

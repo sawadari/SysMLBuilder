@@ -1,0 +1,36 @@
+version: 3.0.0
+profile_id: gfse_reference_requirement_transform_v3
+description: GfSE 参照モデルを用いて要求仕様から SysML v2 へ変換する strict benchmark 対応プロファイル。
+inherits:
+- requirement_contract.yaml
+- requirement_patterns.yaml
+- projection_profiles.yaml
+- review_overlay.yaml
+- example_retrieval.yaml
+- model_lints.yaml
+- benchmark_lints.yaml
+- domain_vocabulary_automotive_control.yaml
+- satisfiability_model.yaml
+- reference_model_trace.yaml
+- gfse_reference_benchmark_profile.yaml
+core_design:
+  primary_intermediate_model: requirement_contract
+  evidence_graph_role: provenance_and_cross_reference_only
+  strict_scoring_requires_trace_quality: direct_file_grounded
+  drafts_must_not_enter_canonical: true
+transformation_order:
+- normalize_input_markdown
+- extract_requirement_contracts
+- classify_requirement_patterns
+- project_requirements
+- project_structure
+- project_interfaces
+- project_use_cases
+- project_manifests
+- project_review_overlay
+- run_static_lints
+- score_against_benchmark_rubric
+default_output_lane_by_satisfiability:
+  high: canonical_first
+  medium: canonical_plus_overlay
+  low: overlay_first
