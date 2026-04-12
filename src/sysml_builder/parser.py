@@ -71,7 +71,7 @@ def infer_case_id(path: Path, text: str) -> str:
 
 def _parse_requirement_bullets(text: str, section: str) -> list[RequirementEntry]:
     entries: list[RequirementEntry] = []
-    for match in re.finditer(r"^- ([A-Z0-9\-]+): (.+)$", text, re.M):
+    for match in re.finditer(r"^\s*-\s+([A-Z0-9\-]+):\s+(.+?)\s*$", text, re.M):
         entries.append(
             RequirementEntry(
                 identifier=match.group(1).strip(),
@@ -112,11 +112,11 @@ def _parse_use_cases(text: str) -> list[UseCaseEntry]:
 
 def _extract_section_text(text: str, headings: tuple[str, ...]) -> str:
     pattern = r"^##\s+(?P<heading>" + "|".join(re.escape(heading) for heading in headings) + r")\s*$"
-    match = re.search(pattern, text, re.M)
+    match = re.search(pattern, text, re.M | re.I)
     if not match:
         return ""
     section_start = match.end()
-    next_heading = re.search(r"^##\s+.+$", text[section_start:], re.M)
+    next_heading = re.search(r"^##\s+.+$", text[section_start:], re.M | re.I)
     section_end = section_start + next_heading.start() if next_heading else len(text)
     return text[section_start:section_end].strip()
 
