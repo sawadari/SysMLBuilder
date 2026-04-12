@@ -1,0 +1,82 @@
+id: C08
+slug: can_heartbeat_timeout
+title_en: CAN Heartbeat Timeout Reaction
+title_ja: CANハートビートタイムアウト反応
+category: fault_reaction
+difficulty: advanced
+completeness: high
+package: C08CanHeartbeatTimeout
+structure_en:
+- CommunicationMonitoringSystem
+- HeartbeatMonitor
+- CruiseControlGate
+- DiagnosticManager
+structure_ja:
+- CommunicationMonitoringSystem
+- HeartbeatMonitor
+- CruiseControlGate
+- DiagnosticManager
+interfaces:
+- - HeartbeatPort
+  - heartbeat
+  - HeartbeatValue
+  - in
+- - FunctionControlPort
+  - cruiseEnable
+  - FunctionControlValue
+  - out
+- - DiagnosticStatusPort
+  - diagnosticStatus
+  - DiagnosticStatusValue
+  - out
+part_ports:
+  HeartbeatMonitor:
+  - - heartbeatIn
+    - HeartbeatPort
+  - - functionOut
+    - FunctionControlPort
+  - - diagOut
+    - DiagnosticStatusPort
+  CruiseControlGate:
+  - - functionIn
+    - ~FunctionControlPort
+  DiagnosticManager:
+  - - diagIn
+    - ~DiagnosticStatusPort
+  CommunicationMonitoringSystem: []
+subparts:
+  CommunicationMonitoringSystem:
+  - - monitor
+    - HeartbeatMonitor
+  - - gate
+    - CruiseControlGate
+  - - diagnostics
+    - DiagnosticManager
+interfaces_defs:
+- - CruiseControlInterface
+  - FunctionControlPort
+  - FunctionControlPort
+  - cruiseEnable
+- - DiagnosticStatusInterface
+  - DiagnosticStatusPort
+  - DiagnosticStatusPort
+  - diagnosticStatus
+state_machine:
+  name: CommunicationStates
+  states:
+  - healthy
+  - timeoutDetected
+  - safeState
+  transitions:
+  - - healthy
+    - timeoutDetected
+  - - timeoutDetected
+    - safeState
+  - - safeState
+    - healthy
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

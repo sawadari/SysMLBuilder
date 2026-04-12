@@ -1,0 +1,65 @@
+id: C09
+slug: seat_heater_auto_off
+title_en: Seat Heater Auto-Off
+title_ja: シートヒータ自動オフ
+category: timed_state_change
+difficulty: basic
+completeness: high
+package: C09SeatHeaterAutoOff
+structure_en:
+- SeatHeaterSystem
+- SeatHeaterController
+- SeatHeaterElement
+structure_ja:
+- SeatHeaterSystem
+- SeatHeaterController
+- SeatHeaterElement
+interfaces:
+- - HeatingRequestPort
+  - heaterRequest
+  - HeatingRequestValue
+  - in
+- - HeatingLevelPort
+  - heatingLevelCommand
+  - HeatingLevelValue
+  - out
+part_ports:
+  SeatHeaterController:
+  - - requestIn
+    - HeatingRequestPort
+  - - levelOut
+    - HeatingLevelPort
+  SeatHeaterElement:
+  - - levelIn
+    - ~HeatingLevelPort
+  SeatHeaterSystem: []
+subparts:
+  SeatHeaterSystem:
+  - - controller
+    - SeatHeaterController
+  - - element
+    - SeatHeaterElement
+interfaces_defs:
+- - HeatingLevelInterface
+  - HeatingLevelPort
+  - HeatingLevelPort
+  - heatingLevelCommand
+state_machine:
+  name: SeatHeaterLevels
+  states:
+  - 'off'
+  - high
+  - medium
+  transitions:
+  - - 'off'
+    - high
+  - - high
+    - medium
+  - - medium
+    - 'off'
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

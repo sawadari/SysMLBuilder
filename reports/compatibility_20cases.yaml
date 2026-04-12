@@ -1,0 +1,265 @@
+pack_name: SysMLBuilder_testdata_20cases
+case_count: 20
+supported_cases: 20
+unsupported_cases: 0
+cases:
+- id: C01
+  slug: power_tailgate_conditions
+  category: timed_response
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C01_power_tailgate_conditions
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C01_power_tailgate_conditions
+    exact_match: true
+- id: C02
+  slug: auto_window_antipinch
+  category: fault_reaction
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C02_auto_window_antipinch
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C02_auto_window_antipinch
+    exact_match: true
+- id: C03
+  slug: door_lock_speed_interlock
+  category: timed_gated_capability
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C03_door_lock_speed_interlock
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C03_door_lock_speed_interlock
+    exact_match: true
+- id: C04
+  slug: headlamp_auto_off_delay
+  category: timed_response
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C04_headlamp_auto_off_delay
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C04_headlamp_auto_off_delay
+    exact_match: true
+- id: C05
+  slug: rear_wiper_reverse_link
+  category: contextual_trigger
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C05_rear_wiper_reverse_link
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C05_rear_wiper_reverse_link
+    exact_match: true
+- id: C06
+  slug: climate_defog_priority
+  category: multi_action_response
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C06_climate_defog_priority
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C06_climate_defog_priority
+    exact_match: true
+- id: C07
+  slug: battery_low_voltage_warning
+  category: threshold_monitoring
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C07_battery_low_voltage_warning
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C07_battery_low_voltage_warning
+    exact_match: true
+- id: C08
+  slug: can_heartbeat_timeout
+  category: fault_reaction
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C08_can_heartbeat_timeout
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C08_can_heartbeat_timeout
+    exact_match: true
+- id: C09
+  slug: seat_heater_auto_off
+  category: timed_state_change
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C09_seat_heater_auto_off
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C09_seat_heater_auto_off
+    exact_match: true
+- id: C10
+  slug: steering_wheel_heater_auto_off
+  category: contextual_threshold
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C10_steering_wheel_heater_auto_off
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C10_steering_wheel_heater_auto_off
+    exact_match: true
+- id: C11
+  slug: lane_departure_warning
+  category: multi_condition_alert
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C11_lane_departure_warning
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C11_lane_departure_warning
+    exact_match: true
+- id: C12
+  slug: parking_sensor_mute_state
+  category: stateful_toggle
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C12_parking_sensor_mute_state
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C12_parking_sensor_mute_state
+    exact_match: true
+- id: C13
+  slug: charge_flap_lock
+  category: contextual_locking
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C13_charge_flap_lock
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C13_charge_flap_lock
+    exact_match: true
+- id: C14
+  slug: keyless_entry_unlock
+  category: timed_secure_access
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C14_keyless_entry_unlock
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C14_keyless_entry_unlock
+    exact_match: true
+- id: C15
+  slug: child_lock_shift_interlock
+  category: gated_capability
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C15_child_lock_shift_interlock
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C15_child_lock_shift_interlock
+    exact_match: true
+- id: C16
+  slug: trailer_lamp_interface
+  category: interface_contract
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C16_trailer_lamp_interface
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C16_trailer_lamp_interface
+    exact_match: true
+- id: C17
+  slug: ota_update_preconditions
+  category: multi_precondition
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C17_ota_update_preconditions
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C17_ota_update_preconditions
+    exact_match: true
+- id: C18
+  slug: regen_brake_inhibit_low_temp
+  category: contextual_threshold
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C18_regen_brake_inhibit_low_temp
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C18_regen_brake_inhibit_low_temp
+    exact_match: true
+- id: C19
+  slug: drive_mode_state_transition
+  category: state_machine
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C19_drive_mode_state_transition
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C19_drive_mode_state_transition
+    exact_match: true
+- id: C20
+  slug: washer_low_fluid_warning
+  category: threshold_monitoring
+  supported_in_current_transformer: true
+  checks:
+  - language: en
+    status: matched
+    detected_case_id: C20_washer_low_fluid_warning
+    exact_match: true
+  - language: ja
+    status: matched
+    detected_case_id: C20_washer_low_fluid_warning
+    exact_match: true

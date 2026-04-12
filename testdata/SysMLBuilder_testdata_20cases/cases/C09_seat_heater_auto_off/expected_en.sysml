@@ -1,0 +1,84 @@
+package C09SeatHeaterAutoOff {
+    doc /*
+    C09 Seat Heater Auto-Off
+    This case models a seat heater that steps down and turns off after timed operation.
+    */
+
+    item def HeatingRequestValue;
+    item def HeatingLevelValue;
+
+    port def HeatingRequestPort {
+        in item heaterRequest : HeatingRequestValue;
+    }
+
+    port def HeatingLevelPort {
+        out item heatingLevelCommand : HeatingLevelValue;
+    }
+
+    interface def HeatingLevelInterface {
+        end source : HeatingLevelPort;
+        end target : ~HeatingLevelPort;
+        flow source.heatingLevelCommand to target.heatingLevelCommand;
+    }
+
+    requirement def Req001 {
+        doc /*
+        C09-RQ-001: The seat heater shall allow the HIGH level immediately after user activation.
+        */
+    }
+
+    requirement def Req002 {
+        doc /*
+        C09-RQ-002: After 30 min of continuous HIGH operation, the system shall change the level from HIGH to MEDIUM.
+        */
+    }
+
+    requirement def Req003 {
+        doc /*
+        C09-RQ-003: After 60 min of total heating operation, the system shall turn the seat heater OFF.
+        */
+    }
+
+    part def SeatHeaterController {
+        state def SeatHeaterLevels {
+            entry; then off;
+
+            state off;
+
+            transition off_to_high
+                first off
+                then high;
+
+            state high;
+
+            transition high_to_medium
+                first high
+                then medium;
+
+            state medium;
+
+            transition medium_to_off
+                first medium
+                then off;
+
+        }
+
+        port requestIn : HeatingRequestPort;
+        port levelOut : HeatingLevelPort;
+    }
+
+    part def SeatHeaterElement {
+        port levelIn : ~HeatingLevelPort;
+    }
+
+    part def SeatHeaterSystem {
+        part controller : SeatHeaterController;
+        part element : SeatHeaterElement;
+    }
+
+    part systemUnderTest : SeatHeaterSystem;
+
+    requirement requirement_001 : Req001;
+    requirement requirement_002 : Req002;
+    requirement requirement_003 : Req003;
+}

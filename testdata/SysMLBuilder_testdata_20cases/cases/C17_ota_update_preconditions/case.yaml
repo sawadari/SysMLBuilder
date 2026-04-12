@@ -1,0 +1,77 @@
+id: C17
+slug: ota_update_preconditions
+title_en: OTA Update Preconditions
+title_ja: OTA更新事前条件
+category: multi_precondition
+difficulty: advanced
+completeness: high
+package: C17OtaUpdatePreconditions
+structure_en:
+- OtaUpdateSystem
+- UpdateManager
+- VehicleConditionMonitor
+structure_ja:
+- OtaUpdateSystem
+- UpdateManager
+- VehicleConditionMonitor
+interfaces:
+- - VehicleParkPort
+  - vehicleParked
+  - VehicleParkValue
+  - in
+- - DoorLockStatusPort
+  - doorsLocked
+  - DoorLockStatusValue
+  - in
+- - BatterySocPort
+  - batterySoc
+  - BatterySocValue
+  - in
+- - UpdateControlPort
+  - updateControl
+  - UpdateControlValue
+  - out
+part_ports:
+  UpdateManager:
+  - &id001
+    - updateControlOut
+    - UpdateControlPort
+  VehicleConditionMonitor:
+  - - parkIn
+    - VehicleParkPort
+  - - lockIn
+    - DoorLockStatusPort
+  - - socIn
+    - BatterySocPort
+  - *id001
+  OtaUpdateSystem: []
+subparts:
+  OtaUpdateSystem:
+  - - manager
+    - UpdateManager
+  - - monitor
+    - VehicleConditionMonitor
+interfaces_defs:
+- - UpdateControlInterface
+  - UpdateControlPort
+  - UpdateControlPort
+  - updateControl
+state_machine:
+  name: UpdateStates
+  states:
+  - idle
+  - updating
+  - suspended
+  transitions:
+  - - idle
+    - updating
+  - - updating
+    - suspended
+  - - suspended
+    - idle
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

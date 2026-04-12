@@ -28,3 +28,4 @@ class ParsedDocument:
     document: dict[str, Any]
     requirements: list[RequirementEntry] = field(default_factory=list)
     use_cases: list[UseCaseEntry] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)

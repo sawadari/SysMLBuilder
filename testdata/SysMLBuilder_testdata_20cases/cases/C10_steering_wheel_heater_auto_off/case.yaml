@@ -1,0 +1,58 @@
+id: C10
+slug: steering_wheel_heater_auto_off
+title_en: Steering Wheel Heater Auto-Off
+title_ja: ステアリングヒータ自動オフ
+category: contextual_threshold
+difficulty: basic
+completeness: high
+package: C10SteeringWheelHeaterAutoOff
+structure_en:
+- SteeringWheelHeaterSystem
+- SteeringWheelHeaterController
+- SteeringWheelHeaterElement
+structure_ja:
+- SteeringWheelHeaterSystem
+- SteeringWheelHeaterController
+- SteeringWheelHeaterElement
+interfaces:
+- - AmbientTemperaturePort
+  - ambientTemperature
+  - TemperatureValue
+  - in
+- - HeatingRequestPort
+  - heaterRequest
+  - HeatingRequestValue
+  - in
+- - HeatingLevelPort
+  - heatingLevelCommand
+  - HeatingLevelValue
+  - out
+part_ports:
+  SteeringWheelHeaterController:
+  - - tempIn
+    - AmbientTemperaturePort
+  - - requestIn
+    - HeatingRequestPort
+  - - levelOut
+    - HeatingLevelPort
+  SteeringWheelHeaterElement:
+  - - levelIn
+    - ~HeatingLevelPort
+  SteeringWheelHeaterSystem: []
+subparts:
+  SteeringWheelHeaterSystem:
+  - - controller
+    - SteeringWheelHeaterController
+  - - element
+    - SteeringWheelHeaterElement
+interfaces_defs:
+- - HeatingLevelInterface
+  - HeatingLevelPort
+  - HeatingLevelPort
+  - heatingLevelCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

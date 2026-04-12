@@ -1,0 +1,64 @@
+id: C11
+slug: lane_departure_warning
+title_en: Lane Departure Warning
+title_ja: 車線逸脱警報
+category: multi_condition_alert
+difficulty: intermediate
+completeness: high
+package: C11LaneDepartureWarning
+structure_en:
+- LaneDepartureWarningSystem
+- LaneMonitor
+- Buzzer
+structure_ja:
+- LaneDepartureWarningSystem
+- LaneMonitor
+- Buzzer
+interfaces:
+- - VehicleSpeedPort
+  - vehicleSpeed
+  - VehicleSpeedValue
+  - in
+- - TurnSignalPort
+  - turnSignalActive
+  - TurnSignalValue
+  - in
+- - LaneDeparturePort
+  - laneDepartureDetected
+  - LaneDepartureValue
+  - in
+- - BuzzerCommandPort
+  - buzzerCommand
+  - BuzzerCommandValue
+  - out
+part_ports:
+  LaneMonitor:
+  - - speedIn
+    - VehicleSpeedPort
+  - - turnSignalIn
+    - TurnSignalPort
+  - - laneIn
+    - LaneDeparturePort
+  - - buzzerOut
+    - BuzzerCommandPort
+  Buzzer:
+  - - commandIn
+    - ~BuzzerCommandPort
+  LaneDepartureWarningSystem: []
+subparts:
+  LaneDepartureWarningSystem:
+  - - monitor
+    - LaneMonitor
+  - - buzzer
+    - Buzzer
+interfaces_defs:
+- - BuzzerCommandInterface
+  - BuzzerCommandPort
+  - BuzzerCommandPort
+  - buzzerCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

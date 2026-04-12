@@ -1,0 +1,52 @@
+id: C20
+slug: washer_low_fluid_warning
+title_en: Washer Low Fluid Warning
+title_ja: ウォッシャ液残量低下警告
+category: threshold_monitoring
+difficulty: basic
+completeness: high
+package: C20WasherLowFluidWarning
+structure_en:
+- WasherFluidWarningSystem
+- FluidLevelMonitor
+- ClusterDisplay
+structure_ja:
+- WasherFluidWarningSystem
+- FluidLevelMonitor
+- ClusterDisplay
+interfaces:
+- - FluidLevelPort
+  - fluidLow
+  - FluidLevelValue
+  - in
+- - DisplayCommandPort
+  - displayCommand
+  - DisplayCommandValue
+  - out
+part_ports:
+  FluidLevelMonitor:
+  - - fluidIn
+    - FluidLevelPort
+  - - displayOut
+    - DisplayCommandPort
+  ClusterDisplay:
+  - - commandIn
+    - ~DisplayCommandPort
+  WasherFluidWarningSystem: []
+subparts:
+  WasherFluidWarningSystem:
+  - - monitor
+    - FluidLevelMonitor
+  - - display
+    - ClusterDisplay
+interfaces_defs:
+- - DisplayCommandInterface
+  - DisplayCommandPort
+  - DisplayCommandPort
+  - displayCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

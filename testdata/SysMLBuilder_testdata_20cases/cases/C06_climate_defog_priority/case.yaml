@@ -1,0 +1,86 @@
+id: C06
+slug: climate_defog_priority
+title_en: Climate Defog Priority
+title_ja: 空調デフロスト優先制御
+category: multi_action_response
+difficulty: intermediate
+completeness: high
+package: C06ClimateDefogPriority
+structure_en:
+- ClimateDefogSystem
+- HvacController
+- BlowerActuator
+- AirMixActuator
+- CompressorRelay
+structure_ja:
+- ClimateDefogSystem
+- HvacController
+- BlowerActuator
+- AirMixActuator
+- CompressorRelay
+interfaces:
+- - DefogRequestPort
+  - defogRequest
+  - DefogRequestValue
+  - in
+- - BlowerCommandPort
+  - blowerCommand
+  - BlowerCommandValue
+  - out
+- - OutletModePort
+  - outletModeCommand
+  - OutletModeValue
+  - out
+- - AcCommandPort
+  - acCommand
+  - AcCommandValue
+  - out
+part_ports:
+  HvacController:
+  - - defogIn
+    - DefogRequestPort
+  - - blowerOut
+    - BlowerCommandPort
+  - - outletModeOut
+    - OutletModePort
+  - - acOut
+    - AcCommandPort
+  BlowerActuator:
+  - - blowerIn
+    - ~BlowerCommandPort
+  AirMixActuator:
+  - - modeIn
+    - ~OutletModePort
+  CompressorRelay:
+  - - acIn
+    - ~AcCommandPort
+  ClimateDefogSystem: []
+subparts:
+  ClimateDefogSystem:
+  - - controller
+    - HvacController
+  - - blower
+    - BlowerActuator
+  - - airMix
+    - AirMixActuator
+  - - compressor
+    - CompressorRelay
+interfaces_defs:
+- - BlowerCommandInterface
+  - BlowerCommandPort
+  - BlowerCommandPort
+  - blowerCommand
+- - OutletModeInterface
+  - OutletModePort
+  - OutletModePort
+  - outletModeCommand
+- - AcCommandInterface
+  - AcCommandPort
+  - AcCommandPort
+  - acCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

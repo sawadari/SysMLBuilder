@@ -1,0 +1,64 @@
+id: C03
+slug: door_lock_speed_interlock
+title_en: Door Lock Speed Interlock
+title_ja: ドアロック車速連動
+category: timed_gated_capability
+difficulty: basic
+completeness: high
+package: C03DoorLockSpeedInterlock
+structure_en:
+- DoorLockSystem
+- DoorLockController
+- DoorLockActuator
+structure_ja:
+- DoorLockSystem
+- DoorLockController
+- DoorLockActuator
+interfaces:
+- - VehicleSpeedPort
+  - vehicleSpeed
+  - VehicleSpeedValue
+  - in
+- - DoorStatusPort
+  - doorAjar
+  - DoorStatusValue
+  - in
+- - ShiftPositionPort
+  - shiftPosition
+  - ShiftPositionValue
+  - in
+- - DoorLockCommandPort
+  - lockCommand
+  - DoorLockCommandValue
+  - out
+part_ports:
+  DoorLockController:
+  - - speedIn
+    - VehicleSpeedPort
+  - - doorStatusIn
+    - DoorStatusPort
+  - - shiftIn
+    - ShiftPositionPort
+  - - commandOut
+    - DoorLockCommandPort
+  DoorLockActuator:
+  - - commandIn
+    - ~DoorLockCommandPort
+  DoorLockSystem: []
+subparts:
+  DoorLockSystem:
+  - - controller
+    - DoorLockController
+  - - actuator
+    - DoorLockActuator
+interfaces_defs:
+- - DoorLockCommandInterface
+  - DoorLockCommandPort
+  - DoorLockCommandPort
+  - lockCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

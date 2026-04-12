@@ -1,0 +1,76 @@
+id: C16
+slug: trailer_lamp_interface
+title_en: Trailer Lamp Interface
+title_ja: トレーラランプインタフェース
+category: interface_contract
+difficulty: intermediate
+completeness: high
+package: C16TrailerLampInterface
+structure_en:
+- TrailerLampSystem
+- TrailerLampController
+- TrailerConnector
+structure_ja:
+- TrailerLampSystem
+- TrailerLampController
+- TrailerConnector
+interfaces:
+- - LeftTurnLampPort
+  - leftTurnLampCommand
+  - LampCommandValue
+  - out
+- - RightTurnLampPort
+  - rightTurnLampCommand
+  - LampCommandValue
+  - out
+- - StopLampPort
+  - stopLampCommand
+  - LampCommandValue
+  - out
+- - TrailerPresencePort
+  - trailerDetected
+  - TrailerPresenceValue
+  - in
+part_ports:
+  TrailerLampController:
+  - - trailerPresenceIn
+    - TrailerPresencePort
+  - - leftOut
+    - LeftTurnLampPort
+  - - rightOut
+    - RightTurnLampPort
+  - - stopOut
+    - StopLampPort
+  TrailerConnector:
+  - - leftIn
+    - ~LeftTurnLampPort
+  - - rightIn
+    - ~RightTurnLampPort
+  - - stopIn
+    - ~StopLampPort
+  TrailerLampSystem: []
+subparts:
+  TrailerLampSystem:
+  - - controller
+    - TrailerLampController
+  - - connector
+    - TrailerConnector
+interfaces_defs:
+- - LeftTurnLampInterface
+  - LeftTurnLampPort
+  - LeftTurnLampPort
+  - leftTurnLampCommand
+- - RightTurnLampInterface
+  - RightTurnLampPort
+  - RightTurnLampPort
+  - rightTurnLampCommand
+- - StopLampInterface
+  - StopLampPort
+  - StopLampPort
+  - stopLampCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

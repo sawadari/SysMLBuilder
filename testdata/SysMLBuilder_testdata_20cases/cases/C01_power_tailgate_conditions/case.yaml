@@ -1,0 +1,84 @@
+id: C01
+slug: power_tailgate_conditions
+title_en: Power Tailgate Opening Conditions
+title_ja: パワーバックドア開条件
+category: timed_response
+difficulty: intermediate
+completeness: high
+package: C01PowerTailgateConditions
+structure_en:
+- PowerTailgateSystem
+- TailgateController
+- TailgateActuator
+- ObstacleSensor
+structure_ja:
+- PowerTailgateSystem
+- TailgateController
+- TailgateActuator
+- ObstacleSensor
+interfaces:
+- - VehicleSpeedPort
+  - vehicleSpeed
+  - VehicleSpeedValue
+  - in
+- - ShiftPositionPort
+  - shiftPosition
+  - ShiftPositionValue
+  - in
+- - TailgateCommandPort
+  - tailgateCommand
+  - TailgateCommandValue
+  - out
+- - ObstacleSignalPort
+  - obstacleDetected
+  - ObstacleSignalValue
+  - in
+part_ports:
+  TailgateController:
+  - - speedIn
+    - VehicleSpeedPort
+  - - shiftIn
+    - ShiftPositionPort
+  - - obstacleIn
+    - ObstacleSignalPort
+  - - commandOut
+    - TailgateCommandPort
+  TailgateActuator:
+  - - commandIn
+    - ~TailgateCommandPort
+  ObstacleSensor:
+  - - obstacleOut
+    - ObstacleSignalPort
+  PowerTailgateSystem: []
+subparts:
+  PowerTailgateSystem:
+  - - controller
+    - TailgateController
+  - - actuator
+    - TailgateActuator
+  - - sensor
+    - ObstacleSensor
+interfaces_defs:
+- - TailgateCommandInterface
+  - TailgateCommandPort
+  - TailgateCommandPort
+  - tailgateCommand
+state_machine:
+  name: TailgateMotionStates
+  states:
+  - idle
+  - closing
+  - reversing
+  transitions:
+  - - idle
+    - closing
+  - - closing
+    - reversing
+  - - reversing
+    - idle
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

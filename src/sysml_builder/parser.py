@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 from .models import ParsedDocument, RequirementEntry, UseCaseEntry
 
@@ -57,6 +60,9 @@ def infer_case_id(path: Path, text: str) -> str:
     for case_id in CASE_METADATA:
         if stem.startswith(case_id):
             return case_id
+    case_metadata_path = path.with_name("case.yaml")
+    if case_metadata_path.is_file():
+        return path.parent.name
     for case_id, meta in CASE_METADATA.items():
         if meta["document_name"] in text or meta["document_name_ja"] in text:
             return case_id
@@ -104,9 +110,58 @@ def _parse_use_cases(text: str) -> list[UseCaseEntry]:
     return use_cases
 
 
+def _extract_section_text(text: str, headings: tuple[str, ...]) -> str:
+    pattern = r"^##\s+(?P<heading>" + "|".join(re.escape(heading) for heading in headings) + r")\s*$"
+    match = re.search(pattern, text, re.M)
+    if not match:
+        return ""
+    section_start = match.end()
+    next_heading = re.search(r"^##\s+.+$", text[section_start:], re.M)
+    section_end = section_start + next_heading.start() if next_heading else len(text)
+    return text[section_start:section_end].strip()
+
+
+def _parse_generic_case(path: Path, text: str, case_id: str) -> ParsedDocument:
+    metadata = yaml.safe_load(path.with_name("case.yaml").read_text(encoding="utf-8"))
+    language = "ja" if path.name.endswith("_ja.md") else "en"
+    title = metadata["title_ja"] if language == "ja" else metadata["title_en"]
+    context = _extract_section_text(text, ("Context", "背景")).strip()
+    requirements = _parse_requirement_bullets(text, "Functional Requirements")
+
+    document: dict[str, Any] = {
+        "document_id": metadata["id"],
+        "document_name": title,
+        "language": language,
+        "domain": metadata["category"],
+    }
+
+    return ParsedDocument(
+        path=path,
+        case_id=case_id,
+        title=title,
+        document=document,
+        requirements=requirements,
+        metadata={
+            "generic_case": {
+                "package": metadata["package"],
+                "context": context,
+                "requirements_count": metadata["requirements_count"],
+                "structure": metadata["structure_ja"] if language == "ja" else metadata["structure_en"],
+                "interfaces": metadata["interfaces"],
+                "part_ports": metadata["part_ports"],
+                "subparts": metadata["subparts"],
+                "interfaces_defs": metadata["interfaces_defs"],
+                "state_machine": metadata.get("state_machine"),
+            }
+        },
+    )
+
+
 def parse_markdown(path: Path) -> ParsedDocument:
     text = path.read_text(encoding="utf-8")
     case_id = infer_case_id(path, text)
+    if case_id not in CASE_METADATA:
+        return _parse_generic_case(path, text, case_id)
     title_match = re.search(r"^#\s+(.+)$", text, re.M)
     title = title_match.group(1).strip() if title_match else case_id
     meta = CASE_METADATA[case_id]

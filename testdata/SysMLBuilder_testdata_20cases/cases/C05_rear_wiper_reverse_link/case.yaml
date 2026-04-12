@@ -1,0 +1,58 @@
+id: C05
+slug: rear_wiper_reverse_link
+title_en: Rear Wiper Reverse Link
+title_ja: 後ワイパリバース連動
+category: contextual_trigger
+difficulty: basic
+completeness: high
+package: C05RearWiperReverseLink
+structure_en:
+- RearWiperLinkSystem
+- RearWiperController
+- RearWiperMotor
+structure_ja:
+- RearWiperLinkSystem
+- RearWiperController
+- RearWiperMotor
+interfaces:
+- - WiperStatusPort
+  - frontWiperActive
+  - WiperStatusValue
+  - in
+- - ShiftPositionPort
+  - shiftPosition
+  - ShiftPositionValue
+  - in
+- - WiperCommandPort
+  - rearWiperCommand
+  - WiperCommandValue
+  - out
+part_ports:
+  RearWiperController:
+  - - frontWiperIn
+    - WiperStatusPort
+  - - shiftIn
+    - ShiftPositionPort
+  - - commandOut
+    - WiperCommandPort
+  RearWiperMotor:
+  - - commandIn
+    - ~WiperCommandPort
+  RearWiperLinkSystem: []
+subparts:
+  RearWiperLinkSystem:
+  - - controller
+    - RearWiperController
+  - - motor
+    - RearWiperMotor
+interfaces_defs:
+- - RearWiperCommandInterface
+  - WiperCommandPort
+  - WiperCommandPort
+  - rearWiperCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

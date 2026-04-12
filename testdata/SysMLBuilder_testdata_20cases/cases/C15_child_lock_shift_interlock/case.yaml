@@ -1,0 +1,64 @@
+id: C15
+slug: child_lock_shift_interlock
+title_en: Child Lock Shift Interlock
+title_ja: チャイルドロックシフト連動
+category: gated_capability
+difficulty: basic
+completeness: high
+package: C15ChildLockShiftInterlock
+structure_en:
+- ChildLockSystem
+- ChildLockController
+- RearDoorLockActuator
+structure_ja:
+- ChildLockSystem
+- ChildLockController
+- RearDoorLockActuator
+interfaces:
+- - ShiftPositionPort
+  - shiftPosition
+  - ShiftPositionValue
+  - in
+- - VehicleSpeedPort
+  - vehicleSpeed
+  - VehicleSpeedValue
+  - in
+- - DoorStatusPort
+  - rearDoorOpen
+  - DoorStatusValue
+  - in
+- - LockCommandPort
+  - childLockCommand
+  - LockCommandValue
+  - out
+part_ports:
+  ChildLockController:
+  - - shiftIn
+    - ShiftPositionPort
+  - - speedIn
+    - VehicleSpeedPort
+  - - doorStatusIn
+    - DoorStatusPort
+  - - commandOut
+    - LockCommandPort
+  RearDoorLockActuator:
+  - - commandIn
+    - ~LockCommandPort
+  ChildLockSystem: []
+subparts:
+  ChildLockSystem:
+  - - controller
+    - ChildLockController
+  - - actuator
+    - RearDoorLockActuator
+interfaces_defs:
+- - ChildLockCommandInterface
+  - LockCommandPort
+  - LockCommandPort
+  - childLockCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

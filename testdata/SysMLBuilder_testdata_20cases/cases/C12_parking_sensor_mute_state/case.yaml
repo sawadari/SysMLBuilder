@@ -1,0 +1,79 @@
+id: C12
+slug: parking_sensor_mute_state
+title_en: Parking Sensor Mute State
+title_ja: パーキングセンサミュート状態
+category: stateful_toggle
+difficulty: basic
+completeness: high
+package: C12ParkingSensorMuteState
+structure_en:
+- ParkingSensorAlertSystem
+- ParkingSensorController
+- AudioBuzzer
+- VisualDisplay
+structure_ja:
+- ParkingSensorAlertSystem
+- ParkingSensorController
+- AudioBuzzer
+- VisualDisplay
+interfaces:
+- - MuteButtonPort
+  - muteButtonPressed
+  - MuteButtonValue
+  - in
+- - AudioAlertPort
+  - audioAlertCommand
+  - AudioAlertValue
+  - out
+- - VisualAlertPort
+  - visualAlertCommand
+  - VisualAlertValue
+  - out
+part_ports:
+  ParkingSensorController:
+  - - muteButtonIn
+    - MuteButtonPort
+  - - audioOut
+    - AudioAlertPort
+  - - visualOut
+    - VisualAlertPort
+  AudioBuzzer:
+  - - audioIn
+    - ~AudioAlertPort
+  VisualDisplay:
+  - - visualIn
+    - ~VisualAlertPort
+  ParkingSensorAlertSystem: []
+subparts:
+  ParkingSensorAlertSystem:
+  - - controller
+    - ParkingSensorController
+  - - buzzer
+    - AudioBuzzer
+  - - display
+    - VisualDisplay
+interfaces_defs:
+- - AudioAlertInterface
+  - AudioAlertPort
+  - AudioAlertPort
+  - audioAlertCommand
+- - VisualAlertInterface
+  - VisualAlertPort
+  - VisualAlertPort
+  - visualAlertCommand
+state_machine:
+  name: MuteStates
+  states:
+  - unmuted
+  - muted
+  transitions:
+  - - unmuted
+    - muted
+  - - muted
+    - unmuted
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

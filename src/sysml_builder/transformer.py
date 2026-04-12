@@ -338,6 +338,21 @@ def _usecase_ambiguous_contracts(reqs: list[RequirementEntry], japanese: bool) -
 
 def build_contracts(parsed: ParsedDocument) -> dict[str, Any]:
     payload = _base_document_metadata(parsed)
+    if parsed.metadata.get("generic_case"):
+        payload["contracts"] = [
+            {
+                "contract_id": requirement.identifier,
+                "source_requirement_id": requirement.identifier,
+                "source_anchor": {"document_id": parsed.document["document_id"], "section": requirement.section},
+                "trace_quality": "direct_file_grounded",
+                "classification": {"pattern_id": "generic_requirement_doc", "confidence": 1.0},
+                "subject": {"kind": "system", "canonical_name": parsed.metadata["generic_case"]["structure"][0]},
+                "evidence": {"quote": requirement.text},
+            }
+            for requirement in parsed.requirements
+        ]
+        payload["generic_case"] = parsed.metadata["generic_case"]
+        return payload
     japanese = _is_japanese(parsed)
     if parsed.case_id == "case01_vehicle_explicit_high":
         payload["contracts"] = _vehicle_explicit_contracts(parsed.requirements)

@@ -1,0 +1,52 @@
+id: C18
+slug: regen_brake_inhibit_low_temp
+title_en: Regenerative Brake Inhibit at Low Temperature
+title_ja: 低温時回生制動抑制
+category: contextual_threshold
+difficulty: advanced
+completeness: high
+package: C18RegenBrakeInhibitLowTemp
+structure_en:
+- RegenBrakeSystem
+- RegenBrakeController
+- BatteryTemperatureMonitor
+structure_ja:
+- RegenBrakeSystem
+- RegenBrakeController
+- BatteryTemperatureMonitor
+interfaces:
+- - BatteryTemperaturePort
+  - batteryTemperature
+  - TemperatureValue
+  - in
+- - RegenLevelPort
+  - regenLevelCommand
+  - RegenLevelValue
+  - out
+part_ports:
+  RegenBrakeController:
+  - - temperatureIn
+    - BatteryTemperaturePort
+  - - regenLevelOut
+    - RegenLevelPort
+  BatteryTemperatureMonitor:
+  - - temperatureOut
+    - BatteryTemperaturePort
+  RegenBrakeSystem: []
+subparts:
+  RegenBrakeSystem:
+  - - controller
+    - RegenBrakeController
+  - - monitor
+    - BatteryTemperatureMonitor
+interfaces_defs:
+- - RegenLevelInterface
+  - RegenLevelPort
+  - RegenLevelPort
+  - regenLevelCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

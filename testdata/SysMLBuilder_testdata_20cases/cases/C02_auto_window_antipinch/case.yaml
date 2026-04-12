@@ -1,0 +1,84 @@
+id: C02
+slug: auto_window_antipinch
+title_en: Auto Window Anti-Pinch
+title_ja: オートウインドウ挟み込み防止
+category: fault_reaction
+difficulty: intermediate
+completeness: high
+package: C02AutoWindowAntiPinch
+structure_en:
+- AutoWindowSystem
+- WindowController
+- WindowMotor
+- PinchSensor
+structure_ja:
+- AutoWindowSystem
+- WindowController
+- WindowMotor
+- PinchSensor
+interfaces:
+- - WindowSwitchPort
+  - closeRequest
+  - WindowSwitchValue
+  - in
+- - DoorStatusPort
+  - doorOpen
+  - DoorStatusValue
+  - in
+- - PinchSignalPort
+  - pinchDetected
+  - PinchSignalValue
+  - in
+- - WindowMotorCommandPort
+  - windowCommand
+  - WindowMotorCommandValue
+  - out
+part_ports:
+  WindowController:
+  - - switchIn
+    - WindowSwitchPort
+  - - doorStatusIn
+    - DoorStatusPort
+  - - pinchIn
+    - PinchSignalPort
+  - - commandOut
+    - WindowMotorCommandPort
+  WindowMotor:
+  - - commandIn
+    - ~WindowMotorCommandPort
+  PinchSensor:
+  - - pinchOut
+    - PinchSignalPort
+  AutoWindowSystem: []
+subparts:
+  AutoWindowSystem:
+  - - controller
+    - WindowController
+  - - motor
+    - WindowMotor
+  - - sensor
+    - PinchSensor
+interfaces_defs:
+- - WindowMotorCommandInterface
+  - WindowMotorCommandPort
+  - WindowMotorCommandPort
+  - windowCommand
+state_machine:
+  name: WindowMotionStates
+  states:
+  - idle
+  - autoClosing
+  - reverseOpen
+  transitions:
+  - - idle
+    - autoClosing
+  - - autoClosing
+    - reverseOpen
+  - - reverseOpen
+    - idle
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

@@ -1,0 +1,66 @@
+id: C19
+slug: drive_mode_state_transition
+title_en: Drive Mode State Transition
+title_ja: ドライブモード状態遷移
+category: state_machine
+difficulty: advanced
+completeness: high
+package: C19DriveModeStateTransition
+structure_en:
+- DriveModeSystem
+- DriveModeController
+structure_ja:
+- DriveModeSystem
+- DriveModeController
+interfaces:
+- - AcceleratorPort
+  - acceleratorOpening
+  - AcceleratorValue
+  - in
+- - DriveModeRequestPort
+  - driveModeRequest
+  - DriveModeRequestValue
+  - in
+- - DriveModeStatusPort
+  - driveModeStatus
+  - DriveModeStatusValue
+  - out
+part_ports:
+  DriveModeController:
+  - - acceleratorIn
+    - AcceleratorPort
+  - - requestIn
+    - DriveModeRequestPort
+  - - statusOut
+    - DriveModeStatusPort
+  DriveModeSystem: []
+subparts:
+  DriveModeSystem:
+  - - controller
+    - DriveModeController
+interfaces_defs:
+- - DriveModeStatusInterface
+  - DriveModeStatusPort
+  - DriveModeStatusPort
+  - driveModeStatus
+state_machine:
+  name: DriveModes
+  states:
+  - eco
+  - normal
+  - sport
+  transitions:
+  - - normal
+    - eco
+  - - normal
+    - sport
+  - - eco
+    - normal
+  - - sport
+    - normal
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

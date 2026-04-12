@@ -1,0 +1,58 @@
+id: C13
+slug: charge_flap_lock
+title_en: Charge Flap Lock Control
+title_ja: 充電フラップロック制御
+category: contextual_locking
+difficulty: intermediate
+completeness: high
+package: C13ChargeFlapLockControl
+structure_en:
+- ChargeFlapLockSystem
+- ChargeFlapController
+- ChargeFlapActuator
+structure_ja:
+- ChargeFlapLockSystem
+- ChargeFlapController
+- ChargeFlapActuator
+interfaces:
+- - VehicleMotionPort
+  - vehicleMoving
+  - VehicleMotionValue
+  - in
+- - ChargingStatusPort
+  - chargingActive
+  - ChargingStatusValue
+  - in
+- - LockCommandPort
+  - lockCommand
+  - LockCommandValue
+  - out
+part_ports:
+  ChargeFlapController:
+  - - motionIn
+    - VehicleMotionPort
+  - - chargingIn
+    - ChargingStatusPort
+  - - commandOut
+    - LockCommandPort
+  ChargeFlapActuator:
+  - - commandIn
+    - ~LockCommandPort
+  ChargeFlapLockSystem: []
+subparts:
+  ChargeFlapLockSystem:
+  - - controller
+    - ChargeFlapController
+  - - actuator
+    - ChargeFlapActuator
+interfaces_defs:
+- - LockCommandInterface
+  - LockCommandPort
+  - LockCommandPort
+  - lockCommand
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

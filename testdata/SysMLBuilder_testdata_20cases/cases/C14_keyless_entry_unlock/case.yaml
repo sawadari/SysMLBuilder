@@ -1,0 +1,75 @@
+id: C14
+slug: keyless_entry_unlock
+title_en: Keyless Entry Unlock
+title_ja: キーレスエントリ解錠
+category: timed_secure_access
+difficulty: advanced
+completeness: high
+package: C14KeylessEntryUnlock
+structure_en:
+- KeylessEntrySystem
+- AccessController
+- RfReceiver
+- DoorLockActuator
+structure_ja:
+- KeylessEntrySystem
+- AccessController
+- RfReceiver
+- DoorLockActuator
+interfaces:
+- - KeyPresencePort
+  - validKeyPresent
+  - KeyPresenceValue
+  - in
+- - HandleTouchPort
+  - handleTouched
+  - HandleTouchValue
+  - in
+- - DoorLockCommandPort
+  - doorUnlockCommand
+  - DoorLockCommandValue
+  - out
+part_ports:
+  AccessController:
+  - - keyIn
+    - KeyPresencePort
+  - - touchIn
+    - HandleTouchPort
+  - - commandOut
+    - DoorLockCommandPort
+  RfReceiver:
+  - - keyOut
+    - KeyPresencePort
+  DoorLockActuator:
+  - - commandIn
+    - ~DoorLockCommandPort
+  KeylessEntrySystem: []
+subparts:
+  KeylessEntrySystem:
+  - - controller
+    - AccessController
+  - - receiver
+    - RfReceiver
+  - - actuator
+    - DoorLockActuator
+interfaces_defs:
+- - DoorUnlockInterface
+  - DoorLockCommandPort
+  - DoorLockCommandPort
+  - doorUnlockCommand
+state_machine:
+  name: AccessStates
+  states:
+  - ready
+  - lockedOut
+  transitions:
+  - - ready
+    - lockedOut
+  - - lockedOut
+    - ready
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

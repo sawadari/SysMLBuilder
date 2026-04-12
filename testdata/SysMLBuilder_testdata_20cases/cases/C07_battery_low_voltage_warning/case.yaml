@@ -1,0 +1,69 @@
+id: C07
+slug: battery_low_voltage_warning
+title_en: Battery Low Voltage Warning
+title_ja: 低電圧警告
+category: threshold_monitoring
+difficulty: intermediate
+completeness: high
+package: C07BatteryLowVoltageWarning
+structure_en:
+- BatteryWarningSystem
+- BatteryMonitor
+- WarningLamp
+- NetworkPublisher
+structure_ja:
+- BatteryWarningSystem
+- BatteryMonitor
+- WarningLamp
+- NetworkPublisher
+interfaces:
+- - VoltageInputPort
+  - batteryVoltage
+  - VoltageValue
+  - in
+- - LampCommandPort
+  - lampCommand
+  - LampCommandValue
+  - out
+- - NetworkStatusPort
+  - statusMessage
+  - NetworkStatusValue
+  - out
+part_ports:
+  BatteryMonitor:
+  - - voltageIn
+    - VoltageInputPort
+  - - lampOut
+    - LampCommandPort
+  - - networkOut
+    - NetworkStatusPort
+  WarningLamp:
+  - - commandIn
+    - ~LampCommandPort
+  NetworkPublisher:
+  - - statusIn
+    - ~NetworkStatusPort
+  BatteryWarningSystem: []
+subparts:
+  BatteryWarningSystem:
+  - - monitor
+    - BatteryMonitor
+  - - lamp
+    - WarningLamp
+  - - publisher
+    - NetworkPublisher
+interfaces_defs:
+- - LampCommandInterface
+  - LampCommandPort
+  - LampCommandPort
+  - lampCommand
+- - NetworkStatusInterface
+  - NetworkStatusPort
+  - NetworkStatusPort
+  - statusMessage
+requirements_count: 3
+files:
+  requirements_en: requirements_en.md
+  requirements_ja: requirements_ja.md
+  sysml_en: expected_en.sysml
+  sysml_ja: expected_ja.sysml

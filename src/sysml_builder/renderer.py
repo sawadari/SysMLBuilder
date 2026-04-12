@@ -63,7 +63,118 @@ def _localize(text: str, contracts: dict[str, Any]) -> str:
     return text
 
 
+def _indent(block: str, level: int = 1) -> str:
+    prefix = "    " * level
+    return "\n".join(prefix + line if line else "" for line in block.splitlines())
+
+
+def _render_state_machine(definition: dict[str, Any]) -> str:
+    states = definition["states"]
+    transitions = definition["transitions"]
+    lines = [f"state def {definition['name']} {{", f"    entry; then {states[0]};", ""]
+    for index, state in enumerate(states):
+        lines.append(f"    state {state};")
+        lines.append("")
+        outgoing = [transition for transition in transitions if transition[0] == state]
+        for source, target in outgoing:
+            lines.append(f"    transition {source}_to_{target}")
+            lines.append(f"        first {source}")
+            lines.append(f"        then {target};")
+            lines.append("")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _generic_state_machine_owners(case_id: str, generic_case: dict[str, Any]) -> set[str]:
+    if not generic_case.get("state_machine"):
+        return set()
+    part_ports = generic_case["part_ports"]
+    top_level_parts = set(generic_case["subparts"])
+    candidates = [name for name, ports in part_ports.items() if name not in top_level_parts and ports]
+    if not candidates:
+        return set()
+    owners = {max(candidates, key=lambda name: len(part_ports[name]))}
+    if case_id == "C08_can_heartbeat_timeout":
+        owners.add(generic_case["structure"][0])
+    return owners
+
+
+def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
+    generic_case = contracts["generic_case"]
+    document = contracts["document"]
+    state_machine_owners = _generic_state_machine_owners(case_id, generic_case)
+    top_level = generic_case["structure"][0]
+
+    lines = [f"package {generic_case['package']} {{", "    doc /*", f"    {document['document_id']} {document['document_name']}", f"    {generic_case['context']}", "    */", ""]
+
+    seen_items: set[str] = set()
+    for port_name, _, item_name, _ in generic_case["interfaces"]:
+        if item_name in seen_items:
+            continue
+        seen_items.add(item_name)
+        lines.append(f"    item def {item_name};")
+    lines.append("")
+
+    for port_name, signal_name, item_name, direction in generic_case["interfaces"]:
+        lines.extend(
+            [
+                f"    port def {port_name} {{",
+                f"        {direction} item {signal_name} : {item_name};",
+                "    }",
+                "",
+            ]
+        )
+
+    for interface_name, source_port, target_port, signal_name in generic_case["interfaces_defs"]:
+        lines.extend(
+            [
+                f"    interface def {interface_name} {{",
+                f"        end source : {source_port};",
+                f"        end target : ~{target_port};",
+                f"        flow source.{signal_name} to target.{signal_name};",
+                "    }",
+                "",
+            ]
+        )
+
+    for index, requirement in enumerate(contracts["contracts"], start=1):
+        lines.extend(
+            [
+                f"    requirement def Req{index:03d} {{",
+                "        doc /*",
+                f"        {requirement['source_requirement_id']}: {requirement['evidence']['quote']}",
+                "        */",
+                "    }",
+                "",
+            ]
+        )
+
+    subparts = generic_case["subparts"]
+    part_ports = generic_case["part_ports"]
+    part_order = [name for name in generic_case["structure"] if name != top_level] + [top_level]
+
+    for part_name in part_order:
+        lines.append(f"    part def {part_name} {{")
+        if part_name in state_machine_owners:
+            lines.append(_indent(_render_state_machine(generic_case["state_machine"]), 2))
+            lines.append("")
+        for port_name, port_type in part_ports.get(part_name, []):
+            lines.append(f"        port {port_name} : {port_type};")
+        if part_name in subparts:
+            for child_name, child_type in subparts[part_name]:
+                lines.append(f"        part {child_name} : {child_type};")
+        lines.extend(["    }", ""])
+
+    lines.extend([f"    part systemUnderTest : {top_level};", ""])
+    for index in range(1, len(contracts["contracts"]) + 1):
+        lines.append(f"    requirement requirement_{index:03d} : Req{index:03d};")
+    lines.append("}")
+    return "\n".join(lines) + "\n"
+
+
 def render_canonical(case_id: str, contracts: dict[str, Any]) -> str | None:
+    if contracts.get("generic_case"):
+        return _render_generic_case(case_id, contracts)
     templates = {
         "case01_vehicle_explicit_high": """package Case01VehicleExplicitHighExpected {
 
