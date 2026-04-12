@@ -91,7 +91,7 @@ package DomainDefinitions {
   }
 
   part def Vehicle {
-    attribute mass : Real;
+    attribute mass : ScalarValues::Real;
     part engine : Engine;
     part transmission : Transmission;
   }
@@ -101,15 +101,15 @@ package RequirementDefinitions {
 
   requirement def MassRequirement {
     subject vehicle : DomainDefinitions::Vehicle;
-    attribute actualMass : Real;
-    attribute requiredMass : Real;
+    attribute actualMass : ScalarValues::Real;
+    attribute requiredMass : ScalarValues::Real;
     require constraint { actualMass <= requiredMass }
   }
 
   requirement def FuelEconomyRequirement {
     subject vehicle : DomainDefinitions::Vehicle;
-    attribute actualFuelEconomy : Real;
-    attribute requiredFuelEconomy : Real;
+    attribute actualFuelEconomy : ScalarValues::Real;
+    attribute requiredFuelEconomy : ScalarValues::Real;
     require constraint { actualFuelEconomy >= requiredFuelEconomy }
   }
 
@@ -130,13 +130,13 @@ package Requirements {
 
     requirement cityFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
       redefines requiredFuelEconomy = 25;
-      attribute assumedCargoMass : Real;
+      attribute assumedCargoMass : ScalarValues::Real;
       assume constraint { assumedCargoMass >= 500 }
     }
 
     requirement highwayFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
       redefines requiredFuelEconomy = 30;
-      attribute assumedCargoMass : Real;
+      attribute assumedCargoMass : ScalarValues::Real;
       assume constraint { assumedCargoMass >= 500 }
     }
   }
@@ -184,9 +184,9 @@ package ViewTargets {
 package DomainDefinitions {
 
   part def MiningFrigate {
-    attribute cargoCapacity : Real;
-    attribute shieldStrengthHS : Real;
-    attribute shieldStrengthLS : Real;
+    attribute cargoCapacity : ScalarValues::Real;
+    attribute shieldStrengthHS : ScalarValues::Real;
+    attribute shieldStrengthLS : ScalarValues::Real;
   }
 }
 
@@ -194,14 +194,14 @@ package RequirementDefinitions {
 
   requirement def CargoCapacityRequirement {
     subject miningFrigate : DomainDefinitions::MiningFrigate;
-    attribute cargoCapacity : Real;
+    attribute cargoCapacity : ScalarValues::Real;
     require constraint { cargoCapacity >= 5000.0 }
   }
 
   requirement def SurvivabilityRequirement {
     subject miningFrigate : DomainDefinitions::MiningFrigate;
-    attribute shieldStrengthHS : Real;
-    attribute shieldStrengthLS : Real;
+    attribute shieldStrengthHS : ScalarValues::Real;
+    attribute shieldStrengthLS : ScalarValues::Real;
     require constraint { shieldStrengthHS >= 200.0 }
     require constraint { shieldStrengthLS >= 400.0 }
   }
@@ -247,15 +247,15 @@ package ViewTargets {
 package DomainDefinitions {
 
   item def PowerSupply {
-    attribute energyTransfer : Real;
+    attribute energyTransfer : ScalarValues::Real;
   }
 
   item def HighSlotCommand {
-    attribute activation : Boolean;
+    attribute activation : ScalarValues::Boolean;
   }
 
   item def MediumSlotCommand {
-    attribute activation : Boolean;
+    attribute activation : ScalarValues::Boolean;
   }
 
   port def HighSlotPort {

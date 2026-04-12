@@ -24,7 +24,7 @@ package DomainDefinitions {
   }
 
   part def Vehicle {
-    attribute mass : Real;
+    attribute mass : ScalarValues::Real;
     part engine : Engine;
     part transmission : Transmission;
   }
@@ -34,15 +34,15 @@ package RequirementDefinitions {
 
   requirement def MassRequirement {
     subject vehicle : DomainDefinitions::Vehicle;
-    attribute actualMass : Real;
-    attribute requiredMass : Real;
+    attribute actualMass : ScalarValues::Real;
+    attribute requiredMass : ScalarValues::Real;
     require constraint { actualMass <= requiredMass }
   }
 
   requirement def FuelEconomyRequirement {
     subject vehicle : DomainDefinitions::Vehicle;
-    attribute actualFuelEconomy : Real;
-    attribute requiredFuelEconomy : Real;
+    attribute actualFuelEconomy : ScalarValues::Real;
+    attribute requiredFuelEconomy : ScalarValues::Real;
     require constraint { actualFuelEconomy >= requiredFuelEconomy }
   }
 
@@ -63,13 +63,13 @@ package Requirements {
 
     requirement cityFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
       redefines requiredFuelEconomy = 25;
-      attribute assumedCargoMass : Real;
+      attribute assumedCargoMass : ScalarValues::Real;
       assume constraint { assumedCargoMass >= 500 }
     }
 
     requirement highwayFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
       redefines requiredFuelEconomy = 30;
-      attribute assumedCargoMass : Real;
+      attribute assumedCargoMass : ScalarValues::Real;
       assume constraint { assumedCargoMass >= 500 }
     }
   }

@@ -3,15 +3,15 @@ package Case04MiningModularInterfaceHighExpected {
 package DomainDefinitions {
 
   item def PowerSupply {
-    attribute energyTransfer : Real;
+    attribute energyTransfer : ScalarValues::Real;
   }
 
   item def HighSlotCommand {
-    attribute activation : Boolean;
+    attribute activation : ScalarValues::Boolean;
   }
 
   item def MediumSlotCommand {
-    attribute activation : Boolean;
+    attribute activation : ScalarValues::Boolean;
   }
 
   port def HighSlotPort {

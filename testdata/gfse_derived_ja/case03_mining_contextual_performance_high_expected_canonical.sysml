@@ -3,9 +3,9 @@ package Case03MiningContextualPerformanceHighExpected {
 package DomainDefinitions {
 
   part def MiningFrigate {
-    attribute cargoCapacity : Real;
-    attribute shieldStrengthHS : Real;
-    attribute shieldStrengthLS : Real;
+    attribute cargoCapacity : ScalarValues::Real;
+    attribute shieldStrengthHS : ScalarValues::Real;
+    attribute shieldStrengthLS : ScalarValues::Real;
   }
 }
 
@@ -13,14 +13,14 @@ package RequirementDefinitions {
 
   requirement def CargoCapacityRequirement {
     subject miningFrigate : DomainDefinitions::MiningFrigate;
-    attribute cargoCapacity : Real;
+    attribute cargoCapacity : ScalarValues::Real;
     require constraint { cargoCapacity >= 5000.0 }
   }
 
   requirement def SurvivabilityRequirement {
     subject miningFrigate : DomainDefinitions::MiningFrigate;
-    attribute shieldStrengthHS : Real;
-    attribute shieldStrengthLS : Real;
+    attribute shieldStrengthHS : ScalarValues::Real;
+    attribute shieldStrengthLS : ScalarValues::Real;
     require constraint { shieldStrengthHS >= 200.0 }
     require constraint { shieldStrengthLS >= 400.0 }
   }
