@@ -86,4 +86,16 @@ package C14KeylessEntryUnlock {
     requirement requirement_001 : Req001;
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
+
+    package ViewDefinitions {
+        private import Views::*;
+        private import DS_Views::*;
+
+        view systemContextView : DS_Views::SymbolicViews::gv {
+            expose C14KeylessEntryUnlock::systemUnderTest;
+            expose C14KeylessEntryUnlock::systemUnderTest::controller;
+            expose C14KeylessEntryUnlock::systemUnderTest::receiver;
+            expose C14KeylessEntryUnlock::systemUnderTest::actuator;
+        }
+    }
 }

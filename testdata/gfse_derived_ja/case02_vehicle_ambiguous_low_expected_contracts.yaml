@@ -1,7 +1,7 @@
 document:
   document_id: GFSE-CASE02
   document_name: 車両の曖昧な性能要求
-  language: en
+  language: ja
   domain: vehicle_system
 contracts:
 - contract_id: C-VEH-L-001
@@ -33,7 +33,7 @@ contracts:
     confidence: 0.79
     rationale: 軽量という表現は車両質量を指す可能性が高い。
   evidence:
-    quote: The vehicle shall be lightweight.
+    quote: 車両は軽量でなければならない。
 - contract_id: C-VEH-L-002
   source_requirement_id: REQ-VEH-L-002
   source_anchor:
@@ -58,7 +58,7 @@ contracts:
     confidence: 0.58
     rationale: VehicleModel では市街地と高速の燃費要求が分離されている。
   evidence:
-    quote: The vehicle shall be fuel efficient.
+    quote: 車両は燃費が良くなければならない。
 - contract_id: C-VEH-L-003
   source_requirement_id: REQ-VEH-L-003
   source_anchor:
@@ -81,7 +81,6 @@ contracts:
     missing_slot: interface_name
     proposed_value: EngineToTransmissionInterface
     confidence: 0.68
-    rationale: VehicleModel defines an EngineToTransmissionInterface between engine
-      and transmission.
+    rationale: VehicleModel ではエンジンとトランスミッション間に EngineToTransmissionInterface が定義されている。
   evidence:
-    quote: The engine shall provide drive power to the transmission reliably.
+    quote: エンジンはトランスミッションへ駆動力を確実に供給しなければならない。

@@ -70,4 +70,15 @@ package C03DoorLockSpeedInterlock {
     requirement requirement_001 : Req001;
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
+
+    package ViewDefinitions {
+        private import Views::*;
+        private import DS_Views::*;
+
+        view systemContextView : DS_Views::SymbolicViews::gv {
+            expose C03DoorLockSpeedInterlock::systemUnderTest;
+            expose C03DoorLockSpeedInterlock::systemUnderTest::controller;
+            expose C03DoorLockSpeedInterlock::systemUnderTest::actuator;
+        }
+    }
 }

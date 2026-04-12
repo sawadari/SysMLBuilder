@@ -102,6 +102,18 @@ python -m sysml_builder.cli testdata\gfse_derived\case01_vehicle_explicit_high_r
 low 充足性ケースのように canonical が出ない場合もあります。
 その場合は review overlay が主成果物です。
 
+SysML v1 XMI も必要な場合:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m sysml_builder.cli testdata\SysMLBuilder_testdata_20cases\cases\C01_power_tailgate_conditions\requirements_en.md -o out --sysml-v1-xmi cameo ea
+```
+
+追加で出力されるファイル:
+
+- `*_cameo_v1.xmi`
+- `*_ea_v1.xmi`
+
 ## 検証コマンド
 
 英語版 strict suite:

@@ -47,9 +47,17 @@ package Requirements {
   }
 }
 
-package ViewTargets {
-  doc /* render target: UseCases::MineAsteroids as textual objective view
-         render target: UseCases::OffloadOreAndResupply as textual objective view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view mineAsteroidsObjectiveView : DS_Views::SymbolicViews::gv {
+    expose UseCases::MineAsteroids;
+  }
+
+  view offloadOreAndResupplyObjectiveView : DS_Views::SymbolicViews::gv {
+    expose UseCases::OffloadOreAndResupply;
+  }
 }
 
 }

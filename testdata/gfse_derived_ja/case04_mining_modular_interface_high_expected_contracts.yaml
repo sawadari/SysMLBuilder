@@ -1,7 +1,7 @@
 document:
   document_id: GFSE-CASE04
   document_name: 採掘フリゲートのモジュラーインタフェース要求
-  language: en
+  language: ja
   domain: space_system
 contracts:
 - contract_id: C-MFI-001
@@ -62,8 +62,7 @@ contracts:
     from: hullPort.control
     to: modulePort.control
   evidence:
-    quote: The HighSlot interface shall transfer power and activation command from
-      the hull to the mining laser module.
+    quote: HighSlotインタフェースは船体から採掘レーザーモジュールへ電力と起動コマンドを伝達しなければならない。
 - contract_id: C-MFI-003
   source_requirement_id: REQ-MFI-003
   source_anchor:
@@ -94,8 +93,7 @@ contracts:
     from: hullPort.control
     to: modulePort.control
   evidence:
-    quote: The hull shall provide a typed MediumSlot interface to a shield hardener
-      module.
+    quote: 船体はシールドハードナーモジュールに対して型付きMediumSlotインタフェースを提供しなければならない。
 - contract_id: C-MFI-004
   source_requirement_id: REQ-MFI-004
   source_anchor:
@@ -123,5 +121,4 @@ contracts:
     from: hullPort.control
     to: modulePort.control
   evidence:
-    quote: The MediumSlot interface shall transfer power and activation command from
-      the hull to the shield hardener module.
+    quote: MediumSlotインタフェースは船体からシールドハードナーモジュールへ電力と起動コマンドを伝達しなければならない。

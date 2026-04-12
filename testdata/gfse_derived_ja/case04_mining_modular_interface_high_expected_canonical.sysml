@@ -106,8 +106,16 @@ package AllocationManifest {
          [allocation] C-MFI-004 allocated_to Structure::frigate_ref::hull */
 }
 
-package ViewTargets {
-  doc /* render target: Structure::frigate_ref as interconnection view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view miningFrigateInterconnectionView : DS_Views::SymbolicViews::gv {
+    expose Structure::frigate_ref;
+    expose Structure::frigate_ref::hull;
+    expose Structure::frigate_ref::miningLaser;
+    expose Structure::frigate_ref::shieldHardener;
+  }
 }
 
 }

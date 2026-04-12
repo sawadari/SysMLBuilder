@@ -68,6 +68,25 @@ def _indent(block: str, level: int = 1) -> str:
     return "\n".join(prefix + line if line else "" for line in block.splitlines())
 
 
+def _render_view_package(viewpoint_name: str, view_name: str, expose_paths: list[str], frame_name: str) -> list[str]:
+    lines = [
+        "    package ViewDefinitions {",
+        "        private import Views::*;",
+        "        private import DS_Views::*;",
+        "",
+        f"        view {view_name} : DS_Views::SymbolicViews::gv {{",
+    ]
+    for expose_path in expose_paths:
+        lines.append(f"            expose {expose_path};")
+    lines.extend(
+        [
+            "        }",
+            "    }",
+        ]
+    )
+    return lines
+
+
 def _render_state_machine(definition: dict[str, Any]) -> str:
     states = definition["states"]
     transitions = definition["transitions"]
@@ -168,6 +187,18 @@ def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
     lines.extend([f"    part systemUnderTest : {top_level};", ""])
     for index in range(1, len(contracts["contracts"]) + 1):
         lines.append(f"    requirement requirement_{index:03d} : Req{index:03d};")
+    lines.append("")
+    expose_paths = [f"{generic_case['package']}::systemUnderTest"]
+    for child_name, _child_type in subparts.get(top_level, []):
+        expose_paths.append(f"{generic_case['package']}::systemUnderTest::{child_name}")
+    lines.extend(
+        _render_view_package(
+            viewpoint_name="systemContextPerspective",
+            view_name="systemContextView",
+            expose_paths=expose_paths,
+            frame_name="system breakdown",
+        )
+    )
     lines.append("}")
     return "\n".join(lines) + "\n"
 
@@ -284,8 +315,15 @@ package AllocationManifest {
          [allocation] C-VEH-004 allocated_to Structure::vehicle_b::engine */
 }
 
-package ViewTargets {
-  doc /* render target: Structure::vehicle_b as structural context view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view vehicleStructureView : DS_Views::SymbolicViews::gv {
+    expose Structure::vehicle_b;
+    expose Structure::vehicle_b::engine;
+    expose Structure::vehicle_b::transmission;
+  }
 }
 
 }
@@ -347,8 +385,13 @@ package AllocationManifest {
          [allocation] C-MF-003 allocated_to Structure::miningFrigate_ref */
 }
 
-package ViewTargets {
-  doc /* render target: Structure::miningFrigate_ref as structural context view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view miningFrigateStructureView : DS_Views::SymbolicViews::gv {
+    expose Structure::miningFrigate_ref;
+  }
 }
 
 }
@@ -461,8 +504,16 @@ package AllocationManifest {
          [allocation] C-MFI-004 allocated_to Structure::frigate_ref::hull */
 }
 
-package ViewTargets {
-  doc /* render target: Structure::frigate_ref as interconnection view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view miningFrigateInterconnectionView : DS_Views::SymbolicViews::gv {
+    expose Structure::frigate_ref;
+    expose Structure::frigate_ref::hull;
+    expose Structure::frigate_ref::miningLaser;
+    expose Structure::frigate_ref::shieldHardener;
+  }
 }
 
 }
@@ -516,9 +567,17 @@ package Requirements {
   }
 }
 
-package ViewTargets {
-  doc /* render target: UseCases::MineAsteroids as textual objective view
-         render target: UseCases::OffloadOreAndResupply as textual objective view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view mineAsteroidsObjectiveView : DS_Views::SymbolicViews::gv {
+    expose UseCases::MineAsteroids;
+  }
+
+  view offloadOreAndResupplyObjectiveView : DS_Views::SymbolicViews::gv {
+    expose UseCases::OffloadOreAndResupply;
+  }
 }
 
 }

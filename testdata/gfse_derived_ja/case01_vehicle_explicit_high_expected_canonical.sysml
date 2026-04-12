@@ -106,8 +106,15 @@ package AllocationManifest {
          [allocation] C-VEH-004 allocated_to Structure::vehicle_b::engine */
 }
 
-package ViewTargets {
-  doc /* render target: Structure::vehicle_b as structural context view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view vehicleStructureView : DS_Views::SymbolicViews::gv {
+    expose Structure::vehicle_b;
+    expose Structure::vehicle_b::engine;
+    expose Structure::vehicle_b::transmission;
+  }
 }
 
 }

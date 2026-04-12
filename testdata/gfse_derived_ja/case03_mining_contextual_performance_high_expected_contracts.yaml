@@ -1,7 +1,7 @@
 document:
   document_id: GFSE-CASE03
   document_name: 採掘フリゲートの文脈別性能要求
-  language: en
+  language: ja
   domain: space_system
 contracts:
 - contract_id: C-MF-001
@@ -22,7 +22,7 @@ contracts:
   threshold_value: 5000
   threshold_unit: m3
   evidence:
-    quote: The mining frigate shall have a cargo capacity of at least 5000 m3.
+    quote: 採掘フリゲートの貨物容量は少なくとも5000 m3でなければならない。
 - contract_id: C-MF-002
   source_requirement_id: REQ-MF-002
   source_anchor:
@@ -45,7 +45,7 @@ contracts:
     value: 200
     unit: DPS
   evidence:
-    quote: The mining frigate shall withstand at least 200 DPS in High Sec operations.
+    quote: 採掘フリゲートはHigh Sec運用において少なくとも200 DPSに耐えなければならない。
 - contract_id: C-MF-003
   source_requirement_id: REQ-MF-003
   source_anchor:
@@ -70,5 +70,4 @@ contracts:
     value: 400
     unit: DPS
   evidence:
-    quote: The mining frigate shall withstand at least 400 DPS in Low Sec, Null Sec,
-      and Wormhole operations.
+    quote: 採掘フリゲートはLow Sec、Null Sec、およびWormhole運用において少なくとも400 DPSに耐えなければならない。

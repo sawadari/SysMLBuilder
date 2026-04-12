@@ -77,6 +77,9 @@ class RandomizedInputResilienceTest(unittest.TestCase):
                         self.assertEqual(canonical.count("requirement def Req"), metadata["requirements_count"])
                         self.assertEqual(canonical.count("port def "), len(metadata["interfaces"]))
                         self.assertEqual(canonical.count("interface def "), len(metadata["interfaces_defs"]))
+                        self.assertIn("package ViewDefinitions {", canonical)
+                        self.assertIn("view ", canonical)
+                        self.assertIn(": DS_Views::SymbolicViews::gv {", canonical)
                         self.assertEqual(canonical.count("{"), canonical.count("}"))
 
     def test_generated_sysml_is_parseable_by_monticore_when_tool_is_available(self) -> None:

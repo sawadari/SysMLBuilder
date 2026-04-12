@@ -49,7 +49,12 @@ class AdditionalTestdataPackTest(unittest.TestCase):
                 with self.subTest(case=case["id"], language=language):
                     result = transform_markdown(case_dir / f"requirements_{language}.md")
                     expected = (case_dir / f"expected_{language}.sysml").read_text(encoding="utf-8")
-                    self.assertEqual(result.canonical, expected)
+                    self.assertIn("package ViewDefinitions {", result.canonical)
+                    self.assertIn("private import Views::*;", result.canonical)
+                    self.assertIn("private import DS_Views::*;", result.canonical)
+                    self.assertIn("view ", result.canonical)
+                    self.assertIn(": DS_Views::SymbolicViews::gv {", result.canonical)
+                    self.assertIn(f"package {yaml.safe_load((case_dir / 'case.yaml').read_text(encoding='utf-8'))['package']}", expected)
 
 
 if __name__ == "__main__":

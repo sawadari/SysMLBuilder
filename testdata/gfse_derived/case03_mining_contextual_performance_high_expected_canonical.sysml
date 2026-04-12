@@ -55,8 +55,13 @@ package AllocationManifest {
          [allocation] C-MF-003 allocated_to Structure::miningFrigate_ref */
 }
 
-package ViewTargets {
-  doc /* render target: Structure::miningFrigate_ref as structural context view */
+package ViewDefinitions {
+  private import Views::*;
+  private import DS_Views::*;
+
+  view miningFrigateStructureView : DS_Views::SymbolicViews::gv {
+    expose Structure::miningFrigate_ref;
+  }
 }
 
 }
