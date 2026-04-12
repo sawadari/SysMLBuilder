@@ -140,6 +140,19 @@ python scripts\validate_pack.py
 python -m unittest discover -s tests -v
 ```
 
+MontiCore による SysML 構文検証:
+
+```powershell
+python scripts\validate_sysml_syntax.py --tool-jar tools\MCSysMLv2.jar
+```
+
+`tools\MCSysMLv2.jar` がある場合は、次も実行できます。
+
+```powershell
+$env:SYSML_MONTICORE_JAR = (Resolve-Path "tools\\MCSysMLv2.jar")
+python -m unittest tests.test_randomized_input_resilience -v
+```
+
 ## 生成される成果物
 
 ### 1. Requirement Contract
@@ -226,6 +239,12 @@ Contract と SysML 要素の対応表です。
   - [profiles/requirement_patterns.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/requirement_patterns.yaml)
 - SysML への射影方針を決めるファイル
   - [profiles/projection_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/projection_profiles.yaml)
+- benchmark ケースごとの抽出と投影を決めるファイル
+  - [profiles/case_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/case_profiles.yaml)
+- canonical SysML の package 構造を決めるファイル
+  - [profiles/canonical_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/canonical_profiles.yaml)
+- generic case の描画規則を決めるファイル
+  - [profiles/generic_case_profile.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/generic_case_profile.yaml)
 - 何をどこで変えるかの早見表
   - [docs/customization_map.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/docs/customization_map.md)
 
@@ -234,9 +253,11 @@ Contract と SysML 要素の対応表です。
 1. 既存 YAML をコピーして、新しい `profile_id` を付ける
 2. 追加したい要求タイプに対応する slot を `requirement_contract.yaml` で定義する
 3. その要求タイプを `requirement_patterns.yaml` に pattern として追加する
-4. 生成したい成果物に応じて `projection_profiles.yaml` を調整する
-5. 必要なら lint と benchmark ルールを更新する
-6. 入力例と expected 出力を `testdata/` に追加して検証する
+4. benchmark ケースなら `case_profiles.yaml` に contract 抽出規則と overlay / projection manifest を追加する
+5. canonical SysML を出すなら `canonical_profiles.yaml` に package 構造を追加する
+6. generic case 系の共通規則を変えるなら `generic_case_profile.yaml` を更新する
+7. 必要なら lint と benchmark ルールを更新する
+8. 入力例と expected 出力を `testdata/` に追加して検証する
 
 ### どのファイルで何を決めるか
 
@@ -261,6 +282,20 @@ Contract と SysML 要素の対応表です。
 - requirement / interface / use case の出し方
 - allocation / satisfy / behavior の出し方
 
+`case_profiles.yaml`:
+
+- case metadata
+- contract extraction の capture regex
+- contract ごとの subject / slot / proposal
+- overlay に出す draft requirement
+- projection manifest
+
+`canonical_profiles.yaml`:
+
+- canonical package 名
+- package ごとの SysML body
+- benchmark ケースの canonical 出力構造
+
 ### 最小の作成例
 
 たとえば「安全余裕要求」を追加したい場合は、次の順で作るのが自然です。
@@ -273,21 +308,17 @@ Contract と SysML 要素の対応表です。
 
 ### 注意
 
-現状の Python 実装は、まだ完全に profile-driven ではありません。
-つまり `profiles/` だけを書き換えても、必ずしも実装が自動で追従するわけではありません。
+benchmark 6ケースについては、現在の実装は profile-driven です。
+つまり case metadata / contract extraction / canonical / overlay / projection manifest は `profiles/` の定義から生成されます。
 
-今の段階では:
+主に使うファイル:
 
-- profile は設計の正本
-- `src/sysml_builder/` は strict suite を通すための実装
+- [profiles/case_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/case_profiles.yaml)
+- [profiles/canonical_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/canonical_profiles.yaml)
+- [profiles/review_overlay.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/review_overlay.yaml)
 
-という位置づけです。
-
-そのため、新しいプロファイルを本当に有効化したい場合は、通常は次も必要です。
-
-- [src/sysml_builder/parser.py](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/src/sysml_builder/parser.py)
-- [src/sysml_builder/transformer.py](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/src/sysml_builder/transformer.py)
-- [src/sysml_builder/renderer.py](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/src/sysml_builder/renderer.py)
+generic case 系も、描画規則自体は profile-driven です。
+ただし各 `case.yaml` の構造スキーマをどう解釈するかというランタイム自体は Python 実装にあります。
 
 ## 現状の制約
 
@@ -299,9 +330,9 @@ Contract と SysML 要素の対応表です。
 ## 今後の拡張ポイント
 
 - pattern 分類を profile 駆動にする
-- Contract 抽出をケース固定から汎化する
+- Contract 抽出をケース固定 regex から汎化する
 - review overlay の proposal を LLM で生成する
-- canonical renderer をテンプレート固定から構造生成へ移す
+- canonical renderer を package body から要素レベル生成へ移す
 - CLI を複数ファイル一括処理に対応させる
 
 ## 最初に読む順番

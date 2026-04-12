@@ -1,0 +1,350 @@
+version: 1.0.0
+profile_id: gfse_canonical_profiles_v1
+description: Canonical SysML package structures for benchmark cases.
+profiles:
+  case01_vehicle_explicit_high:
+    package_name: Case01VehicleExplicitHighExpected
+    packages:
+    - name: DomainDefinitions
+      leading_blank: true
+      body: |
+        item def Torque;
+
+        port def DrivePwrPort {
+          out engineTorque : Torque;
+        }
+
+        port def ClutchPort;
+
+        interface def EngineToTransmissionInterface {
+          end p1 : DrivePwrPort;
+          end p2 : ClutchPort;
+        }
+
+        part def Engine {
+          port drivePwrPort : DrivePwrPort;
+        }
+
+        part def Transmission {
+          port clutchPort : ~ClutchPort;
+        }
+
+        part def Vehicle {
+          attribute mass : ScalarValues::Real;
+          part engine : Engine;
+          part transmission : Transmission;
+        }
+    - name: RequirementDefinitions
+      leading_blank: true
+      body: |
+        requirement def MassRequirement {
+          subject vehicle : DomainDefinitions::Vehicle;
+          attribute actualMass : ScalarValues::Real;
+          attribute requiredMass : ScalarValues::Real;
+          require constraint { actualMass <= requiredMass }
+        }
+
+        requirement def FuelEconomyRequirement {
+          subject vehicle : DomainDefinitions::Vehicle;
+          attribute actualFuelEconomy : ScalarValues::Real;
+          attribute requiredFuelEconomy : ScalarValues::Real;
+          require constraint { actualFuelEconomy >= requiredFuelEconomy }
+        }
+
+        requirement def DrivePowerInterfaceRequirement {
+          subject engine : DomainDefinitions::Engine;
+          doc /* The engine shall transfer generated torque to the transmission through the clutch interface. */
+        }
+    - name: Requirements
+      leading_blank: true
+      body: |
+        requirement vehicleSpecification {
+          subject vehicle : DomainDefinitions::Vehicle;
+
+          requirement vehicleMassRequirement : RequirementDefinitions::MassRequirement {
+            redefines requiredMass = 2000;
+          }
+
+          requirement cityFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
+            redefines requiredFuelEconomy = 25;
+            attribute assumedCargoMass : ScalarValues::Real;
+            assume constraint { assumedCargoMass >= 500 }
+          }
+
+          requirement highwayFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
+            redefines requiredFuelEconomy = 30;
+            attribute assumedCargoMass : ScalarValues::Real;
+            assume constraint { assumedCargoMass >= 500 }
+          }
+        }
+
+        requirement engineSpecification {
+          subject engine : DomainDefinitions::Engine;
+          requirement drivePowerInterface : RequirementDefinitions::DrivePowerInterfaceRequirement;
+        }
+    - name: Structure
+      leading_blank: true
+      body: |
+        part vehicle_b : DomainDefinitions::Vehicle {
+          attribute mass = 1950;
+          part engine : DomainDefinitions::Engine;
+          part transmission : DomainDefinitions::Transmission;
+
+          interface engineToTransmissionInterface : DomainDefinitions::EngineToTransmissionInterface
+            connect engine::drivePwrPort to transmission::clutchPort;
+        }
+    - name: SatisfactionManifest
+      body: |
+        doc /* [satisfy] Requirements::vehicleSpecification::vehicleMassRequirement by Structure::vehicle_b
+               [satisfy] Requirements::vehicleSpecification::cityFuelEconomyRequirement by Structure::vehicle_b
+               [satisfy] Requirements::vehicleSpecification::highwayFuelEconomyRequirement by Structure::vehicle_b
+               [satisfy] Requirements::engineSpecification::drivePowerInterface by Structure::vehicle_b::engine */
+    - name: AllocationManifest
+      body: |
+        doc /* [allocation] C-VEH-001 allocated_to Structure::vehicle_b
+               [allocation] C-VEH-002 allocated_to Structure::vehicle_b
+               [allocation] C-VEH-003 allocated_to Structure::vehicle_b
+               [allocation] C-VEH-004 allocated_to Structure::vehicle_b::engine */
+    - name: ViewDefinitions
+      body: |
+        private import Views::*;
+        private import DS_Views::*;
+
+        view vehicleStructureView : DS_Views::SymbolicViews::gv {
+          expose Structure::vehicle_b;
+          expose Structure::vehicle_b::engine;
+          expose Structure::vehicle_b::transmission;
+        }
+  case03_mining_contextual_performance_high:
+    package_name: Case03MiningContextualPerformanceHighExpected
+    packages:
+    - name: DomainDefinitions
+      leading_blank: true
+      body: |
+        part def MiningFrigate {
+          attribute cargoCapacity : ScalarValues::Real;
+          attribute shieldStrengthHS : ScalarValues::Real;
+          attribute shieldStrengthLS : ScalarValues::Real;
+        }
+    - name: RequirementDefinitions
+      leading_blank: true
+      body: |
+        requirement def CargoCapacityRequirement {
+          subject miningFrigate : DomainDefinitions::MiningFrigate;
+          attribute cargoCapacity : ScalarValues::Real;
+          require constraint { cargoCapacity >= 5000.0 }
+        }
+
+        requirement def SurvivabilityRequirement {
+          subject miningFrigate : DomainDefinitions::MiningFrigate;
+          attribute shieldStrengthHS : ScalarValues::Real;
+          attribute shieldStrengthLS : ScalarValues::Real;
+          require constraint { shieldStrengthHS >= 200.0 }
+          require constraint { shieldStrengthLS >= 400.0 }
+        }
+    - name: Requirements
+      leading_blank: true
+      body: |
+        requirement miningFrigateSpecification {
+          subject miningFrigate : DomainDefinitions::MiningFrigate;
+          requirement cargoCapacityRequirement : RequirementDefinitions::CargoCapacityRequirement;
+          requirement survivabilityRequirement : RequirementDefinitions::SurvivabilityRequirement;
+        }
+    - name: Structure
+      leading_blank: true
+      body: |
+        part miningFrigate_ref : DomainDefinitions::MiningFrigate {
+          attribute cargoCapacity = 6200.0;
+          attribute shieldStrengthHS = 250.0;
+          attribute shieldStrengthLS = 450.0;
+        }
+    - name: SatisfactionManifest
+      body: |
+        doc /* [satisfy] Requirements::miningFrigateSpecification::cargoCapacityRequirement by Structure::miningFrigate_ref
+               [satisfy] Requirements::miningFrigateSpecification::survivabilityRequirement by Structure::miningFrigate_ref */
+    - name: AllocationManifest
+      body: |
+        doc /* [allocation] C-MF-001 allocated_to Structure::miningFrigate_ref
+               [allocation] C-MF-002 allocated_to Structure::miningFrigate_ref
+               [allocation] C-MF-003 allocated_to Structure::miningFrigate_ref */
+    - name: ViewDefinitions
+      body: |
+        private import Views::*;
+        private import DS_Views::*;
+
+        view miningFrigateStructureView : DS_Views::SymbolicViews::gv {
+          expose Structure::miningFrigate_ref;
+        }
+  case04_mining_modular_interface_high:
+    package_name: Case04MiningModularInterfaceHighExpected
+    packages:
+    - name: DomainDefinitions
+      leading_blank: true
+      body: |
+        item def PowerSupply {
+          attribute energyTransfer : ScalarValues::Real;
+        }
+
+        item def HighSlotCommand {
+          attribute activation : ScalarValues::Boolean;
+        }
+
+        item def MediumSlotCommand {
+          attribute activation : ScalarValues::Boolean;
+        }
+
+        port def HighSlotPort {
+          in power : PowerSupply;
+          in control : HighSlotCommand;
+        }
+
+        port def MediumSlotPort {
+          in power : PowerSupply;
+          in control : MediumSlotCommand;
+        }
+
+        interface def HighSlotInterface {
+          end hullPort : HighSlotPort;
+          end modulePort : ~HighSlotPort;
+          flow of PowerSupply from hullPort.power to modulePort.power;
+          flow of HighSlotCommand from hullPort.control to modulePort.control;
+        }
+
+        interface def MediumSlotInterface {
+          end hullPort : MediumSlotPort;
+          end modulePort : ~MediumSlotPort;
+          flow of PowerSupply from hullPort.power to modulePort.power;
+          flow of MediumSlotCommand from hullPort.control to modulePort.control;
+        }
+
+        part def MiningFrigateHull {
+          port highSlot1 : HighSlotPort;
+          port mediumSlot1 : MediumSlotPort;
+        }
+
+        part def MiningLaserModule {
+          port modulePort : ~HighSlotPort;
+        }
+
+        part def ShieldHardenerModule {
+          port modulePort : ~MediumSlotPort;
+        }
+
+        part def MiningFrigate {
+          part hull : MiningFrigateHull;
+          part miningLaser : MiningLaserModule;
+          part shieldHardener : ShieldHardenerModule;
+        }
+    - name: RequirementDefinitions
+      leading_blank: true
+      body: |
+        requirement def HighSlotInterfaceRequirement {
+          subject hull : DomainDefinitions::MiningFrigateHull;
+          doc /* The hull shall provide a typed HighSlot interface to a mining laser module. */
+        }
+
+        requirement def MediumSlotInterfaceRequirement {
+          subject hull : DomainDefinitions::MiningFrigateHull;
+          doc /* The hull shall provide a typed MediumSlot interface to a shield hardener module. */
+        }
+    - name: Requirements
+      body: |
+        requirement architectureSpecification {
+          subject hull : DomainDefinitions::MiningFrigateHull;
+          requirement highSlotInterfaceRequirement : RequirementDefinitions::HighSlotInterfaceRequirement;
+          requirement mediumSlotInterfaceRequirement : RequirementDefinitions::MediumSlotInterfaceRequirement;
+        }
+    - name: Structure
+      leading_blank: true
+      body: |
+        part frigate_ref : DomainDefinitions::MiningFrigate {
+          part hull : DomainDefinitions::MiningFrigateHull;
+          part miningLaser : DomainDefinitions::MiningLaserModule;
+          part shieldHardener : DomainDefinitions::ShieldHardenerModule;
+
+          interface miningLaserIf : DomainDefinitions::HighSlotInterface
+            connect hull::highSlot1 to miningLaser::modulePort;
+
+          interface shieldIf : DomainDefinitions::MediumSlotInterface
+            connect hull::mediumSlot1 to shieldHardener::modulePort;
+        }
+    - name: SatisfactionManifest
+      body: |
+        doc /* [satisfy] Requirements::architectureSpecification::highSlotInterfaceRequirement by Structure::frigate_ref::hull
+               [satisfy] Requirements::architectureSpecification::mediumSlotInterfaceRequirement by Structure::frigate_ref::hull */
+    - name: AllocationManifest
+      body: |
+        doc /* [allocation] C-MFI-001 allocated_to Structure::frigate_ref::hull
+               [allocation] C-MFI-002 allocated_to Structure::frigate_ref::hull
+               [allocation] C-MFI-003 allocated_to Structure::frigate_ref::hull
+               [allocation] C-MFI-004 allocated_to Structure::frigate_ref::hull */
+    - name: ViewDefinitions
+      body: |
+        private import Views::*;
+        private import DS_Views::*;
+
+        view miningFrigateInterconnectionView : DS_Views::SymbolicViews::gv {
+          expose Structure::frigate_ref;
+          expose Structure::frigate_ref::hull;
+          expose Structure::frigate_ref::miningLaser;
+          expose Structure::frigate_ref::shieldHardener;
+        }
+  case05_mining_usecase_medium:
+    package_name: Case05MiningUseCaseMediumExpected
+    packages:
+    - name: DomainDefinitions
+      body: |
+        part def MiningFrigate;
+        part def PilotPod;
+        part def AsteroidBelt;
+        part def Station;
+    - name: UseCases
+      leading_blank: true
+      body: |
+        use case def MineAsteroids {
+          subject miningFrigate : DomainDefinitions::MiningFrigate;
+          actor pilotPod : DomainDefinitions::PilotPod;
+          actor asteroidBelt : DomainDefinitions::AsteroidBelt;
+          objective {
+            doc /* Main Flow:
+                   1. Identify an asteroid target.
+                   2. Activate the mining laser.
+                   3. Extract ore and store it in the cargo hold.
+                   4. Suspend mining when the cargo hold becomes full.
+                   Exception Flows:
+                   - If the mining laser fails, halt mining and alert the pilot.
+                   - If the target asteroid is depleted, reacquire a target. */
+          }
+        }
+
+        use case def OffloadOreAndResupply {
+          subject miningFrigate : DomainDefinitions::MiningFrigate;
+          actor station : DomainDefinitions::Station;
+          objective {
+            doc /* Main Flow:
+                   1. Establish a docking connection with a station.
+                   2. Transfer ore to the station.
+                   3. Resupply essential systems.
+                   Exception Flows:
+                   - If docking fails, notify the pilot and abort the offload sequence.
+                   - If cargo transfer fails, suspend operations and keep the ore on board. */
+          }
+        }
+    - name: Requirements
+      body: |
+        requirement operationalObjectives {
+          subject miningFrigate : DomainDefinitions::MiningFrigate;
+          doc /* Derived from operational use case objectives. Quantitative completion thresholds are intentionally left unresolved. */
+        }
+    - name: ViewDefinitions
+      body: |
+        private import Views::*;
+        private import DS_Views::*;
+
+        view mineAsteroidsObjectiveView : DS_Views::SymbolicViews::gv {
+          expose UseCases::MineAsteroids;
+        }
+
+        view offloadOreAndResupplyObjectiveView : DS_Views::SymbolicViews::gv {
+          expose UseCases::OffloadOreAndResupply;
+        }

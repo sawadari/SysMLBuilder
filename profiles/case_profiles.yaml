@@ -1,0 +1,877 @@
+version: 1.0.0
+profile_id: gfse_case_profiles_v1
+description: Supported benchmark cases expressed as profile data for parsing, contract extraction, overlay rendering, and projection manifests.
+cases:
+  case01_vehicle_explicit_high:
+    canonical_profile_id: case01_vehicle_explicit_high
+    document:
+      document_id: GFSE-CASE01
+      document_name: Vehicle quantitative and interface requirements
+      document_name_ja: 車両の定量性能およびインタフェース要求
+      language: en
+      domain: vehicle_system
+    extraction:
+      mode: requirements
+      section: Requirements
+      section_ja: 要求
+      contract_rules:
+      - source_requirement_id: REQ-VEH-001
+        contract_id: C-VEH-001
+        pattern_id: quantified_property_constraint
+        confidence: 0.97
+        subject:
+          kind: system
+          canonical_name: Vehicle
+        captures:
+          value:
+            regex:
+              en:
+              - equal to (?P<value>\d+)\s+kg
+              ja:
+              - (?P<value>\d+)\s*kg以下
+            type: int
+        slots:
+          measured_property: mass
+          comparator: <=
+          threshold_value: "{value}"
+          threshold_unit: kg
+          responsible_module: Vehicle
+      - source_requirement_id: REQ-VEH-002
+        contract_id: C-VEH-002
+        pattern_id: contextual_quantified_performance
+        confidence: 0.96
+        subject:
+          kind: system
+          canonical_name: Vehicle
+        captures:
+          mpg:
+            regex:
+              en:
+              - at least (?P<mpg>\d+)\s+mpg.*cargo mass of at least (?P<cargo>\d+)\s+kg
+              ja:
+              - 少なくとも(?P<mpg>\d+)\s*mpg.*貨物質量が少なくとも(?P<cargo>\d+)\s*kg
+              - 貨物質量が少なくとも(?P<cargo>\d+)\s*kg.*少なくとも(?P<mpg>\d+)\s*mpg
+            type: int
+          cargo:
+            regex:
+              en:
+              - at least (?P<mpg>\d+)\s+mpg.*cargo mass of at least (?P<cargo>\d+)\s+kg
+              ja:
+              - 少なくとも(?P<mpg>\d+)\s*mpg.*貨物質量が少なくとも(?P<cargo>\d+)\s*kg
+              - 貨物質量が少なくとも(?P<cargo>\d+)\s*kg.*少なくとも(?P<mpg>\d+)\s*mpg
+            type: int
+        slots:
+          measured_property: fuelEconomy
+          operating_contexts:
+          - CityNominal
+          contextual_thresholds:
+          - context: CityNominal
+            comparator: ">="
+            value: "{mpg}"
+            unit: mpg
+          assumption_constraints:
+          - lhs: assumedCargoMass
+            operator: ">="
+            rhs: "{cargo}"
+            unit: kg
+      - source_requirement_id: REQ-VEH-003
+        contract_id: C-VEH-003
+        pattern_id: contextual_quantified_performance
+        confidence: 0.96
+        subject:
+          kind: system
+          canonical_name: Vehicle
+        captures:
+          mpg:
+            regex:
+              en:
+              - at least (?P<mpg>\d+)\s+mpg.*cargo mass of at least (?P<cargo>\d+)\s+kg
+              ja:
+              - 貨物質量が少なくとも(?P<cargo>\d+)\s*kg.*少なくとも(?P<mpg>\d+)\s*mpg
+            type: int
+          cargo:
+            regex:
+              en:
+              - at least (?P<mpg>\d+)\s+mpg.*cargo mass of at least (?P<cargo>\d+)\s+kg
+              ja:
+              - 貨物質量が少なくとも(?P<cargo>\d+)\s*kg.*少なくとも(?P<mpg>\d+)\s*mpg
+            type: int
+        slots:
+          measured_property: fuelEconomy
+          operating_contexts:
+          - HighwayNominal
+          contextual_thresholds:
+          - context: HighwayNominal
+            comparator: ">="
+            value: "{mpg}"
+            unit: mpg
+          assumption_constraints:
+          - lhs: assumedCargoMass
+            operator: ">="
+            rhs: "{cargo}"
+            unit: kg
+      - source_requirement_id: REQ-VEH-004
+        contract_id: C-VEH-004
+        pattern_id: interface_transfer
+        confidence: 0.95
+        subject:
+          kind: module
+          canonical_name: Engine
+        slots:
+          interface_name: EngineToTransmissionInterface
+          interface_ends:
+          - role: p1
+            port_type: DrivePwrPort
+          - role: p2
+            port_type: ClutchPort
+          flows:
+          - item: Torque
+            from: p1
+            to: p2
+    projection_manifest:
+      requirements:
+      - sysml_name: vehicleMassRequirement
+        source_contract: C-VEH-001
+        pattern: MassRequirement
+      - sysml_name: cityFuelEconomyRequirement
+        source_contract: C-VEH-002
+        pattern: FuelEconomyRequirement
+      - sysml_name: highwayFuelEconomyRequirement
+        source_contract: C-VEH-003
+        pattern: FuelEconomyRequirement
+      - sysml_name: drivePowerInterface
+        source_contract: C-VEH-004
+        pattern: DrivePowerInterfaceRequirement
+      interfaces:
+      - id: IF-VEH-001
+        name: engineToTransmissionInterface
+        type: EngineToTransmissionInterface
+        from: vehicle_b.engine.drivePwrPort
+        to: vehicle_b.transmission.clutchPort
+      allocations:
+      - id: ALLOC-VEH-001
+        contract: C-VEH-001
+        allocated_to: Structure::vehicle_b
+      - id: ALLOC-VEH-004
+        contract: C-VEH-004
+        allocated_to: Structure::vehicle_b::engine
+      satisfy_claims:
+      - requirement: Requirements::vehicleSpecification::vehicleMassRequirement
+        by: Structure::vehicle_b
+      - requirement: Requirements::engineSpecification::drivePowerInterface
+        by: Structure::vehicle_b::engine
+      views:
+      - id: VIEW-VEH-001
+        target: Structure::vehicle_b
+        rendering: structural_context
+  case02_vehicle_ambiguous_low:
+    document:
+      document_id: GFSE-CASE02
+      document_name: Vehicle ambiguous performance requirements
+      document_name_ja: 車両の曖昧な性能要求
+      language: en
+      domain: vehicle_system
+    extraction:
+      mode: requirements
+      section: Narrative requirements
+      section_ja: 記述要求
+      contract_rules:
+      - source_requirement_id: REQ-VEH-L-001
+        contract_id: C-VEH-L-001
+        pattern_id: ambiguous_quality_claim
+        confidence: 0.91
+        subject:
+          kind: system
+          canonical_name: Vehicle
+        slots:
+          gaps:
+          - threshold_value
+          - threshold_unit
+          - measured_property
+          llm_proposals:
+          - proposal_id: P-VEH-L-001
+            missing_slot: threshold_value
+            proposed_value: "2000"
+            confidence: 0.56
+            rationale:
+              en: Mass requirement in VehicleModel uses a 2000 kg style threshold.
+              ja: VehicleModel では 2000 kg 級の質量閾値が使われている。
+          - proposal_id: P-VEH-L-002
+            missing_slot: measured_property
+            proposed_value: mass
+            confidence: 0.79
+            rationale:
+              en: The phrase lightweight most likely maps to vehicle mass.
+              ja: 軽量という表現は車両質量を指す可能性が高い。
+      - source_requirement_id: REQ-VEH-L-002
+        contract_id: C-VEH-L-002
+        pattern_id: ambiguous_quality_claim
+        confidence: 0.9
+        subject:
+          kind: system
+          canonical_name: Vehicle
+        slots:
+          gaps:
+          - operating_contexts
+          - threshold_value
+          - threshold_unit
+          llm_proposals:
+          - proposal_id: P-VEH-L-003
+            missing_slot: operating_contexts
+            proposed_value: CityNominal and HighwayNominal
+            confidence: 0.58
+            rationale:
+              en: VehicleModel separates city and highway fuel economy requirements.
+              ja: VehicleModel では市街地と高速の燃費要求が分離されている。
+      - source_requirement_id: REQ-VEH-L-003
+        contract_id: C-VEH-L-003
+        pattern_id: interface_transfer
+        confidence: 0.74
+        subject:
+          kind: module
+          canonical_name: Engine
+        slots:
+          gaps:
+          - interface_name
+          - interface_ends
+          - flows
+          llm_proposals:
+          - proposal_id: P-VEH-L-004
+            missing_slot: interface_name
+            proposed_value: EngineToTransmissionInterface
+            confidence: 0.68
+            rationale:
+              en: VehicleModel defines an EngineToTransmissionInterface between engine and transmission.
+              ja: VehicleModel ではエンジンとトランスミッション間に EngineToTransmissionInterface が定義されている。
+    overlay:
+      package_name: Case02VehicleAmbiguousLowExpectedReview
+      domain_parts:
+      - Vehicle
+      - Engine
+      drafts:
+      - name: DraftVehicleMassRequirement
+        subject_name: vehicle
+        subject_type: Vehicle
+        proposal:
+          proposal_id: P-VEH-L-001
+          source_contract: C-VEH-L-001
+          source_requirement_id: REQ-VEH-L-001
+          missing_slot: threshold_value
+          proposed_value: "2000"
+          rationale:
+            en: VehicleModel uses explicit quantitative mass requirements.
+            ja: VehicleModel では明示的な定量質量要求が使われている。
+          trace_quality: direct_file_grounded
+          confidence: 0.56
+      - name: DraftVehicleFuelEconomyContext
+        subject_name: vehicle
+        subject_type: Vehicle
+        proposal:
+          proposal_id: P-VEH-L-003
+          source_contract: C-VEH-L-002
+          source_requirement_id: REQ-VEH-L-002
+          missing_slot: operating_contexts
+          proposed_value: CityNominal and HighwayNominal
+          rationale:
+            en: VehicleModel separates city and highway fuel economy requirements.
+            ja: VehicleModel では市街地と高速の燃費要求が分離されている。
+          trace_quality: direct_file_grounded
+          confidence: 0.58
+      - name: DraftVehicleDrivePowerInterface
+        subject_name: engine
+        subject_type: Engine
+        proposal:
+          proposal_id: P-VEH-L-004
+          source_contract: C-VEH-L-003
+          source_requirement_id: REQ-VEH-L-003
+          missing_slot: interface_name
+          proposed_value: EngineToTransmissionInterface
+          rationale:
+            en: VehicleModel defines an EngineToTransmissionInterface between engine and transmission.
+            ja: VehicleModel ではエンジンとトランスミッションの間に EngineToTransmissionInterface が定義されている。
+          trace_quality: direct_file_grounded
+          confidence: 0.68
+      missing_slots:
+        en:
+        - "REQ-VEH-L-001 missing: measured_property, threshold_value, threshold_unit"
+        - "REQ-VEH-L-002 missing: operating_contexts, threshold_value, threshold_unit"
+        - "REQ-VEH-L-003 missing: interface_name, interface_ends, flows"
+        ja:
+        - "REQ-VEH-L-001 missing: measured_property, threshold_value, threshold_unit"
+        - "REQ-VEH-L-002 missing: operating_contexts, threshold_value, threshold_unit"
+        - "REQ-VEH-L-003 missing: interface_name, interface_ends, flows"
+      open_questions:
+        en:
+        - Is lightweight a mass threshold or an acceleration/performance surrogate?
+        - Should fuel efficiency be split into city and highway contexts?
+        - Does reliable drive power imply an interface requirement, a performance requirement, or both?
+        ja:
+        - 軽量とは質量閾値なのか、それとも加速性能の代用なのか。
+        - 燃費は市街地と高速の文脈に分割すべきか。
+        - 確実な駆動力供給はインタフェース要求を意味するのか、性能要求を意味するのか、それとも両方か。
+      assumptions:
+        en:
+        - "Assumption A1: lightweight most likely maps to mass."
+        - "Assumption A2: fuel efficient most likely maps to city/highway fuel economy."
+        - "Assumption A3: drive power transfer most likely maps to a named interface."
+        ja:
+        - "Assumption A1: 軽量は質量を指す可能性が高い。"
+        - "Assumption A2: 燃費が良いとは市街地/高速燃費を指す可能性が高い。"
+        - "Assumption A3: 駆動力伝達は名前付きインタフェースを指す可能性が高い。"
+      trace_weaknesses:
+        en:
+        - The input is intentionally ambiguous.
+        - The review overlay should remain the source of truth until the missing quantitative slots are accepted.
+        ja:
+        - この入力は意図的に曖昧にしてある。
+        - 不足している定量スロットが受理されるまでは、レビューオーバーレイを正とすべきである。
+      review_guide:
+        en:
+        - "[review-action] accept / modify / reject / defer"
+        - Do not promote any draft to canonical until all missing quantitative slots are resolved.
+        ja:
+        - "[review-action] accept / modify / reject / defer"
+        - 不足している定量スロットがすべて解決するまで、いかなるドラフトも canonical へ昇格させてはならない。
+  case03_mining_contextual_performance_high:
+    canonical_profile_id: case03_mining_contextual_performance_high
+    document:
+      document_id: GFSE-CASE03
+      document_name: Mining frigate contextual performance requirements
+      document_name_ja: 採掘フリゲートの文脈別性能要求
+      language: en
+      domain: space_system
+    extraction:
+      mode: requirements
+      section: Requirements
+      section_ja: 要求
+      contract_rules:
+      - source_requirement_id: REQ-MF-001
+        contract_id: C-MF-001
+        pattern_id: quantified_property_constraint
+        confidence: 0.98
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        captures:
+          value:
+            regex:
+              en:
+              - at least (?P<value>\d+)\s+m3
+              ja:
+              - 少なくとも(?P<value>\d+)\s*m3
+            type: int
+        slots:
+          measured_property: cargoCapacity
+          comparator: ">="
+          threshold_value: "{value}"
+          threshold_unit: m3
+      - source_requirement_id: REQ-MF-002
+        contract_id: C-MF-002
+        pattern_id: contextual_quantified_performance
+        confidence: 0.97
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        captures:
+          value:
+            regex:
+              en:
+              - at least (?P<value>\d+)\s+DPS
+              ja:
+              - 少なくとも(?P<value>\d+)\s*DPS
+            type: int
+        slots:
+          measured_property: shieldStrength
+          operating_contexts:
+          - HighSec
+          contextual_thresholds:
+          - context: HighSec
+            comparator: ">="
+            value: "{value}"
+            unit: DPS
+      - source_requirement_id: REQ-MF-003
+        contract_id: C-MF-003
+        pattern_id: contextual_quantified_performance
+        confidence: 0.97
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        captures:
+          value:
+            regex:
+              en:
+              - at least (?P<value>\d+)\s+DPS
+              ja:
+              - 少なくとも(?P<value>\d+)\s*DPS
+            type: int
+        slots:
+          measured_property: shieldStrength
+          operating_contexts:
+          - LowSec
+          - NullSec
+          - Wormhole
+          contextual_thresholds:
+          - context: LowSec|NullSec|Wormhole
+            comparator: ">="
+            value: "{value}"
+            unit: DPS
+    projection_manifest:
+      requirements:
+      - sysml_name: cargoCapacityRequirement
+        source_contract: C-MF-001
+        pattern: CargoCapacityRequirement
+      - sysml_name: survivabilityRequirement
+        source_contract: C-MF-002|C-MF-003
+        pattern: SurvivabilityRequirement
+      allocations:
+      - id: ALLOC-MF-001
+        contract: C-MF-001
+        allocated_to: Structure::miningFrigate_ref
+      - id: ALLOC-MF-002
+        contract: C-MF-002
+        allocated_to: Structure::miningFrigate_ref
+      - id: ALLOC-MF-003
+        contract: C-MF-003
+        allocated_to: Structure::miningFrigate_ref
+      satisfy_claims:
+      - requirement: Requirements::miningFrigateSpecification::cargoCapacityRequirement
+        by: Structure::miningFrigate_ref
+      - requirement: Requirements::miningFrigateSpecification::survivabilityRequirement
+        by: Structure::miningFrigate_ref
+      views:
+      - id: VIEW-MF-001
+        target: Structure::miningFrigate_ref
+        rendering: structural_context
+  case04_mining_modular_interface_high:
+    canonical_profile_id: case04_mining_modular_interface_high
+    document:
+      document_id: GFSE-CASE04
+      document_name: Mining frigate modular interface requirements
+      document_name_ja: 採掘フリゲートのモジュラーインタフェース要求
+      language: en
+      domain: space_system
+    extraction:
+      mode: requirements
+      section: Requirements
+      section_ja: 要求
+      contract_rules:
+      - source_requirement_id: REQ-MFI-001
+        contract_id: C-MFI-001
+        pattern_id: modular_slot_interface
+        confidence: 0.97
+        subject:
+          kind: module
+          canonical_name: MiningFrigateHull
+        slots:
+          slot_type: HighSlot
+          interface_name: HighSlotInterface
+          interface_ends:
+          - role: hullPort
+            port_type: HighSlotPort
+          - role: modulePort
+            port_type: ~HighSlotPort
+          module_bindings:
+          - MiningLaserModule
+          flows:
+          - item: PowerSupply
+            from: hullPort.power
+            to: modulePort.power
+          - item: HighSlotCommand
+            from: hullPort.control
+            to: modulePort.control
+      - source_requirement_id: REQ-MFI-002
+        contract_id: C-MFI-002
+        pattern_id: interface_transfer
+        confidence: 0.98
+        subject:
+          kind: interface
+          canonical_name: HighSlotInterface
+        slots:
+          interface_name: HighSlotInterface
+          interface_ends:
+          - role: hullPort
+            port_type: HighSlotPort
+          - role: modulePort
+            port_type: ~HighSlotPort
+          flows:
+          - item: PowerSupply
+            from: hullPort.power
+            to: modulePort.power
+          - item: HighSlotCommand
+            from: hullPort.control
+            to: modulePort.control
+      - source_requirement_id: REQ-MFI-003
+        contract_id: C-MFI-003
+        pattern_id: modular_slot_interface
+        confidence: 0.97
+        subject:
+          kind: module
+          canonical_name: MiningFrigateHull
+        slots:
+          slot_type: MediumSlot
+          interface_name: MediumSlotInterface
+          interface_ends:
+          - role: hullPort
+            port_type: MediumSlotPort
+          - role: modulePort
+            port_type: ~MediumSlotPort
+          module_bindings:
+          - ShieldHardenerModule
+          flows:
+          - item: PowerSupply
+            from: hullPort.power
+            to: modulePort.power
+          - item: MediumSlotCommand
+            from: hullPort.control
+            to: modulePort.control
+      - source_requirement_id: REQ-MFI-004
+        contract_id: C-MFI-004
+        pattern_id: interface_transfer
+        confidence: 0.98
+        subject:
+          kind: interface
+          canonical_name: MediumSlotInterface
+        slots:
+          interface_name: MediumSlotInterface
+          interface_ends:
+          - role: hullPort
+            port_type: MediumSlotPort
+          - role: modulePort
+            port_type: ~MediumSlotPort
+          flows:
+          - item: PowerSupply
+            from: hullPort.power
+            to: modulePort.power
+          - item: MediumSlotCommand
+            from: hullPort.control
+            to: modulePort.control
+    projection_manifest:
+      requirements:
+      - sysml_name: highSlotInterfaceRequirement
+        source_contract: C-MFI-001|C-MFI-002
+        pattern: HighSlotInterfaceRequirement
+      - sysml_name: mediumSlotInterfaceRequirement
+        source_contract: C-MFI-003|C-MFI-004
+        pattern: MediumSlotInterfaceRequirement
+      interfaces:
+      - id: IF-MFI-001
+        name: miningLaserIf
+        type: HighSlotInterface
+        from: frigate_ref.hull.highSlot1
+        to: frigate_ref.miningLaser.modulePort
+      - id: IF-MFI-002
+        name: shieldIf
+        type: MediumSlotInterface
+        from: frigate_ref.hull.mediumSlot1
+        to: frigate_ref.shieldHardener.modulePort
+      allocations:
+      - id: ALLOC-MFI-001
+        contract: C-MFI-001
+        allocated_to: Structure::frigate_ref::hull
+      - id: ALLOC-MFI-003
+        contract: C-MFI-003
+        allocated_to: Structure::frigate_ref::hull
+      satisfy_claims:
+      - requirement: Requirements::architectureSpecification::highSlotInterfaceRequirement
+        by: Structure::frigate_ref::hull
+      - requirement: Requirements::architectureSpecification::mediumSlotInterfaceRequirement
+        by: Structure::frigate_ref::hull
+      views:
+      - id: VIEW-MFI-001
+        target: Structure::frigate_ref
+        rendering: interconnection
+  case05_mining_usecase_medium:
+    canonical_profile_id: case05_mining_usecase_medium
+    document:
+      document_id: GFSE-CASE05
+      document_name: Mining frigate operational use cases
+      document_name_ja: 採掘フリゲートの運用ユースケース
+      language: en
+      domain: space_system
+    extraction:
+      mode: use_cases
+      section: Operational objectives
+      section_ja: 運用目的
+      contract_rules:
+      - source_requirement_id: UC-MF-001
+        contract_id: C-UC-001
+        pattern_id: operational_use_case_objective
+        confidence: 0.95
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        slots:
+          actors:
+          - PilotPod
+          - AsteroidBelt
+          objective_text:
+            en: Mine asteroids and manage cargo.
+            ja: 小惑星を採掘し貨物を管理する。
+          gaps:
+          - success_thresholds
+          - time_limits
+          - trigger_conditions
+          evidence_quote:
+            en: "Main Flow: Identify an asteroid target, activate the mining laser, extract ore, and suspend mining when the cargo hold becomes full."
+            ja: "メインフロー: 小惑星ターゲットを特定し、採掘レーザーを起動し、鉱石を採取し、貨物倉が満杯になったら採掘を中断する。"
+      - source_requirement_id: UC-MF-002
+        contract_id: C-UC-002
+        pattern_id: operational_use_case_objective
+        confidence: 0.94
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        slots:
+          actors:
+          - Station
+          objective_text:
+            en: Offload ore and resupply essential systems.
+            ja: 鉱石を荷下ろしし重要システムを補給する。
+          gaps:
+          - success_thresholds
+          - completion_conditions
+          evidence_quote:
+            en: "Main Flow: Establish a docking connection with a station, transfer ore, and resupply essential systems."
+            ja: "メインフロー: ステーションとのドッキング接続を確立し、鉱石を移送し、重要システムを補給する。"
+    overlay:
+      package_name: Case05MiningUseCaseMediumExpectedReview
+      domain_parts:
+      - MiningFrigate
+      drafts:
+      - name: DraftMineAsteroidsCompletionCriteria
+        subject_name: miningFrigate
+        subject_type: MiningFrigate
+        proposal:
+          proposal_id: P-UC-001
+          source_contract: C-UC-001
+          source_requirement_id: UC-MF-001
+          missing_slot: success_thresholds
+          proposed_value:
+            en: define ore extraction completion criteria and cargo-full threshold
+            ja: 鉱石採取の完了基準と貨物満杯閾値を定義する
+          rationale:
+            en: The use case contains main and exception flows but does not define measurable success limits.
+            ja: このユースケースはメインフローと例外フローを含むが、測定可能な成功限界を定義していない。
+          trace_quality: direct_file_grounded
+          confidence: 0.61
+      - name: DraftOffloadCompletionCriteria
+        subject_name: miningFrigate
+        subject_type: MiningFrigate
+        proposal:
+          proposal_id: P-UC-002
+          source_contract: C-UC-002
+          source_requirement_id: UC-MF-002
+          missing_slot: completion_conditions
+          proposed_value:
+            en: define successful docking, cargo transfer completion, and resupply completion criteria
+            ja: 成功したドッキング、貨物移送完了、補給完了の基準を定義する
+          rationale:
+            en: The narrative preserves flow but not completion metrics.
+            ja: この記述はフローを保持しているが完了指標は保持していない。
+          trace_quality: direct_file_grounded
+          confidence: 0.6
+      missing_slots:
+        en:
+        - "UC-MF-001 missing: success_thresholds, time_limits, trigger_conditions"
+        - "UC-MF-002 missing: success_thresholds, completion_conditions"
+        ja:
+        - "UC-MF-001 missing: success_thresholds, time_limits, trigger_conditions"
+        - "UC-MF-002 missing: success_thresholds, completion_conditions"
+      open_questions:
+        en:
+        - Should mining completion be measured by ore quantity, time, or cargo fill percentage?
+        - Should offload success be measured by all cargo transferred, minimum cargo transferred, or docking completion?
+        ja:
+        - 採掘完了は鉱石量、時間、貨物充填率のどれで測るべきか。
+        - 荷下ろし成功は全貨物移送、最小貨物移送、ドッキング完了のどれで測るべきか。
+      behavior_candidates:
+        en:
+        - "Candidate behavior decomposition:"
+        - MineAsteroids -> target selection / mining activation / ore transfer / suspend on full cargo
+        - OffloadOreAndResupply -> docking / cargo transfer / resupply / abort on failure
+        ja:
+        - "候補となる振る舞い分解:"
+        - MineAsteroids -> ターゲット選択 / 採掘起動 / 鉱石移送 / 貨物満杯で中断
+        - OffloadOreAndResupply -> ドッキング / 貨物移送 / 補給 / 失敗時中止
+      review_guide:
+        en:
+        - "[review-action] accept / modify / reject / defer"
+        - Canonical use cases are acceptable, but quantitative success criteria remain unresolved.
+        ja:
+        - "[review-action] accept / modify / reject / defer"
+        - canonical なユースケース自体は受容可能だが、定量的な成功基準は未解決のままである。
+    projection_manifest:
+      use_cases:
+      - sysml_name: MineAsteroids
+        source_contract: C-UC-001
+        subject_type: MiningFrigate
+        actors:
+        - PilotPod
+        - AsteroidBelt
+      - sysml_name: OffloadOreAndResupply
+        source_contract: C-UC-002
+        subject_type: MiningFrigate
+        actors:
+        - Station
+      derived_requirements:
+      - sysml_name: operationalObjectives
+        source_contract: C-UC-001|C-UC-002
+      views:
+      - id: VIEW-UC-001
+        target: UseCases::MineAsteroids
+        rendering: textual_objective
+      - id: VIEW-UC-002
+        target: UseCases::OffloadOreAndResupply
+        rendering: textual_objective
+  case06_mining_usecase_ambiguous_low:
+    document:
+      document_id: GFSE-CASE06
+      document_name: Mining frigate ambiguous operational narrative
+      document_name_ja: 採掘フリゲートの曖昧な運用記述
+      language: en
+      domain: space_system
+    extraction:
+      mode: requirements
+      section: Narrative requirements
+      section_ja: 記述要求
+      contract_rules:
+      - source_requirement_id: REQ-UC-L-001
+        contract_id: C-UCL-001
+        pattern_id: ambiguous_quality_claim
+        confidence: 0.88
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        slots:
+          gaps:
+          - actors
+          - objective_text
+          - main_flow_steps
+          - success_thresholds
+          llm_proposals:
+          - proposal_id: P-UCL-001
+            missing_slot: actors
+            proposed_value: PilotPod and AsteroidBelt
+            confidence: 0.72
+            rationale:
+              en: UseCasesFrigate pairs mining with pilot and asteroid belt actors.
+              ja: UseCasesFrigate の採掘ユースケースではパイロットと小惑星帯が組みになっている。
+      - source_requirement_id: REQ-UC-L-002
+        contract_id: C-UCL-002
+        pattern_id: ambiguous_quality_claim
+        confidence: 0.87
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        slots:
+          gaps:
+          - actors
+          - trigger_conditions
+          - exception_flow_steps
+          llm_proposals:
+          - proposal_id: P-UCL-002
+            missing_slot: actors
+            proposed_value: HostileShip and PilotPod
+            confidence: 0.71
+            rationale:
+              en: Threat engagement use case involves hostile ship and pilot.
+              ja: 脅威対処ユースケースには敵対艦船とパイロットが含まれる。
+      - source_requirement_id: REQ-UC-L-003
+        contract_id: C-UCL-003
+        pattern_id: ambiguous_quality_claim
+        confidence: 0.86
+        subject:
+          kind: system
+          canonical_name: MiningFrigate
+        slots:
+          gaps:
+          - actors
+          - trigger_conditions
+          - completion_conditions
+          llm_proposals:
+          - proposal_id: P-UCL-003
+            missing_slot: actors
+            proposed_value: Station
+            confidence: 0.7
+            rationale:
+              en: Offload and resupply use cases involve a station actor.
+              ja: 荷下ろしと補給のユースケースにはステーションアクターが含まれる。
+    overlay:
+      package_name: Case06MiningUseCaseAmbiguousLowExpectedReview
+      domain_parts:
+      - MiningFrigate
+      drafts:
+      - name: DraftMineAsteroidsUseCase
+        subject_name: miningFrigate
+        subject_type: MiningFrigate
+        proposal:
+          proposal_id: P-UCL-001
+          source_contract: C-UCL-001
+          source_requirement_id: REQ-UC-L-001
+          missing_slot: actors
+          proposed_value: PilotPod and AsteroidBelt
+          rationale:
+            en: Mining use cases in the reference model use a pilot and an asteroid belt.
+            ja: 参照モデルの採掘ユースケースではパイロットと小惑星帯を用いている。
+          trace_quality: direct_file_grounded
+          confidence: 0.72
+      - name: DraftDefenseUseCase
+        subject_name: miningFrigate
+        subject_type: MiningFrigate
+        proposal:
+          proposal_id: P-UCL-002
+          source_contract: C-UCL-002
+          source_requirement_id: REQ-UC-L-002
+          missing_slot: actors
+          proposed_value: HostileShip and PilotPod
+          rationale:
+            en: Threat engagement use cases in the reference model use hostile ships and the pilot.
+            ja: 参照モデルの脅威対処ユースケースでは敵対艦船とパイロットを用いている。
+          trace_quality: direct_file_grounded
+          confidence: 0.71
+      - name: DraftResupplyUseCase
+        subject_name: miningFrigate
+        subject_type: MiningFrigate
+        proposal:
+          proposal_id: P-UCL-003
+          source_contract: C-UCL-003
+          source_requirement_id: REQ-UC-L-003
+          missing_slot: actors
+          proposed_value: Station
+          rationale:
+            en: Resupply use cases in the reference model involve a station actor.
+            ja: 参照モデルの補給ユースケースにはステーションアクターが含まれる。
+          trace_quality: direct_file_grounded
+          confidence: 0.70
+      missing_slots:
+        en:
+        - "REQ-UC-L-001 missing: objective_text, actors, main_flow_steps, success_thresholds"
+        - "REQ-UC-L-002 missing: objective_text, actors, trigger_conditions, exception_flow_steps"
+        - "REQ-UC-L-003 missing: objective_text, actors, trigger_conditions, completion_conditions"
+        ja:
+        - "REQ-UC-L-001 missing: objective_text, actors, main_flow_steps, success_thresholds"
+        - "REQ-UC-L-002 missing: objective_text, actors, trigger_conditions, exception_flow_steps"
+        - "REQ-UC-L-003 missing: objective_text, actors, trigger_conditions, completion_conditions"
+      open_questions:
+        en:
+        - What is the concrete success definition for efficient mining?
+        - What specific trigger makes a threat actionable?
+        - When exactly is resupply considered necessary and complete?
+        ja:
+        - 効率的な採掘の具体的な成功定義は何か。
+        - どの具体的なトリガが脅威を対処対象にするのか。
+        - 補給はどの時点で必要かつ完了と見なされるのか。
+      trace_weaknesses:
+        en:
+        - This case is intentionally vague.
+        - It is grounded in the same source file as case05, but the input narrative omits most operational structure.
+        ja:
+        - このケースは意図的に曖昧である。
+        - case05 と同じソースファイルを根拠にしているが、入力記述では運用構造の大半を省略している。
+      review_guide:
+        en:
+        - "[review-action] accept / modify / reject / defer"
+        - Do not emit canonical use cases until actors, objective text, and flow structure are accepted.
+        ja:
+        - "[review-action] accept / modify / reject / defer"
+        - アクター、目的テキスト、フロー構造が受理されるまで canonical なユースケースを出力してはならない。

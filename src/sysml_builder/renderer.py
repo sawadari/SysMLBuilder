@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .profile_runtime import get_canonical_profile, get_case_profile, load_generic_case_profile, load_review_overlay_profile
+
 
 JA_RENDER_REPLACEMENTS = [
     ("The engine shall transfer generated torque to the transmission through the clutch interface.", "エンジンはクラッチインタフェースを介して生成トルクをトランスミッションへ伝達しなければならない。"),
@@ -68,14 +70,25 @@ def _indent(block: str, level: int = 1) -> str:
     return "\n".join(prefix + line if line else "" for line in block.splitlines())
 
 
-def _render_view_package(viewpoint_name: str, view_name: str, expose_paths: list[str], frame_name: str) -> list[str]:
-    lines = [
-        "    package ViewDefinitions {",
-        "        private import Views::*;",
-        "        private import DS_Views::*;",
-        "",
-        f"        view {view_name} : DS_Views::SymbolicViews::gv {{",
-    ]
+def _render_view_package(
+    viewpoint_name: str,
+    view_name: str,
+    expose_paths: list[str],
+    frame_name: str,
+    package_name: str = "ViewDefinitions",
+    imports: list[str] | None = None,
+    rendering_type: str = "DS_Views::SymbolicViews::gv",
+) -> list[str]:
+    imports = imports or ["Views::*", "DS_Views::*"]
+    lines = [f"    package {package_name} {{"]
+    for import_name in imports:
+        lines.append(f"        private import {import_name};")
+    lines.extend(
+        [
+            "",
+            f"        view {view_name} : {rendering_type} {{",
+        ]
+    )
     for expose_path in expose_paths:
         lines.append(f"            expose {expose_path};")
     lines.extend(
@@ -104,27 +117,34 @@ def _render_state_machine(definition: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def _generic_state_machine_owners(case_id: str, generic_case: dict[str, Any]) -> set[str]:
+def _generic_state_machine_owners(case_id: str, generic_case: dict[str, Any], rendering_profile: dict[str, Any]) -> set[str]:
     if not generic_case.get("state_machine"):
         return set()
     part_ports = generic_case["part_ports"]
     top_level_parts = set(generic_case["subparts"])
+    owner_policy = rendering_profile["state_machine_owner_policy"]
     candidates = [name for name, ports in part_ports.items() if name not in top_level_parts and ports]
     if not candidates:
         return set()
     owners = {max(candidates, key=lambda name: len(part_ports[name]))}
-    if case_id == "C08_can_heartbeat_timeout":
+    if case_id in owner_policy.get("include_top_level_case_ids", []):
         owners.add(generic_case["structure"][0])
     return owners
 
 
 def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
+    generic_profile = load_generic_case_profile()
+    rendering = generic_profile["renderer"]
     generic_case = contracts["generic_case"]
     document = contracts["document"]
-    state_machine_owners = _generic_state_machine_owners(case_id, generic_case)
+    state_machine_owners = _generic_state_machine_owners(case_id, generic_case, rendering)
     top_level = generic_case["structure"][0]
 
-    lines = [f"package {generic_case['package']} {{", "    doc /*", f"    {document['document_id']} {document['document_name']}", f"    {generic_case['context']}", "    */", ""]
+    package_doc_lines = [
+        line.format(document_id=document["document_id"], document_name=document["document_name"], context=generic_case["context"])
+        for line in rendering["package_doc_lines"]
+    ]
+    lines = [f"package {generic_case['package']} {{", "    doc /*", *[f"    {line}" for line in package_doc_lines], "    */", ""]
 
     seen_items: set[str] = set()
     for port_name, _, item_name, _ in generic_case["interfaces"]:
@@ -159,7 +179,7 @@ def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
     for index, requirement in enumerate(contracts["contracts"], start=1):
         lines.extend(
             [
-                f"    requirement def Req{index:03d} {{",
+                f"    requirement def {rendering['requirement_definition_prefix']}{index:03d} {{",
                 "        doc /*",
                 f"        {requirement['source_requirement_id']}: {requirement['evidence']['quote']}",
                 "        */",
@@ -184,19 +204,25 @@ def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
                 lines.append(f"        part {child_name} : {child_type};")
         lines.extend(["    }", ""])
 
-    lines.extend([f"    part systemUnderTest : {top_level};", ""])
+    lines.extend([f"    part {rendering['system_under_test_name']} : {top_level};", ""])
     for index in range(1, len(contracts["contracts"]) + 1):
-        lines.append(f"    requirement requirement_{index:03d} : Req{index:03d};")
+        lines.append(
+            f"    requirement {rendering['requirement_usage_prefix']}{index:0{rendering['requirement_usage_digits']}d} : "
+            f"{rendering['requirement_definition_prefix']}{index:03d};"
+        )
     lines.append("")
-    expose_paths = [f"{generic_case['package']}::systemUnderTest"]
+    expose_paths = [f"{generic_case['package']}::{rendering['system_under_test_name']}"]
     for child_name, _child_type in subparts.get(top_level, []):
-        expose_paths.append(f"{generic_case['package']}::systemUnderTest::{child_name}")
+        expose_paths.append(f"{generic_case['package']}::{rendering['system_under_test_name']}::{child_name}")
     lines.extend(
         _render_view_package(
             viewpoint_name="systemContextPerspective",
-            view_name="systemContextView",
+            view_name=rendering["view_name"],
             expose_paths=expose_paths,
             frame_name="system breakdown",
+            package_name=rendering["view_package_name"],
+            imports=rendering["view_imports"],
+            rendering_type=rendering["view_rendering"],
         )
     )
     lines.append("}")
@@ -206,388 +232,40 @@ def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
 def render_canonical(case_id: str, contracts: dict[str, Any]) -> str | None:
     if contracts.get("generic_case"):
         return _render_generic_case(case_id, contracts)
-    templates = {
-        "case01_vehicle_explicit_high": """package Case01VehicleExplicitHighExpected {
-
-package DomainDefinitions {
-
-  item def Torque;
-
-  port def DrivePwrPort {
-    out engineTorque : Torque;
-  }
-
-  port def ClutchPort;
-
-  interface def EngineToTransmissionInterface {
-    end p1 : DrivePwrPort;
-    end p2 : ClutchPort;
-  }
-
-  part def Engine {
-    port drivePwrPort : DrivePwrPort;
-  }
-
-  part def Transmission {
-    port clutchPort : ~ClutchPort;
-  }
-
-  part def Vehicle {
-    attribute mass : ScalarValues::Real;
-    part engine : Engine;
-    part transmission : Transmission;
-  }
-}
-
-package RequirementDefinitions {
-
-  requirement def MassRequirement {
-    subject vehicle : DomainDefinitions::Vehicle;
-    attribute actualMass : ScalarValues::Real;
-    attribute requiredMass : ScalarValues::Real;
-    require constraint { actualMass <= requiredMass }
-  }
-
-  requirement def FuelEconomyRequirement {
-    subject vehicle : DomainDefinitions::Vehicle;
-    attribute actualFuelEconomy : ScalarValues::Real;
-    attribute requiredFuelEconomy : ScalarValues::Real;
-    require constraint { actualFuelEconomy >= requiredFuelEconomy }
-  }
-
-  requirement def DrivePowerInterfaceRequirement {
-    subject engine : DomainDefinitions::Engine;
-    doc /* The engine shall transfer generated torque to the transmission through the clutch interface. */
-  }
-}
-
-package Requirements {
-
-  requirement vehicleSpecification {
-    subject vehicle : DomainDefinitions::Vehicle;
-
-    requirement vehicleMassRequirement : RequirementDefinitions::MassRequirement {
-      redefines requiredMass = 2000;
-    }
-
-    requirement cityFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
-      redefines requiredFuelEconomy = 25;
-      attribute assumedCargoMass : ScalarValues::Real;
-      assume constraint { assumedCargoMass >= 500 }
-    }
-
-    requirement highwayFuelEconomyRequirement : RequirementDefinitions::FuelEconomyRequirement {
-      redefines requiredFuelEconomy = 30;
-      attribute assumedCargoMass : ScalarValues::Real;
-      assume constraint { assumedCargoMass >= 500 }
-    }
-  }
-
-  requirement engineSpecification {
-    subject engine : DomainDefinitions::Engine;
-    requirement drivePowerInterface : RequirementDefinitions::DrivePowerInterfaceRequirement;
-  }
-}
-
-package Structure {
-
-  part vehicle_b : DomainDefinitions::Vehicle {
-    attribute mass = 1950;
-    part engine : DomainDefinitions::Engine;
-    part transmission : DomainDefinitions::Transmission;
-
-    interface engineToTransmissionInterface : DomainDefinitions::EngineToTransmissionInterface
-      connect engine::drivePwrPort to transmission::clutchPort;
-  }
-}
-
-package SatisfactionManifest {
-  doc /* [satisfy] Requirements::vehicleSpecification::vehicleMassRequirement by Structure::vehicle_b
-         [satisfy] Requirements::vehicleSpecification::cityFuelEconomyRequirement by Structure::vehicle_b
-         [satisfy] Requirements::vehicleSpecification::highwayFuelEconomyRequirement by Structure::vehicle_b
-         [satisfy] Requirements::engineSpecification::drivePowerInterface by Structure::vehicle_b::engine */
-}
-
-package AllocationManifest {
-  doc /* [allocation] C-VEH-001 allocated_to Structure::vehicle_b
-         [allocation] C-VEH-002 allocated_to Structure::vehicle_b
-         [allocation] C-VEH-003 allocated_to Structure::vehicle_b
-         [allocation] C-VEH-004 allocated_to Structure::vehicle_b::engine */
-}
-
-package ViewDefinitions {
-  private import Views::*;
-  private import DS_Views::*;
-
-  view vehicleStructureView : DS_Views::SymbolicViews::gv {
-    expose Structure::vehicle_b;
-    expose Structure::vehicle_b::engine;
-    expose Structure::vehicle_b::transmission;
-  }
-}
-
-}
-""",
-        "case03_mining_contextual_performance_high": """package Case03MiningContextualPerformanceHighExpected {
-
-package DomainDefinitions {
-
-  part def MiningFrigate {
-    attribute cargoCapacity : ScalarValues::Real;
-    attribute shieldStrengthHS : ScalarValues::Real;
-    attribute shieldStrengthLS : ScalarValues::Real;
-  }
-}
-
-package RequirementDefinitions {
-
-  requirement def CargoCapacityRequirement {
-    subject miningFrigate : DomainDefinitions::MiningFrigate;
-    attribute cargoCapacity : ScalarValues::Real;
-    require constraint { cargoCapacity >= 5000.0 }
-  }
-
-  requirement def SurvivabilityRequirement {
-    subject miningFrigate : DomainDefinitions::MiningFrigate;
-    attribute shieldStrengthHS : ScalarValues::Real;
-    attribute shieldStrengthLS : ScalarValues::Real;
-    require constraint { shieldStrengthHS >= 200.0 }
-    require constraint { shieldStrengthLS >= 400.0 }
-  }
-}
-
-package Requirements {
-
-  requirement miningFrigateSpecification {
-    subject miningFrigate : DomainDefinitions::MiningFrigate;
-    requirement cargoCapacityRequirement : RequirementDefinitions::CargoCapacityRequirement;
-    requirement survivabilityRequirement : RequirementDefinitions::SurvivabilityRequirement;
-  }
-}
-
-package Structure {
-
-  part miningFrigate_ref : DomainDefinitions::MiningFrigate {
-    attribute cargoCapacity = 6200.0;
-    attribute shieldStrengthHS = 250.0;
-    attribute shieldStrengthLS = 450.0;
-  }
-}
-
-package SatisfactionManifest {
-  doc /* [satisfy] Requirements::miningFrigateSpecification::cargoCapacityRequirement by Structure::miningFrigate_ref
-         [satisfy] Requirements::miningFrigateSpecification::survivabilityRequirement by Structure::miningFrigate_ref */
-}
-
-package AllocationManifest {
-  doc /* [allocation] C-MF-001 allocated_to Structure::miningFrigate_ref
-         [allocation] C-MF-002 allocated_to Structure::miningFrigate_ref
-         [allocation] C-MF-003 allocated_to Structure::miningFrigate_ref */
-}
-
-package ViewDefinitions {
-  private import Views::*;
-  private import DS_Views::*;
-
-  view miningFrigateStructureView : DS_Views::SymbolicViews::gv {
-    expose Structure::miningFrigate_ref;
-  }
-}
-
-}
-""",
-        "case04_mining_modular_interface_high": """package Case04MiningModularInterfaceHighExpected {
-
-package DomainDefinitions {
-
-  item def PowerSupply {
-    attribute energyTransfer : ScalarValues::Real;
-  }
-
-  item def HighSlotCommand {
-    attribute activation : ScalarValues::Boolean;
-  }
-
-  item def MediumSlotCommand {
-    attribute activation : ScalarValues::Boolean;
-  }
-
-  port def HighSlotPort {
-    in power : PowerSupply;
-    in control : HighSlotCommand;
-  }
-
-  port def MediumSlotPort {
-    in power : PowerSupply;
-    in control : MediumSlotCommand;
-  }
-
-  interface def HighSlotInterface {
-    end hullPort : HighSlotPort;
-    end modulePort : ~HighSlotPort;
-    flow of PowerSupply from hullPort.power to modulePort.power;
-    flow of HighSlotCommand from hullPort.control to modulePort.control;
-  }
-
-  interface def MediumSlotInterface {
-    end hullPort : MediumSlotPort;
-    end modulePort : ~MediumSlotPort;
-    flow of PowerSupply from hullPort.power to modulePort.power;
-    flow of MediumSlotCommand from hullPort.control to modulePort.control;
-  }
-
-  part def MiningFrigateHull {
-    port highSlot1 : HighSlotPort;
-    port mediumSlot1 : MediumSlotPort;
-  }
-
-  part def MiningLaserModule {
-    port modulePort : ~HighSlotPort;
-  }
-
-  part def ShieldHardenerModule {
-    port modulePort : ~MediumSlotPort;
-  }
-
-  part def MiningFrigate {
-    part hull : MiningFrigateHull;
-    part miningLaser : MiningLaserModule;
-    part shieldHardener : ShieldHardenerModule;
-  }
-}
-
-package RequirementDefinitions {
-
-  requirement def HighSlotInterfaceRequirement {
-    subject hull : DomainDefinitions::MiningFrigateHull;
-    doc /* The hull shall provide a typed HighSlot interface to a mining laser module. */
-  }
-
-  requirement def MediumSlotInterfaceRequirement {
-    subject hull : DomainDefinitions::MiningFrigateHull;
-    doc /* The hull shall provide a typed MediumSlot interface to a shield hardener module. */
-  }
-}
-
-package Requirements {
-  requirement architectureSpecification {
-    subject hull : DomainDefinitions::MiningFrigateHull;
-    requirement highSlotInterfaceRequirement : RequirementDefinitions::HighSlotInterfaceRequirement;
-    requirement mediumSlotInterfaceRequirement : RequirementDefinitions::MediumSlotInterfaceRequirement;
-  }
-}
-
-package Structure {
-
-  part frigate_ref : DomainDefinitions::MiningFrigate {
-    part hull : DomainDefinitions::MiningFrigateHull;
-    part miningLaser : DomainDefinitions::MiningLaserModule;
-    part shieldHardener : DomainDefinitions::ShieldHardenerModule;
-
-    interface miningLaserIf : DomainDefinitions::HighSlotInterface
-      connect hull::highSlot1 to miningLaser::modulePort;
-
-    interface shieldIf : DomainDefinitions::MediumSlotInterface
-      connect hull::mediumSlot1 to shieldHardener::modulePort;
-  }
-}
-
-package SatisfactionManifest {
-  doc /* [satisfy] Requirements::architectureSpecification::highSlotInterfaceRequirement by Structure::frigate_ref::hull
-         [satisfy] Requirements::architectureSpecification::mediumSlotInterfaceRequirement by Structure::frigate_ref::hull */
-}
-
-package AllocationManifest {
-  doc /* [allocation] C-MFI-001 allocated_to Structure::frigate_ref::hull
-         [allocation] C-MFI-002 allocated_to Structure::frigate_ref::hull
-         [allocation] C-MFI-003 allocated_to Structure::frigate_ref::hull
-         [allocation] C-MFI-004 allocated_to Structure::frigate_ref::hull */
-}
-
-package ViewDefinitions {
-  private import Views::*;
-  private import DS_Views::*;
-
-  view miningFrigateInterconnectionView : DS_Views::SymbolicViews::gv {
-    expose Structure::frigate_ref;
-    expose Structure::frigate_ref::hull;
-    expose Structure::frigate_ref::miningLaser;
-    expose Structure::frigate_ref::shieldHardener;
-  }
-}
-
-}
-""",
-        "case05_mining_usecase_medium": """package Case05MiningUseCaseMediumExpected {
-
-package DomainDefinitions {
-  part def MiningFrigate;
-  part def PilotPod;
-  part def AsteroidBelt;
-  part def Station;
-}
-
-package UseCases {
-
-  use case def MineAsteroids {
-    subject miningFrigate : DomainDefinitions::MiningFrigate;
-    actor pilotPod : DomainDefinitions::PilotPod;
-    actor asteroidBelt : DomainDefinitions::AsteroidBelt;
-    objective {
-      doc /* Main Flow:
-             1. Identify an asteroid target.
-             2. Activate the mining laser.
-             3. Extract ore and store it in the cargo hold.
-             4. Suspend mining when the cargo hold becomes full.
-             Exception Flows:
-             - If the mining laser fails, halt mining and alert the pilot.
-             - If the target asteroid is depleted, reacquire a target. */
-    }
-  }
-
-  use case def OffloadOreAndResupply {
-    subject miningFrigate : DomainDefinitions::MiningFrigate;
-    actor station : DomainDefinitions::Station;
-    objective {
-      doc /* Main Flow:
-             1. Establish a docking connection with a station.
-             2. Transfer ore to the station.
-             3. Resupply essential systems.
-             Exception Flows:
-             - If docking fails, notify the pilot and abort the offload sequence.
-             - If cargo transfer fails, suspend operations and keep the ore on board. */
-    }
-  }
-}
-
-package Requirements {
-  requirement operationalObjectives {
-    subject miningFrigate : DomainDefinitions::MiningFrigate;
-    doc /* Derived from operational use case objectives. Quantitative completion thresholds are intentionally left unresolved. */
-  }
-}
-
-package ViewDefinitions {
-  private import Views::*;
-  private import DS_Views::*;
-
-  view mineAsteroidsObjectiveView : DS_Views::SymbolicViews::gv {
-    expose UseCases::MineAsteroids;
-  }
-
-  view offloadOreAndResupplyObjectiveView : DS_Views::SymbolicViews::gv {
-    expose UseCases::OffloadOreAndResupply;
-  }
-}
-
-}
-""",
-    }
-    template = templates.get(case_id)
-    return _localize(template, contracts) if template else None
+    case_profile = get_case_profile(case_id)
+    if not case_profile:
+        return None
+    canonical_profile_id = case_profile.get("canonical_profile_id")
+    if not canonical_profile_id:
+        return None
+    canonical_profile = get_canonical_profile(canonical_profile_id)
+    if not canonical_profile:
+        return None
+    return _localize(_render_canonical_profile(canonical_profile), contracts)
+
+
+def _render_canonical_profile(canonical_profile: dict[str, Any]) -> str:
+    lines = [f"package {canonical_profile['package_name']} {{", ""]
+    packages = canonical_profile["packages"]
+    for index, package in enumerate(packages):
+        lines.append(f"package {package['name']} {{")
+        if package.get("leading_blank"):
+            lines.append("")
+        body = package["body"].rstrip("\n")
+        if body:
+            lines.extend(f"  {line}" if line else "" for line in body.splitlines())
+        lines.append("}")
+        if index != len(packages) - 1:
+            lines.append("")
+    lines.append("")
+    lines.append("}")
+    return "\n".join(lines) + "\n"
 
 
 def render_overlay(case_id: str, contracts: dict[str, Any]) -> str | None:
+    case_profile = get_case_profile(case_id)
+    if case_profile and case_profile.get("overlay"):
+        return _render_profile_overlay(case_profile["overlay"], contracts)
     templates = {
         "case02_vehicle_ambiguous_low": """package Case02VehicleAmbiguousLowExpectedReview {
 
@@ -804,6 +482,9 @@ package ReviewGuide {
 
 
 def render_projection_manifest(case_id: str) -> dict[str, Any] | None:
+    case_profile = get_case_profile(case_id)
+    if case_profile:
+        return case_profile.get("projection_manifest")
     manifests: dict[str, dict[str, Any]] = {
         "case01_vehicle_explicit_high": {
             "requirements": [
@@ -837,3 +518,133 @@ def render_projection_manifest(case_id: str) -> dict[str, Any] | None:
         },
     }
     return manifests.get(case_id)
+
+
+def _overlay_language(contracts: dict[str, Any]) -> str:
+    return contracts.get("document", {}).get("language", "en")
+
+
+def _overlay_lines(payload: dict[str, Any], field: str, language: str) -> list[str]:
+    value = payload.get(field, {})
+    if isinstance(value, dict):
+        return value.get(language, value.get("en", []))
+    return value or []
+
+
+def _find_contract(contracts: dict[str, Any], contract_id: str) -> dict[str, Any]:
+    for contract in contracts["contracts"]:
+        if contract["contract_id"] == contract_id:
+            return contract
+    raise KeyError(contract_id)
+
+
+def _find_proposal(contracts: dict[str, Any], proposal_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    for contract in contracts["contracts"]:
+        for proposal in contract.get("llm_proposals", []):
+            if proposal["proposal_id"] == proposal_id:
+                return contract, proposal
+    raise KeyError(proposal_id)
+
+
+def _indent_lines(lines: list[str], level: int = 1) -> list[str]:
+    prefix = "  " * level
+    return [f"{prefix}{line}" if line else "" for line in lines]
+
+
+def _render_doc_block(lines: list[str], level: int = 0) -> list[str]:
+    indent = "  " * level
+    if len(lines) == 1:
+        return [f"{indent}doc /* {lines[0]} */"]
+    rendered = [f"{indent}doc /* {lines[0]}"]
+    rendered.extend(f"{indent}       {line}" for line in lines[1:-1])
+    rendered.append(f"{indent}       {lines[-1]} */")
+    return rendered
+
+
+def _proposal_payload(draft: dict[str, Any], contracts: dict[str, Any], language: str) -> dict[str, Any]:
+    if "proposal" in draft:
+        proposal = draft["proposal"].copy()
+        proposed_value = proposal.get("proposed_value")
+        rationale = proposal.get("rationale")
+        if isinstance(proposed_value, dict):
+            proposal["proposed_value"] = proposed_value.get(language, proposed_value.get("en"))
+        if isinstance(rationale, dict):
+            proposal["rationale"] = rationale.get(language, rationale.get("en"))
+        return proposal
+
+    contract, proposal = _find_proposal(contracts, draft["proposal_id"])
+    return {
+        "proposal_id": proposal["proposal_id"],
+        "source_contract": contract["contract_id"],
+        "source_requirement_id": contract["source_requirement_id"],
+        "missing_slot": proposal["missing_slot"],
+        "proposed_value": proposal["proposed_value"],
+        "rationale": proposal["rationale"],
+        "trace_quality": contract["trace_quality"],
+        "confidence": proposal["confidence"],
+    }
+
+
+def _render_profile_overlay(overlay_profile: dict[str, Any], contracts: dict[str, Any]) -> str:
+    review_profile = load_review_overlay_profile()
+    language = _overlay_language(contracts)
+    package_names = review_profile["packages"]
+    lines = [f"package {overlay_profile['package_name']} {{", ""]
+
+    lines.extend(
+        [
+            "package DomainDefinitions {",
+            *[f"  part def {part_name};" for part_name in overlay_profile.get("domain_parts", [])],
+            "}",
+            "",
+        ]
+    )
+
+    lines.append(f"package {package_names['draft_requirement_contracts']} {{")
+    lines.append("")
+    for draft in overlay_profile.get("drafts", []):
+        proposal = _proposal_payload(draft, contracts, language)
+        lines.append(f"  requirement def {draft['name']} {{")
+        lines.append(f"    subject {draft['subject_name']} : DomainDefinitions::{draft['subject_type']};")
+        lines.extend(
+            _render_doc_block(
+                [
+                    f"[proposal-id] {proposal['proposal_id']}",
+                    f"[source-contract] {proposal['source_contract']}",
+                    f"[source-requirement] {proposal['source_requirement_id']}",
+                    f"[missing-slot] {proposal['missing_slot']}",
+                    f"[proposed-value] {proposal['proposed_value']}",
+                    f"[rationale] {proposal['rationale']}",
+                    f"[trace-quality] {proposal['trace_quality']}",
+                    f"[confidence] {proposal['confidence']:.2f}",
+                    "[review-action] accept / modify / reject / defer",
+                ],
+                level=2,
+            )
+        )
+        lines.append("  }")
+        if draft is not overlay_profile["drafts"][-1]:
+            lines.append("")
+    lines.append("}")
+    lines.append("")
+
+    package_field_map = {
+        "missing_slots": "missing_slots",
+        "open_questions": "open_questions",
+        "assumptions": "assumptions",
+        "behavior_candidates": "behavior_candidates",
+        "trace_weaknesses": "trace_weaknesses",
+        "review_guide": "review_guide",
+    }
+    for profile_key, package_key in package_field_map.items():
+        package_name = package_names[package_key]
+        package_lines = _overlay_lines(overlay_profile, profile_key, language)
+        if not package_lines:
+            continue
+        lines.append(f"package {package_name} {{")
+        lines.extend(_render_doc_block(package_lines, level=1))
+        lines.append("}")
+        lines.append("")
+
+    lines.append("}")
+    return "\n".join(lines) + "\n"

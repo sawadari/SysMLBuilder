@@ -7,63 +7,20 @@ from typing import Any
 import yaml
 
 from .models import ParsedDocument, RequirementEntry, UseCaseEntry
-
-
-CASE_METADATA = {
-    "case01_vehicle_explicit_high": {
-        "document_id": "GFSE-CASE01",
-        "document_name": "Vehicle quantitative and interface requirements",
-        "document_name_ja": "車両の定量性能およびインタフェース要求",
-        "language": "en",
-        "domain": "vehicle_system",
-    },
-    "case02_vehicle_ambiguous_low": {
-        "document_id": "GFSE-CASE02",
-        "document_name": "Vehicle ambiguous performance requirements",
-        "document_name_ja": "車両の曖昧な性能要求",
-        "language": "en",
-        "domain": "vehicle_system",
-    },
-    "case03_mining_contextual_performance_high": {
-        "document_id": "GFSE-CASE03",
-        "document_name": "Mining frigate contextual performance requirements",
-        "document_name_ja": "採掘フリゲートの文脈別性能要求",
-        "language": "en",
-        "domain": "space_system",
-    },
-    "case04_mining_modular_interface_high": {
-        "document_id": "GFSE-CASE04",
-        "document_name": "Mining frigate modular interface requirements",
-        "document_name_ja": "採掘フリゲートのモジュラーインタフェース要求",
-        "language": "en",
-        "domain": "space_system",
-    },
-    "case05_mining_usecase_medium": {
-        "document_id": "GFSE-CASE05",
-        "document_name": "Mining frigate operational use cases",
-        "document_name_ja": "採掘フリゲートの運用ユースケース",
-        "language": "en",
-        "domain": "space_system",
-    },
-    "case06_mining_usecase_ambiguous_low": {
-        "document_id": "GFSE-CASE06",
-        "document_name": "Mining frigate ambiguous operational narrative",
-        "document_name_ja": "採掘フリゲートの曖昧な運用記述",
-        "language": "en",
-        "domain": "space_system",
-    },
-}
+from .profile_runtime import load_case_profiles
 
 
 def infer_case_id(path: Path, text: str) -> str:
     stem = path.stem
-    for case_id in CASE_METADATA:
+    case_profiles = load_case_profiles()
+    for case_id in case_profiles:
         if stem.startswith(case_id):
             return case_id
     case_metadata_path = path.with_name("case.yaml")
     if case_metadata_path.is_file():
         return path.parent.name
-    for case_id, meta in CASE_METADATA.items():
+    for case_id, profile in case_profiles.items():
+        meta = profile["document"]
         if meta["document_name"] in text or meta["document_name_ja"] in text:
             return case_id
     raise ValueError(f"Unsupported input document: {path}")
@@ -160,11 +117,12 @@ def _parse_generic_case(path: Path, text: str, case_id: str) -> ParsedDocument:
 def parse_markdown(path: Path) -> ParsedDocument:
     text = path.read_text(encoding="utf-8")
     case_id = infer_case_id(path, text)
-    if case_id not in CASE_METADATA:
+    case_profiles = load_case_profiles()
+    if case_id not in case_profiles:
         return _parse_generic_case(path, text, case_id)
     title_match = re.search(r"^#\s+(.+)$", text, re.M)
     title = title_match.group(1).strip() if title_match else case_id
-    meta = CASE_METADATA[case_id]
+    meta = case_profiles[case_id]["document"]
     document = {
         "document_id": meta["document_id"],
         "document_name": meta["document_name"],

@@ -1,0 +1,27 @@
+version: 1.0.0
+profile_id: generic_case_profile_v1
+description: Rendering and extraction rules for generic testdata pack cases.
+contracts:
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+renderer:
+  package_doc_lines:
+  - "{document_id} {document_name}"
+  - "{context}"
+  requirement_definition_prefix: Req
+  requirement_usage_prefix: requirement_
+  requirement_usage_digits: 3
+  system_under_test_name: systemUnderTest
+  view_package_name: ViewDefinitions
+  view_name: systemContextView
+  view_rendering: DS_Views::SymbolicViews::gv
+  view_imports:
+  - Views::*
+  - DS_Views::*
+  state_machine_owner_policy:
+    default: non_top_level_with_most_ports
+    include_top_level_case_ids:
+    - C08_can_heartbeat_timeout

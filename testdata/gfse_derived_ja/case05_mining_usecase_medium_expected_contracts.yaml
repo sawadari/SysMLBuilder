@@ -1,7 +1,7 @@
 document:
   document_id: GFSE-CASE05
   document_name: 採掘フリゲートの運用ユースケース
-  language: ja
+  language: en
   domain: space_system
 contracts:
 - contract_id: C-UC-001
@@ -34,7 +34,8 @@ contracts:
   - time_limits
   - trigger_conditions
   evidence:
-    quote: 'メインフロー: 小惑星ターゲットを特定し、採掘レーザーを起動し、鉱石を採取し、貨物倉が満杯になったら採掘を中断する。'
+    quote: 'メインフロー: Identify an asteroid target, activate the mining laser, extract
+      ore, and suspend mining when the cargo hold becomes full.'
 - contract_id: C-UC-002
   source_requirement_id: UC-MF-002
   source_anchor:
@@ -62,4 +63,5 @@ contracts:
   - success_thresholds
   - completion_conditions
   evidence:
-    quote: 'メインフロー: ステーションとのドッキング接続を確立し、鉱石を移送し、重要システムを補給する。'
+    quote: 'メインフロー: Establish a docking connection with a station, transfer ore,
+      and resupply essential systems.'
