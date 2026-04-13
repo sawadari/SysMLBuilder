@@ -40,6 +40,23 @@ class SysMLV1XmiTest(unittest.TestCase):
         self.assertGreater(len(root.findall("sysml:ProxyPort", sysml_ns)), 0)
         self.assertGreater(len(root.findall("sysml:Satisfy", sysml_ns)), 0)
 
+    def test_ea_xmi_contains_expected_diagrams(self) -> None:
+        case_dir = PACK_ROOT / "cases" / "C01_power_tailgate_conditions"
+        result = transform_markdown(case_dir / "requirements_en.md")
+        root = ET.fromstring(result.sysml_v1_xmi["ea"])
+        xmi_ns = {"xmi": "http://schema.omg.org/spec/XMI/2.1"}
+
+        extension = root.find("xmi:Extension", xmi_ns)
+        self.assertIsNotNone(extension)
+
+        diagrams = extension.findall("./diagrams/diagram") if extension is not None else []
+        self.assertEqual(len(diagrams), 3)
+
+        props = {(diagram.find("properties").attrib["name"], diagram.find("properties").attrib["type"]) for diagram in diagrams}
+        self.assertIn(("TailgateMotionStates", "Statechart"), props)
+        self.assertIn(("Blocks", "Logical"), props)
+        self.assertIn(("Requirements", "Custom"), props)
+
 
 if __name__ == "__main__":
     unittest.main()
