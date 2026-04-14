@@ -1,7 +1,10 @@
 # SysMLBuilder
 
+SysMLBuilder は、Markdown で書かれた要求仕様を SysML のv1およびv2に変換するツールです。
+現状は生成系AIを利用せず、完全に決定論的なツールです。
+
 SysMLBuilder は、Markdown で書かれた要求仕様をそのまま直接 SysML に変換するのではなく、
-まず **Requirement Contract** に正規化し、その後で SysML v2 の成果物へ射影するためのリポジトリです。
+まず **Requirement Contract** に正規化し、その後で SysML の成果物へ射影します。
 
 ライセンスは [Apache License 2.0](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/LICENSE) です。
 
@@ -19,6 +22,7 @@ SysMLBuilder は、Markdown で書かれた要求仕様をそのまま直接 Sys
 - Contract から canonical SysML を生成する
 - 不足情報や曖昧さを review overlay SysML に分離する
 - Contract と SysML 要素の対応を projection manifest として出力する
+- Common Semantic IR と SysML v1 sidecar payload の土台を生成する
 - 英語版 strict suite と、日本語化した派生 suite の両方で同等性を確認する
 
 ## 変換の考え方
@@ -113,6 +117,41 @@ python -m sysml_builder.cli testdata\SysMLBuilder_testdata_20cases\cases\C01_pow
 
 - `*_cameo_v1.xmi`
 - `*_ea_v1.xmi`
+
+`ea` 向け XMI には、要求図、ブロック定義図、内部ブロック図、ステートマシン図の diagram 定義も含めます。
+モデル要素だけでなく diagram まで含めて確認したい場合は、まず `*_ea_v1.xmi` を使います。
+
+Common IR から SysML v1 sidecar 向け payload を作る場合:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m sysml_builder.sidecar_cli testdata\SysMLBuilder_testdata_20cases\cases\C01_power_tailgate_conditions\requirements_en.md --target cameo -o out\C01_cameo_sidecar.yaml
+```
+
+この payload は、設計書で想定している JVM sidecar の入力契約です。
+現状のリポジトリでは、`Common IR -> v1 projection -> sidecar request` までを Python 側で生成します。
+
+JVM sidecar をビルドして XMI を生成する最小 smoke 手順:
+
+```powershell
+mvn -q package -f sidecar\pom.xml
+java -jar sidecar\target\sysml-v1-sidecar-0.1.0-SNAPSHOT-jar-with-dependencies.jar `
+  --input out\C01_cameo_sidecar.yaml `
+  --output out\C01_cameo_sidecar.xmi
+```
+
+現在の sidecar は Eclipse UML2 を使って SysML v1 向け XMI を生成します。
+sidecar の `ea` 向け XMI も同様に、要求図、ブロック定義図、内部ブロック図、ステートマシン図の diagram 定義を含みます。
+
+ツール固有の import smoke は補助用途です。Cameo / EA が使える環境でだけ任意に実行します:
+
+```powershell
+python scripts\run_cameo_import_smoke.py
+```
+
+通常の既定フローは `XMI` 出力のみです。`sidecar` の標準出力は `*.xmi` だけを生成します。
+`cameo` と `ea` では target shim で XMI wrapper を分けています。
+SysML profile 適用と OMG SysML.xmi 連携はまだ未実装です。
 
 ## 検証コマンド
 
@@ -238,7 +277,9 @@ Contract と SysML 要素の対応表です。
 - 要求パターンを決めるファイル
   - [profiles/requirement_patterns.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/requirement_patterns.yaml)
 - SysML への射影方針を決めるファイル
-  - [profiles/projection_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/projection_profiles.yaml)
+- [profiles/projection_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/projection_profiles.yaml)
+- [profiles/common_semantic_ir_schema.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/common_semantic_ir_schema.yaml)
+projection_profiles.yaml)
 - benchmark ケースごとの抽出と投影を決めるファイル
   - [profiles/case_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/case_profiles.yaml)
 - canonical SysML の package 構造を決めるファイル

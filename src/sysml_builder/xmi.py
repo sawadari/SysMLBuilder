@@ -5,6 +5,7 @@ import itertools
 import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
+from typing import Any
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, register_namespace
 
@@ -68,6 +69,7 @@ class RequirementDefinition:
     doc: str
     req_id: str
     text: str
+    type_name: str | None = None
 
 
 @dataclass
@@ -75,6 +77,7 @@ class BlockDefinition:
     name: str
     ports: list[PortUsage]
     parts: list[PartUsage]
+    connectors: list["ConnectorDefinition"]
     state_machines: list[StateMachineDefinition]
 
 
@@ -84,17 +87,28 @@ class CanonicalModel:
     package_doc: str | None
     items: list[str]
     port_defs: dict[str, PortDefinition]
+    requirement_defs: dict[str, RequirementDefinition]
     requirements: list[RequirementDefinition]
     parts: dict[str, BlockDefinition]
     top_parts: list[PartUsage]
 
 
-def generate_sysml_v1_xmi(canonical_sysml: str, target: str) -> str:
+@dataclass
+class ConnectorDefinition:
+    name: str
+    type_name: str | None
+    from_part: str
+    from_port: str
+    to_part: str
+    to_port: str
+
+
+def generate_sysml_v1_xmi(canonical_sysml: str, target: str, projection_manifest: dict[str, Any] | None = None) -> str:
     if target not in TOOL_PROFILES:
         supported = ", ".join(sorted(TOOL_PROFILES))
         raise ValueError(f"Unsupported SysML v1 XMI target: {target}. Supported targets: {supported}")
     model = parse_sysml_v2_text(canonical_sysml)
-    return _generate_xmi(model, target)
+    return _generate_xmi(model, target, projection_manifest)
 
 
 def parse_sysml_v2_text(text: str) -> CanonicalModel:
@@ -117,36 +131,37 @@ def parse_sysml_v2_text(text: str) -> CanonicalModel:
             name=block["name"],
             direction=direction,
             item_name=item_name,
-            item_type=item_type,
+            item_type=_strip_qualified_name(item_type),
         )
 
-    requirements: list[RequirementDefinition] = []
+    requirement_defs: dict[str, RequirementDefinition] = {}
     for block in _find_named_blocks(text, "requirement def"):
         doc_match = re.search(r"doc\s*/\*(.*?)\*/", block["body"], re.S)
         doc = doc_match.group(1).strip() if doc_match else ""
         id_match = re.search(r"([A-Za-z0-9_-]+)\s*:\s*(.*)", doc, re.S)
         req_id = id_match.group(1).strip() if id_match else block["name"]
         req_text = re.sub(r"\s+", " ", id_match.group(2).strip()) if id_match else doc
-        requirements.append(
-            RequirementDefinition(
-                name=block["name"],
-                doc=doc,
-                req_id=req_id,
-                text=req_text,
-            )
+        requirement_defs[block["name"]] = RequirementDefinition(
+            name=block["name"],
+            doc=doc,
+            req_id=req_id,
+            text=req_text,
         )
+
+    requirements = _collect_requirement_usages(text, requirement_defs) or list(requirement_defs.values())
 
     parts: dict[str, BlockDefinition] = {}
     for block in _find_named_blocks(text, "part def"):
         body = block["body"]
         nested_parts = [
-            PartUsage(name=match.group(1), type_name=match.group(2))
-            for match in re.finditer(r"^\s*part\s+([A-Za-z_]\w*)\s*:\s*([A-Za-z_]\w*)\s*;", body, re.M)
+            PartUsage(name=match.group(1), type_name=_strip_qualified_name(match.group(2)))
+            for match in re.finditer(r"^\s*part\s+([A-Za-z_]\w*)\s*:\s*([A-Za-z_][\w:]*)\s*;", body, re.M)
         ]
         ports = [
-            PortUsage(name=match.group(1), conjugated=bool(match.group(2)), type_name=match.group(3))
-            for match in re.finditer(r"^\s*port\s+([A-Za-z_]\w*)\s*:\s*(~?)([A-Za-z_]\w*)\s*;", body, re.M)
+            PortUsage(name=match.group(1), conjugated=bool(match.group(2)), type_name=_strip_qualified_name(match.group(3)))
+            for match in re.finditer(r"^\s*port\s+([A-Za-z_]\w*)\s*:\s*(~?)([A-Za-z_][\w:]*)\s*;", body, re.M)
         ]
+        connectors = _collect_connectors(body)
         state_machines = []
         for sm_block in _find_named_blocks(body, "state def"):
             transitions = [
@@ -168,12 +183,27 @@ def parse_sysml_v2_text(text: str) -> CanonicalModel:
             name=block["name"],
             ports=ports,
             parts=nested_parts,
+            connectors=connectors,
             state_machines=state_machines,
         )
 
+    for usage_name, type_name, body in _collect_part_usage_blocks(text):
+        connectors = _collect_connectors(body)
+        if not connectors:
+            continue
+        local_type = _strip_qualified_name(type_name)
+        if local_type in parts:
+            existing = {(c.name, c.from_part, c.from_port, c.to_part, c.to_port) for c in parts[local_type].connectors}
+            for connector in connectors:
+                key = (connector.name, connector.from_part, connector.from_port, connector.to_part, connector.to_port)
+                if key not in existing:
+                    parts[local_type].connectors.append(connector)
+        elif usage_name in parts:
+            parts[usage_name].connectors.extend(connectors)
+
     top_parts = [
-        PartUsage(name=match.group(1), type_name=match.group(2))
-        for match in re.finditer(r"^\s*part\s+([A-Za-z_]\w*)\s*:\s*([A-Za-z_]\w*)\s*;", text, re.M)
+        PartUsage(name=match.group(1), type_name=_strip_qualified_name(match.group(2)))
+        for match in re.finditer(r"^\s*part\s+(?!def\b)([A-Za-z_]\w*)\s*:\s*([A-Za-z_][\w:]*)\s*(?:;|\{)", text, re.M)
     ]
 
     return CanonicalModel(
@@ -181,6 +211,7 @@ def parse_sysml_v2_text(text: str) -> CanonicalModel:
         package_doc=package_doc,
         items=items,
         port_defs=port_defs,
+        requirement_defs=requirement_defs,
         requirements=requirements,
         parts=parts,
         top_parts=top_parts,
@@ -223,6 +254,74 @@ def _find_named_blocks(text: str, keyword: str) -> list[dict[str, str | int]]:
     return blocks
 
 
+def _strip_qualified_name(name: str) -> str:
+    return name.split("::")[-1]
+
+
+def _collect_requirement_usages(text: str, requirement_defs: dict[str, RequirementDefinition]) -> list[RequirementDefinition]:
+    usages: list[RequirementDefinition] = []
+    seen: set[str] = set()
+    pattern = re.compile(
+        r"^\s*requirement\s+(?!def\b)([A-Za-z_]\w*)\s*:\s*([A-Za-z_][\w:]*)\s*(\{|;)",
+        re.M,
+    )
+    for match in pattern.finditer(text):
+        usage_name = match.group(1)
+        type_name = _strip_qualified_name(match.group(2))
+        if usage_name in seen:
+            continue
+        base = requirement_defs.get(type_name)
+        if base is not None:
+            doc = base.doc
+            req_id = base.req_id
+            req_text = base.text
+        else:
+            doc = ""
+            req_id = usage_name
+            req_text = ""
+        usages.append(
+            RequirementDefinition(
+                name=usage_name,
+                doc=doc,
+                req_id=req_id,
+                text=req_text,
+                type_name=type_name,
+            )
+        )
+        seen.add(usage_name)
+    return usages
+
+
+def _collect_connectors(text: str) -> list[ConnectorDefinition]:
+    connectors: list[ConnectorDefinition] = []
+    pattern = re.compile(
+        r"^\s*interface\s+([A-Za-z_]\w*)\s*:\s*([A-Za-z_][\w:]*)\s+connect\s+([A-Za-z_]\w*)::([A-Za-z_]\w*)\s+to\s+([A-Za-z_]\w*)::([A-Za-z_]\w*)\s*;",
+        re.M,
+    )
+    for match in pattern.finditer(text):
+        connectors.append(
+            ConnectorDefinition(
+                name=match.group(1),
+                type_name=_strip_qualified_name(match.group(2)),
+                from_part=match.group(3),
+                from_port=match.group(4),
+                to_part=match.group(5),
+                to_port=match.group(6),
+            )
+        )
+    return connectors
+
+
+def _collect_part_usage_blocks(text: str) -> list[tuple[str, str, str]]:
+    blocks: list[tuple[str, str, str]] = []
+    pattern = re.compile(r"^\s*part\s+(?!def\b)([A-Za-z_]\w*)\s*:\s*([A-Za-z_][\w:]*)\s*\{", re.M)
+    for match in pattern.finditer(text):
+        brace_start = text.find("{", match.end() - 1)
+        body, _ = _match_brace_block(text, brace_start)
+        blocks.append((match.group(1), match.group(2), body))
+    return blocks
+
+
 def _effective_direction(port_usage: PortUsage, port_defs: dict[str, PortDefinition]) -> str | None:
     port_def = port_defs.get(port_usage.type_name)
     if port_def is None:
@@ -249,6 +348,35 @@ def _build_connector_candidates(model: CanonicalModel, root_block_name: str) -> 
     if root_block_name not in model.parts:
         return []
     root_block = model.parts[root_block_name]
+    if root_block.connectors:
+        connectors: list[dict[str, dict[str, str] | str]] = []
+        for connector in root_block.connectors:
+            left_part = next((part for part in root_block.parts if part.name == connector.from_part), None)
+            right_part = next((part for part in root_block.parts if part.name == connector.to_part), None)
+            if left_part is None or right_part is None:
+                continue
+            connectors.append(
+                {
+                    "from": {
+                        "part_property": connector.from_part,
+                        "part_type": left_part.type_name,
+                        "port_name": connector.from_port,
+                        "port_type": "",
+                        "direction": "",
+                    },
+                    "to": {
+                        "part_property": connector.to_part,
+                        "part_type": right_part.type_name,
+                        "port_name": connector.to_port,
+                        "port_type": "",
+                        "direction": "",
+                    },
+                    "port_type": connector.type_name or "",
+                    "name": connector.name,
+                }
+            )
+        if connectors:
+            return connectors
     entries: list[dict[str, str]] = []
     for part in root_block.parts:
         block = model.parts.get(part.type_name)
@@ -297,6 +425,45 @@ def _build_connector_candidates(model: CanonicalModel, root_block_name: str) -> 
                 connectors.append({"from": left, "to": right, "port_type": port_type})
                 used.add(key)
     return connectors
+
+
+def _resolve_requirement_id(model: CanonicalModel, ids: dict[object, str], path: str) -> str | None:
+    local_name = _strip_qualified_name(path)
+    for requirement in model.requirements:
+        if requirement.name == local_name:
+            return ids.get(requirement.name)
+    base = model.requirement_defs.get(local_name)
+    if base is not None:
+        return ids.get(base.name)
+    return None
+
+
+def _resolve_structure_element_id(model: CanonicalModel, ids: dict[object, str], path: str) -> str | None:
+    local_parts = [_strip_qualified_name(segment) for segment in path.split("::") if segment]
+    if not local_parts:
+        return None
+
+    current_type: str | None = None
+    for part_name in local_parts:
+        if current_type is None:
+            top_part = next((part for part in model.top_parts if part.name == part_name), None)
+            if top_part is not None:
+                current_type = top_part.type_name
+                continue
+            if part_name in model.parts:
+                current_type = part_name
+                continue
+            continue
+        if current_type not in model.parts:
+            return None
+        nested = next((part for part in model.parts[current_type].parts if part.name == part_name), None)
+        if nested is None:
+            return None
+        current_type = nested.type_name
+
+    if current_type is None:
+        return None
+    return ids.get(current_type)
 
 
 def _pretty_xml(element: Element) -> str:
@@ -571,6 +738,63 @@ def _add_ea_diagrams(root: Element, xmi_ns: str, model: CanonicalModel, ids: dic
     )
     local_id += 1
 
+    root_block_name = _guess_root_system_block(model)
+    if root_block_name is not None and root_block_name in model.parts:
+        root_block = model.parts[root_block_name]
+        ibd_elements: list[dict[str, str | int]] = []
+        for index, part in enumerate(root_block.parts, start=1):
+            left = 80 + ((index - 1) % 3) * 180
+            top = 80 + ((index - 1) // 3) * 140
+            ibd_elements.append(
+                {
+                    "geometry": f"Left={left};Top={top};Right={left + 140};Bottom={top + 90};",
+                    "subject": ids[(root_block_name, part.name)],
+                    "seqno": index,
+                    "style": f"DUID={_mkid('duid', f'{root_block_name}.{part.name}', model.package_name)[-8:]};NSL=0;",
+                }
+            )
+        for connector_index, connector in enumerate(root_block.connectors, start=1):
+            connector_id = ids.get(("conn", root_block_name, connector_index))
+            if connector_id is None:
+                continue
+            ibd_elements.append(
+                {
+                    "geometry": "EDGE=1;$LLB=;LLT=;LMT=CX=100:CY=16:OX=0:OY=0:HDN=0:BLD=0:ITA=0:UND=0:CLR=-1:ALN=1:DIR=0:ROT=0;LMB=;LRT=;LRB=;IRHS=;ILHS=;Path=;",
+                    "subject": connector_id,
+                    "seqno": len(ibd_elements) + 1,
+                    "style": "Color=-1;LWidth=0;Hidden=0;",
+                }
+            )
+        ibd_elements.append(
+            {
+                "geometry": "Left=10;Top=10;Right=760;Bottom=520;",
+                "subject": ids[root_block_name],
+                "seqno": len(ibd_elements) + 1,
+                "style": f"DUID={_mkid('duid', f'{root_block_name}-ibd', model.package_name)[-8:]};NSL=1;",
+            }
+        )
+        _add_ea_diagram(
+            diagrams_el,
+            xmi_ns,
+            _ea_id("diag", f"ibd.{root_block_name}", model.package_name),
+            ids[root_block_name],
+            local_id,
+            f"{root_block_name} Internal",
+            "CompositeStructure",
+            (
+                "ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideRelationships=0;Locked=0;Border=1;"
+                "PackageContents=1;Zoom=100;ShowIcons=1;HideAtts=0;HideOps=0;HideStereo=0;HideElemStereo=0;"
+            ),
+            (
+                "ExcludeRTF=0;DocAll=0;AttPkg=1;SuppressFOC=1;MatrixActive=0;SwimlanesActive=1;"
+                "MDGDgm=SysML1.4::InternalBlock;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;"
+            ),
+            "DGS=On=0:CNT=8:W=120:H=40:SG=0:SGH=0:AEB=0:;AR=0;DCL=0;",
+            ibd_elements,
+            ids[root_block_name],
+        )
+        local_id += 1
+
     requirement_elements: list[dict[str, str | int]] = []
     for index, requirement in enumerate(model.requirements, start=1):
         left = 120
@@ -613,7 +837,7 @@ def _add_ea_diagrams(root: Element, xmi_ns: str, model: CanonicalModel, ids: dic
     )
 
 
-def _generate_xmi(model: CanonicalModel, target: str) -> str:
+def _generate_xmi(model: CanonicalModel, target: str, projection_manifest: dict[str, Any] | None = None) -> str:
     profile = TOOL_PROFILES[target]
     xmi_ns = profile["xmi_ns"]
     uml_ns = profile["uml_ns"]
@@ -818,9 +1042,10 @@ def _generate_xmi(model: CanonicalModel, target: str) -> str:
             for index, connector in enumerate(_build_connector_candidates(model, root_block_name), start=1):
                 from_end = connector["from"]
                 to_end = connector["to"]
+                connector_name = connector.get("name") or f"{from_end['part_property']}_{from_end['port_name']}_to_{to_end['part_property']}_{to_end['port_name']}"
                 connector_id = make_id(
                     "conn",
-                    f"{root_block_name}.{index}.{from_end['part_property']}.{from_end['port_name']}.{to_end['part_property']}.{to_end['port_name']}",
+                    f"{root_block_name}.{index}.{connector_name}",
                     model.package_name,
                 )
                 connector_el = SubElement(
@@ -829,7 +1054,7 @@ def _generate_xmi(model: CanonicalModel, target: str) -> str:
                     {
                         f"{{{xmi_ns}}}type": "uml:Connector",
                         f"{{{xmi_ns}}}id": connector_id,
-                        "name": f"{from_end['part_property']}_{from_end['port_name']}_to_{to_end['part_property']}_{to_end['port_name']}",
+                        "name": str(connector_name),
                     },
                 )
                 SubElement(
@@ -851,21 +1076,59 @@ def _generate_xmi(model: CanonicalModel, target: str) -> str:
                     },
                 )
 
-    if root_block_name:
+    satisfy_relationships: list[tuple[str, str, str]] = []
+    if projection_manifest:
+        for claim in projection_manifest.get("satisfy_claims", []):
+            requirement_id = _resolve_requirement_id(model, ids, claim.get("requirement", ""))
+            structure_id = _resolve_structure_element_id(model, ids, claim.get("by", ""))
+            if requirement_id and structure_id:
+                satisfy_relationships.append((claim.get("requirement", ""), structure_id, requirement_id))
+    if not satisfy_relationships and root_block_name:
         for requirement in model.requirements:
-            abstraction_id = make_id("abs", f"{root_block_name}->{requirement.name}", model.package_name)
-            ids[("sat", requirement.name)] = abstraction_id
-            SubElement(
-                relationships_pkg,
-                "packagedElement",
-                {
-                    f"{{{xmi_ns}}}type": "uml:Abstraction",
-                    f"{{{xmi_ns}}}id": abstraction_id,
-                    "name": f"satisfy_{requirement.name}",
-                    "client": ids[root_block_name],
-                    "supplier": ids[requirement.name],
-                },
-            )
+            satisfy_relationships.append((requirement.name, ids[root_block_name], ids[requirement.name]))
+
+    for index, (name_hint, client_id, supplier_id) in enumerate(satisfy_relationships, start=1):
+        dependency_id = make_id("dep", f"satisfy.{index}.{name_hint}", model.package_name)
+        ids[("sat", index)] = dependency_id
+        SubElement(
+            relationships_pkg,
+            "packagedElement",
+            {
+                f"{{{xmi_ns}}}type": "uml:Dependency",
+                f"{{{xmi_ns}}}id": dependency_id,
+                "name": f"satisfy_{_strip_qualified_name(name_hint)}",
+                "client": client_id,
+                "supplier": supplier_id,
+            },
+        )
+
+    allocation_relationships: list[tuple[str, str, str]] = []
+    if projection_manifest:
+        contract_to_requirement_id = {
+            entry["source_contract"]: ids[entry["sysml_name"]]
+            for entry in projection_manifest.get("requirements", [])
+            if entry.get("source_contract") and entry.get("sysml_name") in ids
+        }
+        for allocation in projection_manifest.get("allocations", []):
+            client_id = contract_to_requirement_id.get(allocation.get("contract", ""))
+            supplier_id = _resolve_structure_element_id(model, ids, allocation.get("allocated_to", ""))
+            if client_id and supplier_id:
+                allocation_relationships.append((allocation.get("id", ""), client_id, supplier_id))
+
+    for index, (allocation_name, client_id, supplier_id) in enumerate(allocation_relationships, start=1):
+        dependency_id = make_id("dep", f"allocate.{index}.{allocation_name}", model.package_name)
+        ids[("alloc", index)] = dependency_id
+        SubElement(
+            relationships_pkg,
+            "packagedElement",
+            {
+                f"{{{xmi_ns}}}type": "uml:Dependency",
+                f"{{{xmi_ns}}}id": dependency_id,
+                "name": allocation_name or f"allocate_{index}",
+                "client": client_id,
+                "supplier": supplier_id,
+            },
+        )
 
     for item in model.items:
         SubElement(root, f"{{{sysml_ns}}}ValueType", {f"{{{xmi_ns}}}id": make_id("stvt", item, model.package_name), "base_DataType": ids[item]})
@@ -911,16 +1174,24 @@ def _generate_xmi(model: CanonicalModel, target: str) -> str:
                     "base_Port": ids[(block_name, port.name)],
                 },
             )
-    if root_block_name:
-        for requirement in model.requirements:
-            SubElement(
-                root,
-                f"{{{sysml_ns}}}Satisfy",
-                {
-                    f"{{{xmi_ns}}}id": make_id("stsat", requirement.name, model.package_name),
-                    "base_Abstraction": ids[("sat", requirement.name)],
-                },
-            )
+    for index, _ in enumerate(satisfy_relationships, start=1):
+        SubElement(
+            root,
+            f"{{{sysml_ns}}}Satisfy",
+            {
+                f"{{{xmi_ns}}}id": make_id("stsat", str(index), model.package_name),
+                "base_Dependency": ids[("sat", index)],
+            },
+        )
+    for index, _ in enumerate(allocation_relationships, start=1):
+        SubElement(
+            root,
+            f"{{{sysml_ns}}}Allocate",
+            {
+                f"{{{xmi_ns}}}id": make_id("stalloc", str(index), model.package_name),
+                "base_Dependency": ids[("alloc", index)],
+            },
+        )
 
     if target == "ea":
         _add_ea_diagrams(root, xmi_ns, model, ids)

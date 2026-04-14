@@ -7,7 +7,9 @@ from typing import Any
 import yaml
 
 from .parser import parse_markdown
+from .common_ir import CommonIrModel, build_common_ir
 from .renderer import render_canonical, render_overlay, render_projection_manifest
+from .v1_projector import V1ProjectionModel, project_to_sysml_v1
 from .transformer import build_contracts
 from .xmi import generate_sysml_v1_xmi
 
@@ -19,6 +21,8 @@ class TransformResult:
     canonical: str | None
     overlay: str | None
     projection_manifest: dict[str, Any] | None
+    common_ir: CommonIrModel
+    v1_projection: V1ProjectionModel
     sysml_v1_xmi: dict[str, str]
 
 
@@ -26,16 +30,21 @@ def transform_markdown(path: Path) -> TransformResult:
     parsed = parse_markdown(path)
     contracts = build_contracts(parsed)
     canonical = render_canonical(parsed.case_id, contracts)
+    projection_manifest = render_projection_manifest(parsed.case_id)
+    common_ir = build_common_ir(parsed, contracts, projection_manifest)
+    v1_projection = project_to_sysml_v1(common_ir)
     sysml_v1_xmi = {}
     if canonical:
         for target in ("cameo", "ea"):
-            sysml_v1_xmi[target] = generate_sysml_v1_xmi(canonical, target)
+            sysml_v1_xmi[target] = generate_sysml_v1_xmi(canonical, target, projection_manifest=projection_manifest)
     return TransformResult(
         case_id=parsed.case_id,
         contracts=contracts,
         canonical=canonical,
         overlay=render_overlay(parsed.case_id, contracts),
-        projection_manifest=render_projection_manifest(parsed.case_id),
+        projection_manifest=projection_manifest,
+        common_ir=common_ir,
+        v1_projection=v1_projection,
         sysml_v1_xmi=sysml_v1_xmi,
     )
 

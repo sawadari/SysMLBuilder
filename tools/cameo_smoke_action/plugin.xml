@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  id="local.sysmlbuilder.cameo.importsmoke"
+  name="SysMLBuilder Cameo Import Smoke"
+  version="0.1.0"
+  provider-name="SysMLBuilder"
+  class="local.sysmlbuilder.cameo.CameoImportSmokePlugin">
+  <requires>
+    <api version="1.0"/>
+  </requires>
+  <runtime>
+    <library name="cameo-import-smoke-plugin.jar"/>
+  </runtime>
+</plugin>

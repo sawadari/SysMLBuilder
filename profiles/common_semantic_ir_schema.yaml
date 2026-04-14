@@ -1,0 +1,62 @@
+version: 1.0.0
+schema_id: common_semantic_ir_v1alpha1
+description: >
+  Common Semantic IR schema for multi-target SysML export. This schema is target-neutral
+  and is the contract between SysMLBuilder core, the SysML v2 emitter, and the SysML v1 projector.
+required:
+  - schema_version
+  - case_id
+  - package_name
+  - source_document
+  - requirements
+  - value_types
+  - port_types
+  - blocks
+properties:
+  schema_version:
+    type: string
+    const: common_semantic_ir_v1alpha1
+  case_id:
+    type: string
+  package_name:
+    type: string
+  source_document:
+    type: object
+    required:
+      - document_id
+      - document_name
+      - language
+  requirements:
+    type: array
+    items:
+      required:
+        - id
+        - source_contract
+        - source_requirement_id
+        - subject
+        - pattern
+        - text
+  value_types:
+    type: array
+    items:
+      required:
+        - name
+  port_types:
+    type: array
+    items:
+      required:
+        - name
+        - flow_properties
+  blocks:
+    type: array
+    items:
+      required:
+        - name
+        - ports
+        - parts
+  connectors:
+    type: array
+  allocations:
+    type: array
+  satisfies:
+    type: array
