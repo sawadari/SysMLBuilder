@@ -1,0 +1,17 @@
+tool_jar: tools/MCSysMLv2.jar
+root: example/C10_steering_wheel_heater_auto_off/output
+file_count: 4
+failure_count: 0
+results:
+- file: example/C10_steering_wheel_heater_auto_off/output/expected_en.sysml
+  status: ok
+  output: ''
+- file: example/C10_steering_wheel_heater_auto_off/output/expected_ja.sysml
+  status: ok
+  output: ''
+- file: example/C10_steering_wheel_heater_auto_off/output/generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example/C10_steering_wheel_heater_auto_off/output/generated_ja_canonical.sysml
+  status: ok
+  output: ''

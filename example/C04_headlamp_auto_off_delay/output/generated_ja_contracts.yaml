@@ -1,0 +1,105 @@
+document:
+  document_id: C04
+  document_name: ヘッドランプ自動消灯遅延
+  language: ja
+  domain: timed_response
+contracts:
+- contract_id: C04-RQ-001
+  source_requirement_id: C04-RQ-001
+  source_anchor:
+    document_id: C04
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: HeadlampControlSystem
+  evidence:
+    quote: システムは、イグニッションがOFFになり運転席ドアが閉じている場合、30 s後にヘッドランプを消灯すること。
+- contract_id: C04-RQ-002
+  source_requirement_id: C04-RQ-002
+  source_anchor:
+    document_id: C04
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: HeadlampControlSystem
+  evidence:
+    quote: システムは、ユーザーがヘッドランプを再度手動でONした場合、自動消灯タイマを解除すること。
+- contract_id: C04-RQ-003
+  source_requirement_id: C04-RQ-003
+  source_anchor:
+    document_id: C04
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: HeadlampControlSystem
+  evidence:
+    quote: システムは、運転席ドアが開いている間、ヘッドランプを点灯状態に維持すること。
+generic_case:
+  package: C04HeadlampAutoOffDelay
+  context: このケースは、イグニッションOFF後のヘッドランプ遅延消灯と、手動操作によるタイマ解除を表します。
+  requirements_count: 3
+  structure:
+  - HeadlampControlSystem
+  - HeadlampController
+  - HeadlampRelay
+  interfaces:
+  - - IgnitionStatusPort
+    - ignitionOn
+    - IgnitionStatusValue
+    - in
+  - - DoorStatusPort
+    - driverDoorOpen
+    - DoorStatusValue
+    - in
+  - - LampCommandPort
+    - lampCommand
+    - LampCommandValue
+    - out
+  part_ports:
+    HeadlampController:
+    - - ignitionIn
+      - IgnitionStatusPort
+    - - doorStatusIn
+      - DoorStatusPort
+    - - commandOut
+      - LampCommandPort
+    HeadlampRelay:
+    - - commandIn
+      - ~LampCommandPort
+    HeadlampControlSystem: []
+  subparts:
+    HeadlampControlSystem:
+    - - controller
+      - HeadlampController
+    - - relay
+      - HeadlampRelay
+  interfaces_defs:
+  - - LampCommandInterface
+    - LampCommandPort
+    - LampCommandPort
+    - lampCommand
+  state_machine:
+    name: HeadlampTimerStates
+    states:
+    - active
+    - timerRunning
+    - 'off'
+    transitions:
+    - - active
+      - timerRunning
+    - - timerRunning
+      - 'off'
+    - - 'off'
+      - active

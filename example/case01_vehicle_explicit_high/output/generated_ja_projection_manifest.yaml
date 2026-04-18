@@ -1,0 +1,35 @@
+requirements:
+- sysml_name: vehicleMassRequirement
+  source_contract: C-VEH-001
+  pattern: MassRequirement
+- sysml_name: cityFuelEconomyRequirement
+  source_contract: C-VEH-002
+  pattern: FuelEconomyRequirement
+- sysml_name: highwayFuelEconomyRequirement
+  source_contract: C-VEH-003
+  pattern: FuelEconomyRequirement
+- sysml_name: drivePowerInterface
+  source_contract: C-VEH-004
+  pattern: DrivePowerInterfaceRequirement
+interfaces:
+- id: IF-VEH-001
+  name: engineToTransmissionInterface
+  type: EngineToTransmissionInterface
+  from: vehicle_b.engine.drivePwrPort
+  to: vehicle_b.transmission.clutchPort
+allocations:
+- id: ALLOC-VEH-001
+  contract: C-VEH-001
+  allocated_to: Structure::vehicle_b
+- id: ALLOC-VEH-004
+  contract: C-VEH-004
+  allocated_to: Structure::vehicle_b::engine
+satisfy_claims:
+- requirement: Requirements::vehicleSpecification::vehicleMassRequirement
+  by: Structure::vehicle_b
+- requirement: Requirements::engineSpecification::drivePowerInterface
+  by: Structure::vehicle_b::engine
+views:
+- id: VIEW-VEH-001
+  target: Structure::vehicle_b
+  rendering: structural_context

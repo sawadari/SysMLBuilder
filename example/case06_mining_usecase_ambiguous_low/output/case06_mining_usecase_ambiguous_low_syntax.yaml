@@ -1,0 +1,33 @@
+tool_jar: tools/MCSysMLv2.jar
+root: example/case06_mining_usecase_ambiguous_low/output
+file_count: 4
+failure_count: 0
+results:
+- file: example/case06_mining_usecase_ambiguous_low/output/expected_en_review_overlay.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'
+- file: example/case06_mining_usecase_ambiguous_low/output/expected_ja_review_overlay.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'
+- file: example/case06_mining_usecase_ambiguous_low/output/generated_en_review_overlay.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'
+- file: example/case06_mining_usecase_ambiguous_low/output/generated_ja_review_overlay.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'

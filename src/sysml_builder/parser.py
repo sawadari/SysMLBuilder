@@ -18,6 +18,8 @@ def infer_case_id(path: Path, text: str) -> str:
             return case_id
     case_metadata_path = path.with_name("case.yaml")
     if case_metadata_path.is_file():
+        if path.parent.name in {"input", "output"}:
+            return path.parent.parent.name
         return path.parent.name
     for case_id, profile in case_profiles.items():
         meta = profile["document"]

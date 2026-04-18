@@ -1,0 +1,119 @@
+document:
+  document_id: C06
+  document_name: 空調デフロスト優先制御
+  language: ja
+  domain: multi_action_response
+contracts:
+- contract_id: C06-RQ-001
+  source_requirement_id: C06-RQ-001
+  source_anchor:
+    document_id: C06
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ClimateDefogSystem
+  evidence:
+    quote: HVACシステムは、前席デフロストが要求された場合、500 ms以内にブロワ段を5以上に設定すること。
+- contract_id: C06-RQ-002
+  source_requirement_id: C06-RQ-002
+  source_anchor:
+    document_id: C06
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ClimateDefogSystem
+  evidence:
+    quote: システムは、前席デフロストが有効な間、吹出口モードをウインドシールドモードに指令すること。
+- contract_id: C06-RQ-003
+  source_requirement_id: C06-RQ-003
+  source_anchor:
+    document_id: C06
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ClimateDefogSystem
+  evidence:
+    quote: システムは、コンプレッサ保護が有効でない限り、前席デフロストが有効な間エアコンをONにすること。
+generic_case:
+  package: C06ClimateDefogPriority
+  context: このケースは、前席デフロスト要求時にブロワ段、コンプレッサ状態、吹出口モードを協調制御する機能を表します。
+  requirements_count: 3
+  structure:
+  - ClimateDefogSystem
+  - HvacController
+  - BlowerActuator
+  - AirMixActuator
+  - CompressorRelay
+  interfaces:
+  - - DefogRequestPort
+    - defogRequest
+    - DefogRequestValue
+    - in
+  - - BlowerCommandPort
+    - blowerCommand
+    - BlowerCommandValue
+    - out
+  - - OutletModePort
+    - outletModeCommand
+    - OutletModeValue
+    - out
+  - - AcCommandPort
+    - acCommand
+    - AcCommandValue
+    - out
+  part_ports:
+    HvacController:
+    - - defogIn
+      - DefogRequestPort
+    - - blowerOut
+      - BlowerCommandPort
+    - - outletModeOut
+      - OutletModePort
+    - - acOut
+      - AcCommandPort
+    BlowerActuator:
+    - - blowerIn
+      - ~BlowerCommandPort
+    AirMixActuator:
+    - - modeIn
+      - ~OutletModePort
+    CompressorRelay:
+    - - acIn
+      - ~AcCommandPort
+    ClimateDefogSystem: []
+  subparts:
+    ClimateDefogSystem:
+    - - controller
+      - HvacController
+    - - blower
+      - BlowerActuator
+    - - airMix
+      - AirMixActuator
+    - - compressor
+      - CompressorRelay
+  interfaces_defs:
+  - - BlowerCommandInterface
+    - BlowerCommandPort
+    - BlowerCommandPort
+    - blowerCommand
+  - - OutletModeInterface
+    - OutletModePort
+    - OutletModePort
+    - outletModeCommand
+  - - AcCommandInterface
+    - AcCommandPort
+    - AcCommandPort
+    - acCommand
+  state_machine: null

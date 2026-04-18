@@ -1,68 +1,90 @@
-# GfSE 参照モデルから得た設計フィードバック
+# GfSE 参照モデルから学んだこと
 
-この文書は、GfSE の公開 SysML v2 モデルを参照しながら strict benchmark を作成した結果、
-設計をどう更新したかを整理したものです。
+## この文書の目的
 
-## 1. VehicleModel.sysml
-### 観察
-- `requirement def` に subject、attribute、`require constraint` がある
-- `requirement` usage 側で `redefines` を使って値を具体化している
-- `satisfy ... by ...` がある
-- `port def`、`interface def`、`interface ... connect ... to ...` がある
+この文書は、GfSE の公開 SysML v2 モデルを見ながらベンチマークを作った結果、SysMLBuilder の設計で何を強く意識するようになったかをまとめたものです。  
+専門的な背景よりも、「どんな気づきがあり、何を変えたのか」を分かりやすく整理しています。
 
-### 設計への影響
-- `quantified_property_constraint` を強化
-- `interface_transfer` を first-class pattern にした
-- strict expected `.sysml` では requirement def / usage の両方を使うようにした
-- manifest 側でも satisfy を別軸で採点するようにした
+## 大きな学び
 
-## 2. MiningFrigateRequirementsDef.sysml
-### 観察
-- cargo capacity と survivability のような定量 requirement がある
-- survivability は High Sec と Low Sec 系で閾値が分かれる
-- 同じ requirement def の中で context 別制約が表現されている
+GfSE のモデルを確認して分かったのは、次の 4 点がとても大事だということです。
 
-### 設計への影響
-- `contextual_quantified_performance` を追加
-- `operating_contexts` と `contextual_thresholds` を contract slot に追加
-- context 別 threshold を flatten しすぎない方針に変更した
+- 数値条件だけでなく、使う場面ごとの差も残すこと
+- Interface や port を省略しないこと
+- use case は普通の要求文と分けて扱うこと
+- どのファイルを根拠にしたかを明確にすること
 
-## 3. standardPortsAndInterfaces.sysml
-### 観察
-- `port def HighSlotPort` のような型付き port 定義がある
-- `interface def HighSlotInterface` で `end` と `flow` が定義されている
-- IF の意味は port の型と flow によって固定されている
+## 1. VehicleModel から学んだこと
 
-### 設計への影響
-- typed port 必須を benchmark rule に昇格
-- `modular_slot_interface` を追加
-- `flows` と `interface_ends` を contract slot に追加
-- strict expected `.sysml` では interface def まで要求するようにした
+見えてきたこと:
 
-## 4. UseCasesFrigate.sysml
-### 観察
-- `use case def` に subject、actor、objective がある
-- objective doc に Main Flow / Exception Flows が書かれている
-- use case narrative は requirement へ無理に潰さない方が情報が保てる
+- requirement の定義と使用が分かれている
+- `satisfy` の関係がはっきり書かれている
+- interface や port が独立した要素として出てくる
 
-### 設計への影響
-- `operational_use_case_objective` を追加
-- `use_cases` projector を追加
-- medium satisfiability ケースでは canonical use case + review overlay の二系統出力を許可
-- scoring rubric に actor / flow retention を追加
+SysMLBuilder への反映:
 
-## 5. strict suite の境界
-### 観察
-- abstract な README 説明だけでは expected `.sysml` を強く固定できない
-- strict benchmark には source file grounded なケースだけが向く
+- 数値つき要求をしっかり扱うようにした
+- interface 要求を主要パターンとして扱うようにした
+- 要求と satisfy の対応を追いやすくした
 
-### 設計への影響
-- `trace_quality` を profile と case manifest に追加
-- strict scoring は `direct_file_grounded` のみ許可
-- abstract-only ケースは今回はパックから外した
+## 2. MiningFrigateRequirementsDef から学んだこと
+
+見えてきたこと:
+
+- 同じ要求でも、場面によって閾値が変わる
+- たとえば通常時と特定条件下で、別の値を持つことがある
+
+SysMLBuilder への反映:
+
+- 文脈ごとの条件を別々に持てるようにした
+- 1 本の単純な数値に無理やりまとめない方針にした
+
+## 3. standardPortsAndInterfaces から学んだこと
+
+見えてきたこと:
+
+- port には型があり、interface には端点や flow がある
+- 接続の意味は、名前だけでなく型や flow で決まる
+
+SysMLBuilder への反映:
+
+- typed port を重視するようにした
+- `interface_ends` や `flows` を中間データで持つようにした
+- interface の定義まで含めて確認しやすくした
+
+## 4. UseCasesFrigate から学んだこと
+
+見えてきたこと:
+
+- use case には actor、目的、Main Flow、Exception Flow がある
+- これを普通の requirement に押し込むと情報が減る
+
+SysMLBuilder への反映:
+
+- use case を独立したパターンとして扱うようにした
+- actor や flow を残せるようにした
+- canonical と overlay の両方を使う中間的なケースを認めた
+
+## 5. strict benchmark で分かったこと
+
+見えてきたこと:
+
+- あいまいな説明文だけでは、期待出力を厳密に決めにくい
+- 厳密比較には、元になった `.sysml` ファイルが明確である方がよい
+
+SysMLBuilder への反映:
+
+- strict benchmark では、根拠が明確なケースを優先するようにした
+- 参照元ファイルをたどれることを重視するようにした
 
 ## まとめ
-今回の strict suite で足りなかったのは、
-**context、typed IF、use case、trace quality**
-の4点でした。
-そのため今回の版では、pattern / projector / lint / scoring をこの4点中心に拡張しています。
+
+GfSE のモデルから学んで、特に大切だと分かったのは次の 4 つです。
+
+- 文脈
+- typed interface
+- use case の構造
+- 根拠の追跡性
+
+そのため、SysMLBuilder では「何を根拠に、どこまで確定したのか」を分けて扱う設計を強めています。

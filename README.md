@@ -1,83 +1,88 @@
 # SysMLBuilder
 
-SysMLBuilder は、Markdown で書かれた要求仕様を SysML のv1およびv2に変換するツールです。
-現状は生成系AIを利用せず、完全に決定論的なツールです。
+SysMLBuilder は、Markdown で書いた要求仕様を、追跡しやすい SysML 成果物へ変換するためのツールです。  
+文章をそのまま 1 つのモデルへ押し込むのではなく、まず Requirement Contract として整理し、そこから SysML や補助ファイルを出します。
 
-SysMLBuilder は、Markdown で書かれた要求仕様をそのまま直接 SysML に変換するのではなく、
-まず **Requirement Contract** に正規化し、その後で SysML の成果物へ射影します。
+ライセンスは [Apache License 2.0](LICENSE) です。
 
-ライセンスは [Apache License 2.0](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/LICENSE) です。
-
-このリポジトリには 2 つの役割があります。
-
-- 変換方式そのものの実装
-- GfSE 参照モデルを根拠にした strict benchmark スイート
-
-現状の実装は、付属の strict suite を確実に再現するための **決定的なルールベース実装** です。
-実際の LLM 推論はまだ入っていません。
+第三者由来の JAR、公開サンプル、Cameo 連携コードの扱いは別です。公開前に
+[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)
+を確認してください。
 
 ## 何ができるか
 
-- Markdown 要求仕様から Requirement Contract を生成する
-- Contract から canonical SysML を生成する
-- 不足情報や曖昧さを review overlay SysML に分離する
-- Contract と SysML 要素の対応を projection manifest として出力する
-- Common Semantic IR と SysML v1 sidecar payload の土台を生成する
-- 英語版 strict suite と、日本語化した派生 suite の両方で同等性を確認する
+- Markdown 要求を `contracts.yaml`、`canonical.sysml`、`projection manifest` へ変換できる
+- 曖昧な内容を `review_overlay.sysml` として分離できる
+- SysML v1 XMI や sidecar payload を追加生成できる
+- Cameo 向けの `.sysml` サンプルと表示ガイドを一緒に管理できる
+- サンプルと expected output を `example/` で一元管理できる
 
-## 変換の考え方
+## 処理の流れ
 
-このリポジトリの中心は **Requirement Contract** です。
+SysMLBuilder は、入力した Markdown をいきなり SysML に変換しません。  
+まず **Requirement Contract** という中間データに整理し、そのあと必要に応じて複数の成果物へ分けて出力します。
 
-変換は次の流れで進みます。
+流れは次のとおりです。
 
-1. Markdown 要求仕様を読む
-2. 要求を構造化して Contract にする
-3. 十分に確定できる内容だけを canonical SysML に出す
-4. 不足情報やレビュー待ち事項を review overlay に出す
-5. Contract と成果物の対応関係を manifest に残す
+1. Markdown の要求仕様を読む
+2. 要求の内容を Requirement Contract に整理する
+3. 十分に明確な内容だけを canonical SysML にする
+4. 曖昧な内容や不足情報は review overlay に分ける
+5. 要求と出力の対応表を projection manifest に残す
 
-この方式により、次の境界を明確に保てます。
+この流れにより、「正式に採用してよい内容」と「まだ確認が必要な内容」を分けて扱えます。
 
-- 原文根拠と推測
-- 正式モデルとレビュー用ドラフト
-- 要求本文と SysML 要素の対応
+## 主な出力
 
-## リポジトリ構成
+- `*_contracts.yaml`
+  要求文を整理した中間データ
+- `*_canonical.sysml`
+  正式モデルとして扱いやすい SysML
+- `*_review_overlay.sysml`
+  曖昧さや不足情報をレビュー用に分けた SysML
+- `*_projection_manifest.yaml`
+  要求と SysML 要素の対応表
+
+必要に応じて SysML v1 XMI、sidecar payload、Cameo 表示ガイドも出力できます。
+
+## 想定ユースケース
+
+- 要求仕様から SysML への変換ルールを揃えたい
+- 曖昧な要求を隠さず、レビューしやすい形で残したい
+- Cameo で確認できる text-first な SysML v2 サンプルを管理したい
+- 公開 `.sysml` サンプルの roundtrip ケースを持ちたい
+- ベンチマーク付きで変換品質を確かめたい
+
+## リポジトリの見取り図
 
 - `src/sysml_builder/`
-  - 変換実装本体
-- `scripts/`
-  - suite 実行、検証、日本語版データ生成
-- `profiles/`
-  - Contract schema、pattern、projection、lint 定義
-- `testdata/gfse_derived/`
-  - 英語版 strict suite
-- `testdata/gfse_derived_ja/`
-  - 日本語化した派生 suite
-- `testdata/legacy_auto_backdoor/`
-  - 旧来のサンプル
+  変換処理の本体
+- `example/`
+  ユーザー向けに整理したサンプル一式
 - `docs/`
-  - 設計意図、採点ガイド、利用者向け文書
+  使い方、設計意図、採点方法、設定変更ガイド
+- `profiles/`
+  変換ルールや出力方針を定義する YAML
+- `scripts/`
+  実行補助、検証、ベンチマーク用スクリプト
 - `reports/`
-  - 検証結果の出力先
+  検証結果の出力先
 
-## 主要ファイル
+## 公開時の注意
 
-- 利用者ガイド: [docs/user_input_to_sysml_flow.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/docs/user_input_to_sysml_flow.md)
-- 設計意図: [docs/developer_design_rationale.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/docs/developer_design_rationale.md)
-- 採点ガイド: [docs/benchmark_scoring_guide.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/docs/benchmark_scoring_guide.md)
-- Contract schema: [profiles/requirement_contract.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/requirement_contract.yaml)
-- pattern 定義: [profiles/requirement_patterns.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/requirement_patterns.yaml)
-- projection 定義: [profiles/projection_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/projection_profiles.yaml)
+- このリポジトリ自身のコードは Apache 2.0 ですが、`tools/` や `example/` の一部は第三者由来物を含みます。
+- `tools/MCSysMLv2.jar` を再配布する場合は、取得元のライセンスと notice を確認してください。
+- `example/dont_panic_batmobile*` のような書籍・ツール由来サンプルは、転載条件を確認してください。
+- Cameo / CATIA Magic 本体や製品付属 JAR は、このリポジトリに含めない前提です。
+- 詳細は [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) を参照してください。
 
-## セットアップ
+## 最短ではじめる
 
 前提:
 
 - Python 3.10 以上
 
-最小セットアップ:
+セットアップ:
 
 ```powershell
 python -m venv .venv
@@ -85,75 +90,56 @@ python -m venv .venv
 pip install -e .[dev]
 ```
 
-依存は軽く、基本的には `PyYAML` が中心です。
-
-## 変換の実行
-
-単一の Markdown ファイルを変換する場合:
+最初の実行例:
 
 ```powershell
 $env:PYTHONPATH='src'
-python -m sysml_builder.cli testdata\gfse_derived\case01_vehicle_explicit_high_requirements.md -o out
+python -m sysml_builder.cli `
+  example\vehicle_practice_expression_views\input\vehicle_practice_expression_views_requirements.md `
+  -o example\vehicle_practice_expression_views\output
 ```
 
-出力されるファイル:
+出力結果は `example\vehicle_practice_expression_views\output\` に作られます。
 
-- `*_contracts.yaml`
-- `*_canonical.sysml`
-- `*_review_overlay.sysml`
-- `*_projection_manifest.yaml`
+主な出力:
 
-low 充足性ケースのように canonical が出ない場合もあります。
-その場合は review overlay が主成果物です。
+- `vehicle_practice_expression_views_contracts.yaml`
+- `vehicle_practice_expression_views_canonical.sysml`
+- `vehicle_practice_expression_views_cameo_display_guide.md`
 
-SysML v1 XMI も必要な場合:
+より詳しい手順は
+[docs/user_input_to_sysml_flow.md](docs/user_input_to_sysml_flow.md)
+を参照してください。
+
+## SysML v1 XMI も出したい場合
 
 ```powershell
 $env:PYTHONPATH='src'
-python -m sysml_builder.cli testdata\SysMLBuilder_testdata_20cases\cases\C01_power_tailgate_conditions\requirements_en.md -o out --sysml-v1-xmi cameo ea
+python -m sysml_builder.cli example\C01_power_tailgate_conditions\input\requirements_en.md -o example\C01_power_tailgate_conditions\output --sysml-v1-xmi cameo ea
 ```
 
-追加で出力されるファイル:
+追加で次のようなファイルが出ます。
 
 - `*_cameo_v1.xmi`
 - `*_ea_v1.xmi`
 
-`ea` 向け XMI には、要求図、ブロック定義図、内部ブロック図、ステートマシン図の diagram 定義も含めます。
-モデル要素だけでなく diagram まで含めて確認したい場合は、まず `*_ea_v1.xmi` を使います。
-
-Common IR から SysML v1 sidecar 向け payload を作る場合:
+## sidecar 用データを作る場合
 
 ```powershell
 $env:PYTHONPATH='src'
-python -m sysml_builder.sidecar_cli testdata\SysMLBuilder_testdata_20cases\cases\C01_power_tailgate_conditions\requirements_en.md --target cameo -o out\C01_cameo_sidecar.yaml
+python -m sysml_builder.sidecar_cli example\C01_power_tailgate_conditions\input\requirements_en.md --target cameo -o example\C01_power_tailgate_conditions\output\C01_cameo_sidecar.yaml
 ```
 
-この payload は、設計書で想定している JVM sidecar の入力契約です。
-現状のリポジトリでは、`Common IR -> v1 projection -> sidecar request` までを Python 側で生成します。
-
-JVM sidecar をビルドして XMI を生成する最小 smoke 手順:
+JVM sidecar を使って XMI へ変換する最小手順:
 
 ```powershell
 mvn -q package -f sidecar\pom.xml
 java -jar sidecar\target\sysml-v1-sidecar-0.1.0-SNAPSHOT-jar-with-dependencies.jar `
-  --input out\C01_cameo_sidecar.yaml `
-  --output out\C01_cameo_sidecar.xmi
+  --input example\C01_power_tailgate_conditions\output\C01_cameo_sidecar.yaml `
+  --output example\C01_power_tailgate_conditions\output\C01_cameo_sidecar.xmi
 ```
 
-現在の sidecar は Eclipse UML2 を使って SysML v1 向け XMI を生成します。
-sidecar の `ea` 向け XMI も同様に、要求図、ブロック定義図、内部ブロック図、ステートマシン図の diagram 定義を含みます。
-
-ツール固有の import smoke は補助用途です。Cameo / EA が使える環境でだけ任意に実行します:
-
-```powershell
-python scripts\run_cameo_import_smoke.py
-```
-
-通常の既定フローは `XMI` 出力のみです。`sidecar` の標準出力は `*.xmi` だけを生成します。
-`cameo` と `ea` では target shim で XMI wrapper を分けています。
-SysML profile 適用と OMG SysML.xmi 連携はまだ未実装です。
-
-## 検証コマンド
+## 品質確認のコマンド
 
 英語版 strict suite:
 
@@ -185,201 +171,43 @@ MontiCore による SysML 構文検証:
 python scripts\validate_sysml_syntax.py --tool-jar tools\MCSysMLv2.jar
 ```
 
-`tools\MCSysMLv2.jar` がある場合は、次も実行できます。
+## どの文書から読めばよいか
 
-```powershell
-$env:SYSML_MONTICORE_JAR = (Resolve-Path "tools\\MCSysMLv2.jar")
-python -m unittest tests.test_randomized_input_resilience -v
-```
+- はじめて触る人:
+  [docs/user_input_to_sysml_flow.md](docs/user_input_to_sysml_flow.md)
+- 想定ユースケースを先に知りたい人:
+  [docs/use_cases.md](docs/use_cases.md)
+- ツールの内部設計を知りたい人:
+  [docs/developer_design_rationale.md](docs/developer_design_rationale.md)
+- Batmobile の公開 `.sysml` を roundtrip したい人:
+  [docs/dont_panic_batmobile_roundtrip.md](docs/dont_panic_batmobile_roundtrip.md)
+- Batmobile の symbolic view を表示確認用に派生させたい人:
+  [docs/dont_panic_batmobile_displayable_roundtrip.md](docs/dont_panic_batmobile_displayable_roundtrip.md)
+- Cameo 向けに要求・構造・アクション・状態遷移の expression-based view を試したい人:
+  [docs/vehicle_practice_expression_views_roundtrip.md](docs/vehicle_practice_expression_views_roundtrip.md)
+- サンプルデータの配置ルールを見たい人:
+  [example/README.md](example/README.md)
+- 採点や比較の考え方を知りたい人:
+  [docs/benchmark_scoring_guide.md](docs/benchmark_scoring_guide.md)
+- 設定をどこで変えるか知りたい人:
+  [docs/customization_map.md](docs/customization_map.md)
 
-## 生成される成果物
+## 現在の前提と制約
 
-### 1. Requirement Contract
+- 現状は生成 AI ではなく、決定論的なルールベース実装です
+- strict suite を再現しやすいように、出力形式をかなり明確に決めています
+- 自由度の高い自然文を何でも自動で高精度に解釈する段階ではありません
+- 曖昧な要求は、無理に canonical へ入れず review overlay に出します
 
-自然言語要求を構造化した中間表現です。
+## 参考ファイル
 
-代表的な項目:
-
-- `contract_id`
-- `source_requirement_id`
-- `source_anchor`
-- `classification.pattern_id`
-- `subject`
-- `evidence`
-- `gaps`
-- `llm_proposals`
-
-例:
-
-- [case01_vehicle_explicit_high_expected_contracts.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/testdata/gfse_derived/case01_vehicle_explicit_high_expected_contracts.yaml)
-
-### 2. canonical SysML
-
-正式採用する SysML 成果物です。
-仮説やレビュー待ち情報は入れません。
-
-例:
-
-- [case01_vehicle_explicit_high_expected_canonical.sysml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/testdata/gfse_derived/case01_vehicle_explicit_high_expected_canonical.sysml)
-- [case04_mining_modular_interface_high_expected_canonical.sysml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/testdata/gfse_derived/case04_mining_modular_interface_high_expected_canonical.sysml)
-
-### 3. review overlay SysML
-
-不足情報、曖昧性、仮案、レビュー指示を持つ SysML 成果物です。
-
-例:
-
-- [case02_vehicle_ambiguous_low_expected_review_overlay.sysml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/testdata/gfse_derived/case02_vehicle_ambiguous_low_expected_review_overlay.sysml)
-- [case06_mining_usecase_ambiguous_low_expected_review_overlay.sysml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/testdata/gfse_derived/case06_mining_usecase_ambiguous_low_expected_review_overlay.sysml)
-
-### 4. projection manifest
-
-Contract と SysML 要素の対応表です。
-追跡性確認、監査、ビュー構築の基礎になります。
-
-例:
-
-- [case01_vehicle_explicit_high_expected_projection_manifest.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/testdata/gfse_derived/case01_vehicle_explicit_high_expected_projection_manifest.yaml)
-
-## どのケースが何を表しているか
-
-- `case01`
-  - 定量性能とインタフェースが十分に明示された high ケース
-- `case02`
-  - 曖昧な性能要求を review overlay へ逃がす low ケース
-- `case03`
-  - 文脈別閾値を含む contextual performance の high ケース
-- `case04`
-  - 型付きポートとモジュラー IF を含む high ケース
-- `case05`
-  - use case を canonical と overlay に分ける medium ケース
-- `case06`
-  - 曖昧な運用記述を review overlay に残す low ケース
-
-## 日本語版について
-
-`testdata/gfse_derived_ja/` は英語版 strict suite を「構文に影響しない範囲」で日本語化した派生データです。
-
-確認方針:
-
-- localized な文言は日本語になっていてよい
-- ただし構造結果は英語版と同等であるべき
-- `scripts/run_local_suite_ja.py` は、その同等性を正規化比較で確認する
-
-## プロファイルの作成と調整
-
-このリポジトリでは、変換方式の考え方を `profiles/` 配下の YAML に分けています。
-
-まず押さえるべきこと:
-
-- Contract の形を決めるファイル
-  - [profiles/requirement_contract.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/requirement_contract.yaml)
-- 要求パターンを決めるファイル
-  - [profiles/requirement_patterns.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/requirement_patterns.yaml)
-- SysML への射影方針を決めるファイル
-- [profiles/projection_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/projection_profiles.yaml)
-- [profiles/common_semantic_ir_schema.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/common_semantic_ir_schema.yaml)
-projection_profiles.yaml)
-- benchmark ケースごとの抽出と投影を決めるファイル
-  - [profiles/case_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/case_profiles.yaml)
-- canonical SysML の package 構造を決めるファイル
-  - [profiles/canonical_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/canonical_profiles.yaml)
-- generic case の描画規則を決めるファイル
-  - [profiles/generic_case_profile.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/generic_case_profile.yaml)
-- 何をどこで変えるかの早見表
-  - [docs/customization_map.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/docs/customization_map.md)
-
-### 新しいプロファイルを作る基本手順
-
-1. 既存 YAML をコピーして、新しい `profile_id` を付ける
-2. 追加したい要求タイプに対応する slot を `requirement_contract.yaml` で定義する
-3. その要求タイプを `requirement_patterns.yaml` に pattern として追加する
-4. benchmark ケースなら `case_profiles.yaml` に contract 抽出規則と overlay / projection manifest を追加する
-5. canonical SysML を出すなら `canonical_profiles.yaml` に package 構造を追加する
-6. generic case 系の共通規則を変えるなら `generic_case_profile.yaml` を更新する
-7. 必要なら lint と benchmark ルールを更新する
-8. 入力例と expected 出力を `testdata/` に追加して検証する
-
-### どのファイルで何を決めるか
-
-`requirement_contract.yaml`:
-
-- 必須フィールド
-- first-class slot
-- gap があったときに overlay へ送る方針
-- projector が読むべき slot
-
-`requirement_patterns.yaml`:
-
-- どんな文をどの pattern と見るか
-- required slot / optional slot
-- どの projector に渡すか
-- review 必須条件
-
-`projection_profiles.yaml`:
-
-- canonical に入れてよい package
-- overlay に入れる package
-- requirement / interface / use case の出し方
-- allocation / satisfy / behavior の出し方
-
-`case_profiles.yaml`:
-
-- case metadata
-- contract extraction の capture regex
-- contract ごとの subject / slot / proposal
-- overlay に出す draft requirement
-- projection manifest
-
-`canonical_profiles.yaml`:
-
-- canonical package 名
-- package ごとの SysML body
-- benchmark ケースの canonical 出力構造
-
-### 最小の作成例
-
-たとえば「安全余裕要求」を追加したい場合は、次の順で作るのが自然です。
-
-1. `requirement_contract.yaml` に `safety_margin` を追加する
-2. `requirement_patterns.yaml` に `safety_margin_constraint` を追加する
-3. `required_slots` に `subject`, `measured_property`, `safety_margin` を入れる
-4. `projectors.requirements` を新しい requirement 形式へ向ける
-5. `projection_profiles.yaml` で canonical 側に出すか overlay 側に出すかを決める
-
-### 注意
-
-benchmark 6ケースについては、現在の実装は profile-driven です。
-つまり case metadata / contract extraction / canonical / overlay / projection manifest は `profiles/` の定義から生成されます。
-
-主に使うファイル:
-
-- [profiles/case_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/case_profiles.yaml)
-- [profiles/canonical_profiles.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/canonical_profiles.yaml)
-- [profiles/review_overlay.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/review_overlay.yaml)
-
-generic case 系も、描画規則自体は profile-driven です。
-ただし各 `case.yaml` の構造スキーマをどう解釈するかというランタイム自体は Python 実装にあります。
-
-## 現状の制約
-
-- 実装は strict suite を通すためのルールベース実装
-- 任意の自由文要求を汎用的に解釈する段階にはまだない
-- pattern 判定や proposal 生成は、まだ LLM 呼び出しに置き換わっていない
-- renderer は suite の期待形に強く寄せてある
-
-## 今後の拡張ポイント
-
-- pattern 分類を profile 駆動にする
-- Contract 抽出をケース固定 regex から汎化する
-- review overlay の proposal を LLM で生成する
-- canonical renderer を package body から要素レベル生成へ移す
-- CLI を複数ファイル一括処理に対応させる
-
-## 最初に読む順番
-
-1. [README.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/README.md)
-2. [docs/user_input_to_sysml_flow.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/docs/user_input_to_sysml_flow.md)
-3. [docs/developer_design_rationale.md](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/docs/developer_design_rationale.md)
-4. [profiles/requirement_contract.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/profiles/requirement_contract.yaml)
-5. [testdata/gfse_derived/case_manifest.yaml](C:/Users/sawad/OneDrive/ドキュメント/dev/SysMLBuilder/testdata/gfse_derived/case_manifest.yaml)
+- 初心者向けガイド:
+  [docs/user_input_to_sysml_flow.md](docs/user_input_to_sysml_flow.md)
+- 想定ユースケース:
+  [docs/use_cases.md](docs/use_cases.md)
+- 内部設計:
+  [docs/developer_design_rationale.md](docs/developer_design_rationale.md)
+- 設定変更ガイド:
+  [docs/customization_map.md](docs/customization_map.md)
+- 20ケースの説明:
+  [example/README.md](example/README.md)

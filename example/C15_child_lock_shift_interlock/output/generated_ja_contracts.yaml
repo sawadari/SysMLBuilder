@@ -1,0 +1,99 @@
+document:
+  document_id: C15
+  document_name: チャイルドロックシフト連動
+  language: ja
+  domain: gated_capability
+contracts:
+- contract_id: C15-RQ-001
+  source_requirement_id: C15-RQ-001
+  source_anchor:
+    document_id: C15
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChildLockSystem
+  evidence:
+    quote: システムは、シフト位置がPかつ車速0 km/hの場合にのみチャイルドロック有効化を許可すること。
+- contract_id: C15-RQ-002
+  source_requirement_id: C15-RQ-002
+  source_anchor:
+    document_id: C15
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChildLockSystem
+  evidence:
+    quote: システムは、いずれかの後席ドアが開いている間、チャイルドロック有効化を拒否すること。
+- contract_id: C15-RQ-003
+  source_requirement_id: C15-RQ-003
+  source_anchor:
+    document_id: C15
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChildLockSystem
+  evidence:
+    quote: システムは、有効なチャイルドロック無効化要求を受信した場合、500 ms以内に無効化を完了すること。
+generic_case:
+  package: C15ChildLockShiftInterlock
+  context: このケースは、安全な車両条件下でのみチャイルドロック状態変更を許可する機能を表します。
+  requirements_count: 3
+  structure:
+  - ChildLockSystem
+  - ChildLockController
+  - RearDoorLockActuator
+  interfaces:
+  - - ShiftPositionPort
+    - shiftPosition
+    - ShiftPositionValue
+    - in
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - DoorStatusPort
+    - rearDoorOpen
+    - DoorStatusValue
+    - in
+  - - LockCommandPort
+    - childLockCommand
+    - LockCommandValue
+    - out
+  part_ports:
+    ChildLockController:
+    - - shiftIn
+      - ShiftPositionPort
+    - - speedIn
+      - VehicleSpeedPort
+    - - doorStatusIn
+      - DoorStatusPort
+    - - commandOut
+      - LockCommandPort
+    RearDoorLockActuator:
+    - - commandIn
+      - ~LockCommandPort
+    ChildLockSystem: []
+  subparts:
+    ChildLockSystem:
+    - - controller
+      - ChildLockController
+    - - actuator
+      - RearDoorLockActuator
+  interfaces_defs:
+  - - ChildLockCommandInterface
+    - LockCommandPort
+    - LockCommandPort
+    - childLockCommand
+  state_machine: null

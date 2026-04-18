@@ -1,0 +1,260 @@
+document:
+  document_id: LEGACY_ABD_COMPLETE_JA
+  document_name: 自動バックドア制御 完全版 参考入力
+  language: ja
+  domain: automotive_control
+contracts:
+- contract_id: ABD-REQ-001
+  source_requirement_id: ABD-REQ-001
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: ShiftPos が P であり、VehSpd が 3 km/h 未満の場合にのみ、BackDoorOpenReq を開要求として受け付けなければならない。
+- contract_id: ABD-REQ-003
+  source_requirement_id: ABD-REQ-003
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: 開要求を受け付けた場合、100 ms 以内に駆動モータへ開方向駆動を指示しなければならない。
+- contract_id: ABD-REQ-004
+  source_requirement_id: ABD-REQ-004
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: BackDoorPos が 95 % 以上となった場合、駆動モータを停止し、状態を全開へ遷移しなければならない。
+- contract_id: ABD-REQ-007
+  source_requirement_id: ABD-REQ-007
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: 閉動作中に PinchDetected = true を検知した場合、50 ms 以内に閉方向駆動を停止し、200 ms 以内に開方向へ反転しなければならない。
+- contract_id: ABD-REQ-009
+  source_requirement_id: ABD-REQ-009
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: 異常停止状態へ遷移した場合、1 s 以内に BuzzerReq を true にしなければならない。
+- contract_id: ABD-REQ-010
+  source_requirement_id: ABD-REQ-010
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: 開度センサ値が 500 ms 以上更新されない場合、異常停止状態へ遷移しなければならない。
+- contract_id: ABD-REQ-012
+  source_requirement_id: ABD-REQ-012
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: 全閉状態で開要求を受け付けた場合、開動作中へ遷移しなければならない。
+- contract_id: ABD-REQ-015
+  source_requirement_id: ABD-REQ-015
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: 閉動作中で挟み込み検知した場合、反転開へ遷移しなければならない。
+- contract_id: ABD-VER-001
+  source_requirement_id: ABD-VER-001
+  source_anchor:
+    document_id: LEGACY_ABD_COMPLETE_JA
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehicleTailgateSystem
+  evidence:
+    quote: ShiftPos=P, VehSpd=0 km/h, BackDoorOpenReq=true のとき、100 ms 以内に開方向駆動が開始されることを確認する。
+generic_case:
+  package: LegacyAutoBackDoorCompleteJa
+  context: ''
+  requirements_count: 9
+  structure:
+  - VehicleTailgateSystem
+  - BodyControlModule
+  - PowerBackDoorSystem
+  - BackDoorController
+  - DriveMotorModule
+  - PositionSensorModule
+  - PinchSensorModule
+  - LatchModule
+  - BuzzerModule
+  interfaces:
+  - - VehicleStatusPort
+    - vehicleStatus
+    - VehicleStatusSignal
+    - in
+  - - DoorRequestPort
+    - doorRequest
+    - DoorRequestSignal
+    - in
+  - - PositionStatusPort
+    - positionStatus
+    - PositionStatusSignal
+    - in
+  - - PinchStatusPort
+    - pinchStatus
+    - PinchStatusSignal
+    - in
+  - - LatchStatusPort
+    - latchStatus
+    - LatchStatusSignal
+    - in
+  - - MotorCommandPort
+    - motorCommand
+    - MotorCommandSignal
+    - out
+  - - BuzzerCommandPort
+    - buzzerCommand
+    - BuzzerCommandSignal
+    - out
+  part_ports:
+    BodyControlModule:
+    - - vehicleStatusPort
+      - VehicleStatusPort
+    - - requestPort
+      - DoorRequestPort
+    BackDoorController:
+    - - vehicleStatusPort
+      - ~VehicleStatusPort
+    - - requestPort
+      - ~DoorRequestPort
+    - - positionStatusPort
+      - ~PositionStatusPort
+    - - pinchStatusPort
+      - ~PinchStatusPort
+    - - latchStatusPort
+      - ~LatchStatusPort
+    - - motorCommandPort
+      - MotorCommandPort
+    - - buzzerCommandPort
+      - BuzzerCommandPort
+    DriveMotorModule:
+    - - motorCommandPort
+      - ~MotorCommandPort
+    PositionSensorModule:
+    - - positionStatusPort
+      - PositionStatusPort
+    PinchSensorModule:
+    - - pinchStatusPort
+      - PinchStatusPort
+    LatchModule:
+    - - latchStatusPort
+      - LatchStatusPort
+    BuzzerModule:
+    - - buzzerCommandPort
+      - ~BuzzerCommandPort
+    PowerBackDoorSystem: []
+    VehicleTailgateSystem: []
+  subparts:
+    PowerBackDoorSystem:
+    - - controller
+      - BackDoorController
+    - - driveMotor
+      - DriveMotorModule
+    - - positionSensor
+      - PositionSensorModule
+    - - pinchSensor
+      - PinchSensorModule
+    - - latchModule
+      - LatchModule
+    - - buzzerModule
+      - BuzzerModule
+    VehicleTailgateSystem:
+    - - bodyControl
+      - BodyControlModule
+    - - powerBackDoorSystem
+      - PowerBackDoorSystem
+  interfaces_defs:
+  - - VehicleStatusInterface
+    - VehicleStatusPort
+    - VehicleStatusPort
+    - vehicleStatus
+  - - DoorRequestInterface
+    - DoorRequestPort
+    - DoorRequestPort
+    - doorRequest
+  - - MotorCommandInterface
+    - MotorCommandPort
+    - MotorCommandPort
+    - motorCommand
+  state_machine:
+    name: BackDoorMotionStates
+    states:
+    - Closed
+    - Opening
+    - Closing
+    - ReverseOpening
+    - FaultStop
+    transitions:
+    - - Closed
+      - Opening
+    - - Closing
+      - ReverseOpening
+    - - ReverseOpening
+      - Closed

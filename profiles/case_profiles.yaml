@@ -875,3 +875,315 @@ cases:
         ja:
         - "[review-action] accept / modify / reject / defer"
         - アクター、目的テキスト、フロー構造が受理されるまで canonical なユースケースを出力してはならない。
+  dont_panic_batmobile:
+    canonical_profile_id: dont_panic_batmobile
+    document:
+      document_id: BATMOBILE-DP-001
+      document_name: Don't Panic Batmobile public sample
+      document_name_ja: Don't Panic バットモービル公開サンプル
+      language: en
+      domain: public_reference
+    extraction:
+      mode: requirements
+      section: Requirements
+      section_ja: 要求
+      contract_rules:
+      - source_requirement_id: REQ-BAT-001
+        contract_id: C-BAT-001
+        pattern_id: public_sample_structure_core
+        confidence: 1.0
+        subject:
+          kind: system
+          canonical_name: Batmobile
+      - source_requirement_id: REQ-BAT-002
+        contract_id: C-BAT-002
+        pattern_id: public_sample_system_decomposition
+        confidence: 1.0
+        subject:
+          kind: system
+          canonical_name: Batmobile
+      - source_requirement_id: REQ-BAT-003
+        contract_id: C-BAT-003
+        pattern_id: public_sample_specialization_and_variability
+        confidence: 1.0
+        subject:
+          kind: system
+          canonical_name: BatmobileConfigurations
+      - source_requirement_id: REQ-BAT-004
+        contract_id: C-BAT-004
+        pattern_id: public_sample_occurrence_and_timeslice
+        confidence: 1.0
+        subject:
+          kind: occurrence
+          canonical_name: bm1
+      - source_requirement_id: REQ-BAT-005
+        contract_id: C-BAT-005
+        pattern_id: public_sample_behavior
+        confidence: 1.0
+        subject:
+          kind: behavior
+          canonical_name: Drive Batmobile
+      - source_requirement_id: REQ-BAT-006
+        contract_id: C-BAT-006
+        pattern_id: public_sample_requirements
+        confidence: 1.0
+        subject:
+          kind: requirement
+          canonical_name: batmobileSpecification
+      - source_requirement_id: REQ-BAT-007
+        contract_id: C-BAT-007
+        pattern_id: public_sample_viewpoint_and_tabular_view
+        confidence: 1.0
+        subject:
+          kind: viewpoint
+          canonical_name: system components
+      - source_requirement_id: REQ-BAT-008
+        contract_id: C-BAT-008
+        pattern_id: public_sample_symbolic_views
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: definition and usage
+  dont_panic_batmobile_displayable:
+    canonical_profile_id: dont_panic_batmobile_displayable
+    document:
+      document_id: BATMOBILE-DP-002
+      document_name: Don't Panic Batmobile Displayable Symbolic Views
+      document_name_ja: Don't Panic バットモービル表示可能 symbolic view
+      language: en
+      domain: public_reference
+    extraction:
+      mode: requirements
+      section: Requirements
+      section_ja: 要求
+      contract_rules:
+      - source_requirement_id: REQ-BAT-D-001
+        contract_id: C-BAT-D-001
+        pattern_id: public_sample_structure_core
+        confidence: 1.0
+        subject:
+          kind: system
+          canonical_name: Batmobile
+      - source_requirement_id: REQ-BAT-D-002
+        contract_id: C-BAT-D-002
+        pattern_id: public_sample_tabular_and_symbolic_views
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: batmobileParts
+      - source_requirement_id: REQ-BAT-D-003
+        contract_id: C-BAT-D-003
+        pattern_id: public_sample_structural_symbolic_view
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: structural Modeling
+      - source_requirement_id: REQ-BAT-D-004
+        contract_id: C-BAT-D-004
+        pattern_id: public_sample_behavioral_symbolic_view
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: behavioral modelling
+      - source_requirement_id: REQ-BAT-D-005
+        contract_id: C-BAT-D-005
+        pattern_id: public_sample_use_case_symbolic_view
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: use cases modelling
+      - source_requirement_id: REQ-BAT-D-006
+        contract_id: C-BAT-D-006
+        pattern_id: public_sample_requirement_symbolic_view
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: requirements modelling
+  vehicle_practice_expression_views:
+    canonical_profile_id: vehicle_practice_expression_views
+    document:
+      document_id: VPV-001
+      document_name: Vehicle Practice Expression Views
+      document_name_ja: Vehicle Practice Expression Views
+      language: en
+      domain: cameo_symbolic_views
+    extraction:
+      mode: requirements
+      section: Requirements
+      section_ja: 要求
+      contract_rules:
+      - source_requirement_id: REQ-VPV-001
+        contract_id: C-VPV-001
+        pattern_id: requirement_tree_view_practice
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: Requirements Tree
+      - source_requirement_id: REQ-VPV-002
+        contract_id: C-VPV-002
+        pattern_id: structural_expression_view_practice
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: Parts Tree
+      - source_requirement_id: REQ-VPV-003
+        contract_id: C-VPV-003
+        pattern_id: action_expression_view_practice
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: Actions Nested
+      - source_requirement_id: REQ-VPV-004
+        contract_id: C-VPV-004
+        pattern_id: state_expression_view_practice
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: States Nested
+      - source_requirement_id: REQ-VPV-005
+        contract_id: C-VPV-005
+        pattern_id: interconnection_render_view_practice
+        confidence: 1.0
+        subject:
+          kind: view
+          canonical_name: System Interconnection
+    cameo_display_guide:
+      title: Vehicle Practice Expression Views Cameo Display Guide
+      intro:
+      - "このガイドは `vehicle_practice_expression_views_canonical.sysml` を Cameo / CATIA Magic で開いた後、どの view に対してどの Display 操作を選ぶと見たい情報が出やすいかを整理したものです。"
+      - "expression-based view は built-in filter を持つので、まずはこちらを使い、線や関係を見たいときだけ `iv` / `afv` / `stv` 側へ切り替える運用を前提にしています。"
+      basics:
+      - "Textual Editor で読み込んだ後は `Synchronize` を実行する。"
+      - "まず各 view で `Display > Display Exposed Elements` を実行する。これは expose 済み要素を view に出す基本操作です。"
+      - "線が不足する場合は、対象シンボルを選んで `Display > Display Connectors` を追加実行する。"
+      - "2026x Hot Fix 1 以降では `Display Connectors` 周りの不具合修正が入っている。モデリングツール本体と SysML v2 Plugin の Hot Fix 番号は一致させる。"
+      links:
+      - label: Exposing elements for views
+        url: https://docs.nomagic.com/SYSML2P/2026x/exposing-elements-for-views-254423168.html
+      - label: Displaying elements in symbolic views
+        url: https://docs.nomagic.com/SYSML2P/2026x/displaying-elements-in-symbolic-views-254422731.html
+      - label: Filtering elements for views
+        url: https://docs.nomagic.com/SYSML2P/2026x/filtering-elements-for-views-254423172.html
+      - label: Rendering views
+        url: https://docs.nomagic.com/SYSML2P/2026x/rendering-views-254422759.html
+      - label: 2026x Hot Fix 1
+        url: https://docs.nomagic.com/VN/latest/2026x-hot-fix-1-278725663.html
+      views:
+      - view_name: Requirements Tree
+        model_elements:
+        - requirement def MassRequirement
+        - requirement vehicleSpecification
+        - requirement vehicleMass
+        - requirement engineMass
+        use_when:
+        - 要求階層と requirement usage を最短で確認したいとき
+        - 標準ライブラリ要素を極力見たくないとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        notes:
+        - expression-based tree view なので、通常はこれだけで十分です。
+        - "`RequirementsTreeView` が名前解決できない build では `RequirementTreeView` に置き換えます。"
+      - view_name: Parts Tree
+        model_elements:
+        - part def Vehicle
+        - part vehicle1
+        - engine / transmission の part 階層
+        use_when:
+        - 部品階層だけを軽く確認したいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        notes:
+        - tree view は線より階層確認向きです。
+      - view_name: Parts Nested
+        model_elements:
+        - part def Vehicle
+        - nested part hierarchy
+        use_when:
+        - ネストされた containment を箱の入れ子で見たいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        - "必要なら対象シンボルに対して `Display > Display Parts`"
+        notes:
+        - nested view なので、部品の内包関係が tree view より視覚的です。
+      - view_name: Parts & Ports Nested
+        model_elements:
+        - Vehicle / Engine / Transmission
+        - drivePwrPort / clutchPort
+        use_when:
+        - 部品に加えてポートも見たいとき
+        - IBD に近い入口が欲しいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        - "ポートが不足する場合は `Display > Display Ports`"
+        - "線が不足する場合は `Display > Display Connectors`"
+        notes:
+        - expression-based view なのでノイズは少ないですが、線は追加表示が必要なことがあります。
+      - view_name: System Interconnection
+        model_elements:
+        - EngineToTransmissionInterface
+        - engine.drivePwrPort to transmission.clutchPort
+        use_when:
+        - connection / interface / flow の線を優先して見たいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        - "`Display > Display Connectors`"
+        notes:
+        - "`iv` は interconnection representation 向けです。構造の線を見るときは最初にこの view を試すのが分かりやすいです。"
+      - view_name: Actions Nested
+        model_elements:
+        - action providePower
+        - action generateTorque
+        - action transferTorque
+        use_when:
+        - action の入れ子や所有関係を確認したいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        - "必要なら対象 action に対して `Display > Display Actions`"
+        notes:
+        - flow 線より action 階層の確認向きです。
+      - view_name: Actions Tree
+        model_elements:
+        - action providePower
+        - action generateTorque
+        - action transferTorque
+        use_when:
+        - action の構成を tree で一覧したいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        notes:
+        - tree 表示なので軽い確認向きです。
+      - view_name: Action Flow View
+        model_elements:
+        - flow of Torque from generateTorque.torque to transferTorque.inTorque
+        - providePower 配下の action 群
+        use_when:
+        - action 間の flow を線で見たいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        - "線が不足する場合は `Display > Display Connectors`"
+        notes:
+        - "`Action Flow View` は renderer 名ではなく標準 predefined symbolic view definition の `DS_Views::SymbolicViews::afv` を使っています。"
+      - view_name: States Nested
+        model_elements:
+        - part def Controller
+        - exhibit state controllerStates
+        - state operatingStates / off / on
+        use_when:
+        - state の所有構造を確認したいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        - "内部 state が不足する場合は対象 state machine または state に対して `Display > Display Features`"
+        notes:
+        - nested view は state hierarchy を追うのに向いています。
+      - view_name: State Transition View
+        model_elements:
+        - transition initial
+        - transition off_to_on
+        - transition on_to_off
+        use_when:
+        - 遷移矢印を優先して確認したいとき
+        display_steps:
+        - "`Display > Display Exposed Elements`"
+        - "必要なら state / state machine に対して `Display > Display Features`"
+        notes:
+        - "`State Transition View` は標準 predefined symbolic view definition の `DS_Views::SymbolicViews::stv` を使っています。"

@@ -1,0 +1,121 @@
+document:
+  document_id: C02
+  document_name: Auto Window Anti-Pinch
+  language: en
+  domain: fault_reaction
+contracts:
+- contract_id: C02-RQ-001
+  source_requirement_id: C02-RQ-001
+  source_anchor:
+    document_id: C02
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: AutoWindowSystem
+  evidence:
+    quote: The auto window system shall start automatic closing when the close switch
+      is held for at least 300 ms.
+- contract_id: C02-RQ-002
+  source_requirement_id: C02-RQ-002
+  source_anchor:
+    document_id: C02
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: AutoWindowSystem
+  evidence:
+    quote: The system shall inhibit automatic closing while the corresponding door
+      is open.
+- contract_id: C02-RQ-003
+  source_requirement_id: C02-RQ-003
+  source_anchor:
+    document_id: C02
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: AutoWindowSystem
+  evidence:
+    quote: When pinch is detected during automatic closing, the system shall stop
+      within 30 ms and lower the glass by at least 100 mm.
+generic_case:
+  package: C02AutoWindowAntiPinch
+  context: This case models an automatic window feature with anti-pinch protection
+    and a door-open inhibit condition.
+  requirements_count: 3
+  structure:
+  - AutoWindowSystem
+  - WindowController
+  - WindowMotor
+  - PinchSensor
+  interfaces:
+  - - WindowSwitchPort
+    - closeRequest
+    - WindowSwitchValue
+    - in
+  - - DoorStatusPort
+    - doorOpen
+    - DoorStatusValue
+    - in
+  - - PinchSignalPort
+    - pinchDetected
+    - PinchSignalValue
+    - in
+  - - WindowMotorCommandPort
+    - windowCommand
+    - WindowMotorCommandValue
+    - out
+  part_ports:
+    WindowController:
+    - - switchIn
+      - WindowSwitchPort
+    - - doorStatusIn
+      - DoorStatusPort
+    - - pinchIn
+      - PinchSignalPort
+    - - commandOut
+      - WindowMotorCommandPort
+    WindowMotor:
+    - - commandIn
+      - ~WindowMotorCommandPort
+    PinchSensor:
+    - - pinchOut
+      - PinchSignalPort
+    AutoWindowSystem: []
+  subparts:
+    AutoWindowSystem:
+    - - controller
+      - WindowController
+    - - motor
+      - WindowMotor
+    - - sensor
+      - PinchSensor
+  interfaces_defs:
+  - - WindowMotorCommandInterface
+    - WindowMotorCommandPort
+    - WindowMotorCommandPort
+    - windowCommand
+  state_machine:
+    name: WindowMotionStates
+    states:
+    - idle
+    - autoClosing
+    - reverseOpen
+    transitions:
+    - - idle
+      - autoClosing
+    - - autoClosing
+      - reverseOpen
+    - - reverseOpen
+      - idle

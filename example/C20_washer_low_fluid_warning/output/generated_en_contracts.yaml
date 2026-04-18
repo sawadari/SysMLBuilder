@@ -1,0 +1,90 @@
+document:
+  document_id: C20
+  document_name: Washer Low Fluid Warning
+  language: en
+  domain: threshold_monitoring
+contracts:
+- contract_id: C20-RQ-001
+  source_requirement_id: C20-RQ-001
+  source_anchor:
+    document_id: C20
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: WasherFluidWarningSystem
+  evidence:
+    quote: When washer fluid level is low for 2 s, the system shall display a low-fluid
+      warning within 500 ms.
+- contract_id: C20-RQ-002
+  source_requirement_id: C20-RQ-002
+  source_anchor:
+    document_id: C20
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: WasherFluidWarningSystem
+  evidence:
+    quote: The system shall not display the warning for transient low-level detections
+      shorter than 2 s.
+- contract_id: C20-RQ-003
+  source_requirement_id: C20-RQ-003
+  source_anchor:
+    document_id: C20
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: WasherFluidWarningSystem
+  evidence:
+    quote: The system shall clear the warning after fluid level is normal for 5 s.
+generic_case:
+  package: C20WasherLowFluidWarning
+  context: This case shows a warning after low fluid is detected with debounce and
+    clears it after refill.
+  requirements_count: 3
+  structure:
+  - WasherFluidWarningSystem
+  - FluidLevelMonitor
+  - ClusterDisplay
+  interfaces:
+  - - FluidLevelPort
+    - fluidLow
+    - FluidLevelValue
+    - in
+  - - DisplayCommandPort
+    - displayCommand
+    - DisplayCommandValue
+    - out
+  part_ports:
+    FluidLevelMonitor:
+    - - fluidIn
+      - FluidLevelPort
+    - - displayOut
+      - DisplayCommandPort
+    ClusterDisplay:
+    - - commandIn
+      - ~DisplayCommandPort
+    WasherFluidWarningSystem: []
+  subparts:
+    WasherFluidWarningSystem:
+    - - monitor
+      - FluidLevelMonitor
+    - - display
+      - ClusterDisplay
+  interfaces_defs:
+  - - DisplayCommandInterface
+    - DisplayCommandPort
+    - DisplayCommandPort
+    - displayCommand
+  state_machine: null

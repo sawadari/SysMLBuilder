@@ -1,0 +1,123 @@
+id: LEGACY_ABD_INCOMPLETE_JA
+slug: legacy_auto_backdoor_incomplete_ja
+title_en: Legacy Auto Backdoor Incomplete JA
+title_ja: 自動バックドア制御 不足情報版 参考入力
+category: automotive_control
+difficulty: intermediate
+completeness: low
+package: LegacyAutoBackDoorIncompleteJa
+structure_en:
+- VehicleTailgateSystem
+- BodyControlModule
+- PowerBackDoorSystem
+- BackDoorController
+- DriveMotorModule
+- PositionSensorModule
+- PinchSensorModule
+- LatchModule
+- BuzzerModule
+structure_ja:
+- VehicleTailgateSystem
+- BodyControlModule
+- PowerBackDoorSystem
+- BackDoorController
+- DriveMotorModule
+- PositionSensorModule
+- PinchSensorModule
+- LatchModule
+- BuzzerModule
+interfaces:
+- - VehicleStatusPort
+  - vehicleStatus
+  - VehicleStatusSignal
+  - in
+- - DoorRequestPort
+  - doorRequest
+  - DoorRequestSignal
+  - in
+- - PositionStatusPort
+  - positionStatus
+  - PositionStatusSignal
+  - in
+- - PinchStatusPort
+  - pinchStatus
+  - PinchStatusSignal
+  - in
+- - MotorCommandPort
+  - motorCommand
+  - MotorCommandSignal
+  - out
+part_ports:
+  BodyControlModule:
+  - - vehicleStatusPort
+    - VehicleStatusPort
+  - - requestPort
+    - DoorRequestPort
+  BackDoorController:
+  - - vehicleStatusPort
+    - ~VehicleStatusPort
+  - - requestPort
+    - ~DoorRequestPort
+  - - positionStatusPort
+    - ~PositionStatusPort
+  - - pinchStatusPort
+    - ~PinchStatusPort
+  - - motorCommandPort
+    - MotorCommandPort
+  DriveMotorModule:
+  - - motorCommandPort
+    - ~MotorCommandPort
+  PositionSensorModule:
+  - - positionStatusPort
+    - PositionStatusPort
+  PinchSensorModule:
+  - - pinchStatusPort
+    - PinchStatusPort
+  PowerBackDoorSystem: []
+  VehicleTailgateSystem: []
+subparts:
+  PowerBackDoorSystem:
+  - - controller
+    - BackDoorController
+  - - driveMotor
+    - DriveMotorModule
+  - - positionSensor
+    - PositionSensorModule
+  - - pinchSensor
+    - PinchSensorModule
+  VehicleTailgateSystem:
+  - - bodyControl
+    - BodyControlModule
+  - - powerBackDoorSystem
+    - PowerBackDoorSystem
+interfaces_defs:
+- - VehicleStatusInterface
+  - VehicleStatusPort
+  - VehicleStatusPort
+  - vehicleStatus
+- - DoorRequestInterface
+  - DoorRequestPort
+  - DoorRequestPort
+  - doorRequest
+- - MotorCommandInterface
+  - MotorCommandPort
+  - MotorCommandPort
+  - motorCommand
+state_machine:
+  name: BackDoorMotionStates
+  states:
+  - Closed
+  - Opening
+  - Closing
+  - ReverseOpening
+  - FaultStop
+  transitions:
+  - - Closed
+    - Opening
+  - - Closing
+    - ReverseOpening
+  - - ReverseOpening
+    - Closed
+requirements_count: 5
+files:
+  requirements_ja: requirements_ja.md

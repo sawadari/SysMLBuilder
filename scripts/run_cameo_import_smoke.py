@@ -116,9 +116,17 @@ def main() -> int:
     result = run_no_check(command, cwd=cameo_home)
     log_path.write_text(result.stdout + "\n" + result.stderr, encoding="utf-8")
     if result.returncode != 0:
+        msosa_log = (
+            Path.home()
+            / "AppData"
+            / "Local"
+            / ".magic.systems.of.systems.architect"
+            / "2026x"
+            / "msosa.log"
+        )
         raise SystemExit(
             "Cameo import smoke failed. See "
-            f"{log_path} and C:\\Users\\sawad\\AppData\\Local\\.magic.systems.of.systems.architect\\2026x\\msosa.log"
+            f"{log_path} and {msosa_log}"
         )
     print(output_path)
     print(log_path)

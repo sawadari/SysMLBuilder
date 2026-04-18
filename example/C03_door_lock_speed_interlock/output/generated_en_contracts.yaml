@@ -1,0 +1,102 @@
+document:
+  document_id: C03
+  document_name: Door Lock Speed Interlock
+  language: en
+  domain: timed_gated_capability
+contracts:
+- contract_id: C03-RQ-001
+  source_requirement_id: C03-RQ-001
+  source_anchor:
+    document_id: C03
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DoorLockSystem
+  evidence:
+    quote: The door lock system shall lock all doors when vehicle speed is at least
+      20 km/h for 3 s.
+- contract_id: C03-RQ-002
+  source_requirement_id: C03-RQ-002
+  source_anchor:
+    document_id: C03
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DoorLockSystem
+  evidence:
+    quote: The system shall not perform automatic locking while any door is ajar.
+- contract_id: C03-RQ-003
+  source_requirement_id: C03-RQ-003
+  source_anchor:
+    document_id: C03
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DoorLockSystem
+  evidence:
+    quote: When ignition is OFF and shift position changes to P, the system shall
+      unlock the driver door within 500 ms.
+generic_case:
+  package: C03DoorLockSpeedInterlock
+  context: This case models automatic door locking and unlocking based on speed, shift
+    position, and door status.
+  requirements_count: 3
+  structure:
+  - DoorLockSystem
+  - DoorLockController
+  - DoorLockActuator
+  interfaces:
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - DoorStatusPort
+    - doorAjar
+    - DoorStatusValue
+    - in
+  - - ShiftPositionPort
+    - shiftPosition
+    - ShiftPositionValue
+    - in
+  - - DoorLockCommandPort
+    - lockCommand
+    - DoorLockCommandValue
+    - out
+  part_ports:
+    DoorLockController:
+    - - speedIn
+      - VehicleSpeedPort
+    - - doorStatusIn
+      - DoorStatusPort
+    - - shiftIn
+      - ShiftPositionPort
+    - - commandOut
+      - DoorLockCommandPort
+    DoorLockActuator:
+    - - commandIn
+      - ~DoorLockCommandPort
+    DoorLockSystem: []
+  subparts:
+    DoorLockSystem:
+    - - controller
+      - DoorLockController
+    - - actuator
+      - DoorLockActuator
+  interfaces_defs:
+  - - DoorLockCommandInterface
+    - DoorLockCommandPort
+    - DoorLockCommandPort
+    - lockCommand
+  state_machine: null

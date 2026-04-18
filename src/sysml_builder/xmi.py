@@ -119,7 +119,12 @@ def parse_sysml_v2_text(text: str) -> CanonicalModel:
     if package_doc_match:
         package_doc = package_doc_match.group(1).strip()
 
-    items = re.findall(r"item def\s+([A-Za-z_]\w*)\s*;", text)
+    items = sorted(
+        {
+            *re.findall(r"item def\s+([A-Za-z_]\w*)\s*;", text),
+            *[block["name"] for block in _find_named_blocks(text, "item def")],
+        }
+    )
 
     port_defs: dict[str, PortDefinition] = {}
     for block in _find_named_blocks(text, "port def"):

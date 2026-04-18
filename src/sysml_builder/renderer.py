@@ -245,6 +245,9 @@ def render_canonical(case_id: str, contracts: dict[str, Any]) -> str | None:
 
 
 def _render_canonical_profile(canonical_profile: dict[str, Any]) -> str:
+    raw_sysml = canonical_profile.get("raw_sysml")
+    if raw_sysml is not None:
+        return raw_sysml if raw_sysml.endswith("\n") else raw_sysml + "\n"
     lines = [f"package {canonical_profile['package_name']} {{", ""]
     packages = canonical_profile["packages"]
     for index, package in enumerate(packages):
@@ -518,6 +521,58 @@ def render_projection_manifest(case_id: str) -> dict[str, Any] | None:
         },
     }
     return manifests.get(case_id)
+
+
+def render_cameo_display_guide(case_id: str) -> str | None:
+    case_profile = get_case_profile(case_id)
+    if not case_profile:
+        return None
+    guide = case_profile.get("cameo_display_guide")
+    if not guide:
+        return None
+    if isinstance(guide, str):
+        return guide if guide.endswith("\n") else guide + "\n"
+
+    lines: list[str] = [f"# {guide['title']}", ""]
+
+    intro = guide.get("intro", [])
+    if intro:
+        lines.extend(intro)
+        lines.append("")
+
+    basics = guide.get("basics", [])
+    if basics:
+        lines.append("## 基本操作")
+        lines.append("")
+        for item in basics:
+            lines.append(f"- {item}")
+        lines.append("")
+
+    lines.append("## View ごとの使い分け")
+    lines.append("")
+    for view in guide.get("views", []):
+        lines.append(f"### {view['view_name']}")
+        lines.append("")
+
+        for element in view.get("model_elements", []):
+            lines.append(f"- 対象要素: {element}")
+        for use_case in view.get("use_when", []):
+            lines.append(f"- 向いている用途: {use_case}")
+        for step in view.get("display_steps", []):
+            lines.append(f"- Cameo 操作: {step}")
+        for note in view.get("notes", []):
+            lines.append(f"- 補足: {note}")
+        lines.append("")
+
+    links = guide.get("links", [])
+    if links:
+        lines.append("## 公式リンク")
+        lines.append("")
+        for link in links:
+            lines.append(f"- [{link['label']}]({link['url']})")
+        lines.append("")
+
+    return "\n".join(lines).rstrip() + "\n"
 
 
 def _overlay_language(contracts: dict[str, Any]) -> str:

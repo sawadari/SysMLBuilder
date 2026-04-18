@@ -1,0 +1,115 @@
+document:
+  document_id: C12
+  document_name: Parking Sensor Mute State
+  language: en
+  domain: stateful_toggle
+contracts:
+- contract_id: C12-RQ-001
+  source_requirement_id: C12-RQ-001
+  source_anchor:
+    document_id: C12
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ParkingSensorAlertSystem
+  evidence:
+    quote: Each valid mute-button press shall toggle the parking sensor audio alert
+      state between MUTED and UNMUTED.
+- contract_id: C12-RQ-002
+  source_requirement_id: C12-RQ-002
+  source_anchor:
+    document_id: C12
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ParkingSensorAlertSystem
+  evidence:
+    quote: The system shall reset the audio alert state to UNMUTED at every power
+      cycle.
+- contract_id: C12-RQ-003
+  source_requirement_id: C12-RQ-003
+  source_anchor:
+    document_id: C12
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ParkingSensorAlertSystem
+  evidence:
+    quote: The system shall preserve visual alerts while audio alerts are muted.
+generic_case:
+  package: C12ParkingSensorMuteState
+  context: This case models a mute/unmute toggle and a power-cycle reset for parking
+    sensor audio alerts.
+  requirements_count: 3
+  structure:
+  - ParkingSensorAlertSystem
+  - ParkingSensorController
+  - AudioBuzzer
+  - VisualDisplay
+  interfaces:
+  - - MuteButtonPort
+    - muteButtonPressed
+    - MuteButtonValue
+    - in
+  - - AudioAlertPort
+    - audioAlertCommand
+    - AudioAlertValue
+    - out
+  - - VisualAlertPort
+    - visualAlertCommand
+    - VisualAlertValue
+    - out
+  part_ports:
+    ParkingSensorController:
+    - - muteButtonIn
+      - MuteButtonPort
+    - - audioOut
+      - AudioAlertPort
+    - - visualOut
+      - VisualAlertPort
+    AudioBuzzer:
+    - - audioIn
+      - ~AudioAlertPort
+    VisualDisplay:
+    - - visualIn
+      - ~VisualAlertPort
+    ParkingSensorAlertSystem: []
+  subparts:
+    ParkingSensorAlertSystem:
+    - - controller
+      - ParkingSensorController
+    - - buzzer
+      - AudioBuzzer
+    - - display
+      - VisualDisplay
+  interfaces_defs:
+  - - AudioAlertInterface
+    - AudioAlertPort
+    - AudioAlertPort
+    - audioAlertCommand
+  - - VisualAlertInterface
+    - VisualAlertPort
+    - VisualAlertPort
+    - visualAlertCommand
+  state_machine:
+    name: MuteStates
+    states:
+    - unmuted
+    - muted
+    transitions:
+    - - unmuted
+      - muted
+    - - muted
+      - unmuted

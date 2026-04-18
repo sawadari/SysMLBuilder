@@ -1,0 +1,104 @@
+document:
+  document_id: BATMOBILE-DP-002
+  document_name: Don't Panic Batmobile Displayable Symbolic Views
+  language: en
+  domain: public_reference
+contracts:
+- contract_id: C-BAT-D-001
+  source_requirement_id: REQ-BAT-D-001
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: Requirements
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_structure_core
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: Batmobile
+  evidence:
+    quote: Preserve the original Batmobile structural, behavioral, requirement, use
+      case, occurrence, concern, and variability elements from the public sample.
+- contract_id: C-BAT-D-002
+  source_requirement_id: REQ-BAT-D-002
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: Requirements
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_tabular_and_symbolic_views
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: batmobileParts
+  evidence:
+    quote: Preserve the `batmobileParts` tabular view and keep it filtered to non-standard
+      library elements while exposing the package contents.
+- contract_id: C-BAT-D-003
+  source_requirement_id: REQ-BAT-D-003
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: Requirements
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_structural_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: structural Modeling
+  evidence:
+    quote: Make the structural symbolic views displayable by adding non-standard-library
+      filtering and explicit `expose` targets for definition and usage, subclassification,
+      subsetting, redefinition, `structural Modeling`, `default value`, and `timeslice
+      modelling`.
+- contract_id: C-BAT-D-004
+  source_requirement_id: REQ-BAT-D-004
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: Requirements
+    sentence_index: 4
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_behavioral_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: behavioral modelling
+  evidence:
+    quote: Make the behavioral symbolic view displayable by adding filtering and `expose`
+      targets for `Drive Batmobile` and `ActivateRocketBooster`.
+- contract_id: C-BAT-D-005
+  source_requirement_id: REQ-BAT-D-005
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: Requirements
+    sentence_index: 5
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_use_case_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: use cases modelling
+  evidence:
+    quote: Make the use case symbolic view displayable by adding filtering and an
+      `expose` target for `Activate rocket booster`.
+- contract_id: C-BAT-D-006
+  source_requirement_id: REQ-BAT-D-006
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: Requirements
+    sentence_index: 6
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_requirement_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: requirements modelling
+  evidence:
+    quote: Make the requirements symbolic view and top-level `index` displayable by
+      adding filtering and explicit `expose` targets for requirement and view elements.

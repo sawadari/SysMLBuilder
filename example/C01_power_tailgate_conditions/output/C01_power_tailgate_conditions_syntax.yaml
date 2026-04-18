@@ -1,0 +1,17 @@
+tool_jar: tools/MCSysMLv2.jar
+root: example/C01_power_tailgate_conditions/output
+file_count: 4
+failure_count: 0
+results:
+- file: example/C01_power_tailgate_conditions/output/expected_en.sysml
+  status: ok
+  output: ''
+- file: example/C01_power_tailgate_conditions/output/expected_ja.sysml
+  status: ok
+  output: ''
+- file: example/C01_power_tailgate_conditions/output/generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example/C01_power_tailgate_conditions/output/generated_ja_canonical.sysml
+  status: ok
+  output: ''

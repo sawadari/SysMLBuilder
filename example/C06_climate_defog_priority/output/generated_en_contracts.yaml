@@ -1,0 +1,123 @@
+document:
+  document_id: C06
+  document_name: Climate Defog Priority
+  language: en
+  domain: multi_action_response
+contracts:
+- contract_id: C06-RQ-001
+  source_requirement_id: C06-RQ-001
+  source_anchor:
+    document_id: C06
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ClimateDefogSystem
+  evidence:
+    quote: When front defog is requested, the HVAC system shall set blower level to
+      5 or higher within 500 ms.
+- contract_id: C06-RQ-002
+  source_requirement_id: C06-RQ-002
+  source_anchor:
+    document_id: C06
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ClimateDefogSystem
+  evidence:
+    quote: The system shall command the air outlet mode to windshield mode while front
+      defog is active.
+- contract_id: C06-RQ-003
+  source_requirement_id: C06-RQ-003
+  source_anchor:
+    document_id: C06
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ClimateDefogSystem
+  evidence:
+    quote: The system shall turn the air conditioner ON while front defog is active
+      unless compressor protection is active.
+generic_case:
+  package: C06ClimateDefogPriority
+  context: This case coordinates blower level, compressor state, and outlet mode when
+    front defog is requested.
+  requirements_count: 3
+  structure:
+  - ClimateDefogSystem
+  - HvacController
+  - BlowerActuator
+  - AirMixActuator
+  - CompressorRelay
+  interfaces:
+  - - DefogRequestPort
+    - defogRequest
+    - DefogRequestValue
+    - in
+  - - BlowerCommandPort
+    - blowerCommand
+    - BlowerCommandValue
+    - out
+  - - OutletModePort
+    - outletModeCommand
+    - OutletModeValue
+    - out
+  - - AcCommandPort
+    - acCommand
+    - AcCommandValue
+    - out
+  part_ports:
+    HvacController:
+    - - defogIn
+      - DefogRequestPort
+    - - blowerOut
+      - BlowerCommandPort
+    - - outletModeOut
+      - OutletModePort
+    - - acOut
+      - AcCommandPort
+    BlowerActuator:
+    - - blowerIn
+      - ~BlowerCommandPort
+    AirMixActuator:
+    - - modeIn
+      - ~OutletModePort
+    CompressorRelay:
+    - - acIn
+      - ~AcCommandPort
+    ClimateDefogSystem: []
+  subparts:
+    ClimateDefogSystem:
+    - - controller
+      - HvacController
+    - - blower
+      - BlowerActuator
+    - - airMix
+      - AirMixActuator
+    - - compressor
+      - CompressorRelay
+  interfaces_defs:
+  - - BlowerCommandInterface
+    - BlowerCommandPort
+    - BlowerCommandPort
+    - blowerCommand
+  - - OutletModeInterface
+    - OutletModePort
+    - OutletModePort
+    - outletModeCommand
+  - - AcCommandInterface
+    - AcCommandPort
+    - AcCommandPort
+    - acCommand
+  state_machine: null

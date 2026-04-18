@@ -1,0 +1,93 @@
+document:
+  document_id: C10
+  document_name: ステアリングヒータ自動オフ
+  language: ja
+  domain: contextual_threshold
+contracts:
+- contract_id: C10-RQ-001
+  source_requirement_id: C10-RQ-001
+  source_anchor:
+    document_id: C10
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: SteeringWheelHeaterSystem
+  evidence:
+    quote: システムは、外気温が20℃を超える場合、ステアリングヒータ要求を拒否すること。
+- contract_id: C10-RQ-002
+  source_requirement_id: C10-RQ-002
+  source_anchor:
+    document_id: C10
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: SteeringWheelHeaterSystem
+  evidence:
+    quote: システムは、加熱が30 min連続した後、ステアリングヒータをOFFにすること。
+- contract_id: C10-RQ-003
+  source_requirement_id: C10-RQ-003
+  source_anchor:
+    document_id: C10
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: SteeringWheelHeaterSystem
+  evidence:
+    quote: システムは、イグニッションサイクルごとにヒータ状態をOFFへ戻すこと。
+generic_case:
+  package: C10SteeringWheelHeaterAutoOff
+  context: このケースは、周囲温度条件と自動タイムアウトを組み合わせたステアリングヒータを表します。
+  requirements_count: 3
+  structure:
+  - SteeringWheelHeaterSystem
+  - SteeringWheelHeaterController
+  - SteeringWheelHeaterElement
+  interfaces:
+  - - AmbientTemperaturePort
+    - ambientTemperature
+    - TemperatureValue
+    - in
+  - - HeatingRequestPort
+    - heaterRequest
+    - HeatingRequestValue
+    - in
+  - - HeatingLevelPort
+    - heatingLevelCommand
+    - HeatingLevelValue
+    - out
+  part_ports:
+    SteeringWheelHeaterController:
+    - - tempIn
+      - AmbientTemperaturePort
+    - - requestIn
+      - HeatingRequestPort
+    - - levelOut
+      - HeatingLevelPort
+    SteeringWheelHeaterElement:
+    - - levelIn
+      - ~HeatingLevelPort
+    SteeringWheelHeaterSystem: []
+  subparts:
+    SteeringWheelHeaterSystem:
+    - - controller
+      - SteeringWheelHeaterController
+    - - element
+      - SteeringWheelHeaterElement
+  interfaces_defs:
+  - - HeatingLevelInterface
+    - HeatingLevelPort
+    - HeatingLevelPort
+    - heatingLevelCommand
+  state_machine: null

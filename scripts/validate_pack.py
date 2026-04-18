@@ -6,7 +6,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILES = ROOT / 'profiles'
-TEST_GFSE = ROOT / 'testdata' / 'gfse_derived'
+TEST_GFSE = ROOT / 'example'
 REPORTS = ROOT / 'reports'
 DOCS = ROOT / 'docs'
 
@@ -71,11 +71,11 @@ rubric_profiles = rubric['case_profiles']
 
 for case_id, case in strict_cases.items():
     base = TEST_GFSE / case_id
-    req_path = TEST_GFSE / f'{case_id}_requirements.md'
-    contracts_path = TEST_GFSE / f'{case_id}_expected_contracts.yaml'
-    canonical_path = TEST_GFSE / f'{case_id}_expected_canonical.sysml'
-    overlay_path = TEST_GFSE / f'{case_id}_expected_review_overlay.sysml'
-    manifest_path = TEST_GFSE / f'{case_id}_expected_projection_manifest.yaml'
+    req_path = TEST_GFSE / case_id / 'input' / 'requirements_en.md'
+    contracts_path = TEST_GFSE / case_id / 'output' / 'expected_en_contracts.yaml'
+    canonical_path = TEST_GFSE / case_id / 'output' / 'expected_en_canonical.sysml'
+    overlay_path = TEST_GFSE / case_id / 'output' / 'expected_en_review_overlay.sysml'
+    manifest_path = TEST_GFSE / case_id / 'output' / 'expected_en_projection_manifest.yaml'
 
     expected = {
         'requirements': req_path.exists(),

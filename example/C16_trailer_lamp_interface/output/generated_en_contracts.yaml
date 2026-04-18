@@ -1,0 +1,114 @@
+document:
+  document_id: C16
+  document_name: Trailer Lamp Interface
+  language: en
+  domain: interface_contract
+contracts:
+- contract_id: C16-RQ-001
+  source_requirement_id: C16-RQ-001
+  source_anchor:
+    document_id: C16
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: TrailerLampSystem
+  evidence:
+    quote: The trailer lamp controller shall output left-turn, right-turn, and stop-lamp
+      commands on the trailer connector interface.
+- contract_id: C16-RQ-002
+  source_requirement_id: C16-RQ-002
+  source_anchor:
+    document_id: C16
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: TrailerLampSystem
+  evidence:
+    quote: The system shall detect trailer disconnect within 500 ms after connector
+      continuity is lost.
+- contract_id: C16-RQ-003
+  source_requirement_id: C16-RQ-003
+  source_anchor:
+    document_id: C16
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: TrailerLampSystem
+  evidence:
+    quote: The system shall suppress trailer-lamp commands when no trailer is detected.
+generic_case:
+  package: C16TrailerLampInterface
+  context: This case focuses on typed signal interfaces between the trailer controller
+    and the trailer lamp connector.
+  requirements_count: 3
+  structure:
+  - TrailerLampSystem
+  - TrailerLampController
+  - TrailerConnector
+  interfaces:
+  - - LeftTurnLampPort
+    - leftTurnLampCommand
+    - LampCommandValue
+    - out
+  - - RightTurnLampPort
+    - rightTurnLampCommand
+    - LampCommandValue
+    - out
+  - - StopLampPort
+    - stopLampCommand
+    - LampCommandValue
+    - out
+  - - TrailerPresencePort
+    - trailerDetected
+    - TrailerPresenceValue
+    - in
+  part_ports:
+    TrailerLampController:
+    - - trailerPresenceIn
+      - TrailerPresencePort
+    - - leftOut
+      - LeftTurnLampPort
+    - - rightOut
+      - RightTurnLampPort
+    - - stopOut
+      - StopLampPort
+    TrailerConnector:
+    - - leftIn
+      - ~LeftTurnLampPort
+    - - rightIn
+      - ~RightTurnLampPort
+    - - stopIn
+      - ~StopLampPort
+    TrailerLampSystem: []
+  subparts:
+    TrailerLampSystem:
+    - - controller
+      - TrailerLampController
+    - - connector
+      - TrailerConnector
+  interfaces_defs:
+  - - LeftTurnLampInterface
+    - LeftTurnLampPort
+    - LeftTurnLampPort
+    - leftTurnLampCommand
+  - - RightTurnLampInterface
+    - RightTurnLampPort
+    - RightTurnLampPort
+    - rightTurnLampCommand
+  - - StopLampInterface
+    - StopLampPort
+    - StopLampPort
+    - stopLampCommand
+  state_machine: null

@@ -1,0 +1,121 @@
+document:
+  document_id: C01
+  document_name: Power Tailgate Opening Conditions
+  language: en
+  domain: timed_response
+contracts:
+- contract_id: C01-RQ-001
+  source_requirement_id: C01-RQ-001
+  source_anchor:
+    document_id: C01
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: PowerTailgateSystem
+  evidence:
+    quote: The power tailgate system shall accept an open request only when vehicle
+      speed is less than 3 km/h and shift position is P.
+- contract_id: C01-RQ-002
+  source_requirement_id: C01-RQ-002
+  source_anchor:
+    document_id: C01
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: PowerTailgateSystem
+  evidence:
+    quote: After a valid close request, the system shall start closing within 200
+      ms.
+- contract_id: C01-RQ-003
+  source_requirement_id: C01-RQ-003
+  source_anchor:
+    document_id: C01
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: PowerTailgateSystem
+  evidence:
+    quote: When an obstacle is detected during closing, the system shall stop within
+      50 ms and reverse for at least 200 ms.
+generic_case:
+  package: C01PowerTailgateConditions
+  context: This case describes a power tailgate that checks vehicle conditions before
+    opening and reacts to obstacles during closing.
+  requirements_count: 3
+  structure:
+  - PowerTailgateSystem
+  - TailgateController
+  - TailgateActuator
+  - ObstacleSensor
+  interfaces:
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - ShiftPositionPort
+    - shiftPosition
+    - ShiftPositionValue
+    - in
+  - - TailgateCommandPort
+    - tailgateCommand
+    - TailgateCommandValue
+    - out
+  - - ObstacleSignalPort
+    - obstacleDetected
+    - ObstacleSignalValue
+    - in
+  part_ports:
+    TailgateController:
+    - - speedIn
+      - VehicleSpeedPort
+    - - shiftIn
+      - ShiftPositionPort
+    - - obstacleIn
+      - ObstacleSignalPort
+    - - commandOut
+      - TailgateCommandPort
+    TailgateActuator:
+    - - commandIn
+      - ~TailgateCommandPort
+    ObstacleSensor:
+    - - obstacleOut
+      - ObstacleSignalPort
+    PowerTailgateSystem: []
+  subparts:
+    PowerTailgateSystem:
+    - - controller
+      - TailgateController
+    - - actuator
+      - TailgateActuator
+    - - sensor
+      - ObstacleSensor
+  interfaces_defs:
+  - - TailgateCommandInterface
+    - TailgateCommandPort
+    - TailgateCommandPort
+    - tailgateCommand
+  state_machine:
+    name: TailgateMotionStates
+    states:
+    - idle
+    - closing
+    - reversing
+    transitions:
+    - - idle
+      - closing
+    - - closing
+      - reversing
+    - - reversing
+      - idle

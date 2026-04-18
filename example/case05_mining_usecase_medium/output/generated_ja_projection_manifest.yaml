@@ -1,0 +1,22 @@
+use_cases:
+- sysml_name: MineAsteroids
+  source_contract: C-UC-001
+  subject_type: MiningFrigate
+  actors:
+  - PilotPod
+  - AsteroidBelt
+- sysml_name: OffloadOreAndResupply
+  source_contract: C-UC-002
+  subject_type: MiningFrigate
+  actors:
+  - Station
+derived_requirements:
+- sysml_name: operationalObjectives
+  source_contract: C-UC-001|C-UC-002
+views:
+- id: VIEW-UC-001
+  target: UseCases::MineAsteroids
+  rendering: textual_objective
+- id: VIEW-UC-002
+  target: UseCases::OffloadOreAndResupply
+  rendering: textual_objective

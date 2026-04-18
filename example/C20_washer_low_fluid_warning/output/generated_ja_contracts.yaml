@@ -1,0 +1,87 @@
+document:
+  document_id: C20
+  document_name: ウォッシャ液残量低下警告
+  language: ja
+  domain: threshold_monitoring
+contracts:
+- contract_id: C20-RQ-001
+  source_requirement_id: C20-RQ-001
+  source_anchor:
+    document_id: C20
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: WasherFluidWarningSystem
+  evidence:
+    quote: システムは、ウォッシャ液残量低下が2 s継続した場合、500 ms以内に残量低下警告を表示すること。
+- contract_id: C20-RQ-002
+  source_requirement_id: C20-RQ-002
+  source_anchor:
+    document_id: C20
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: WasherFluidWarningSystem
+  evidence:
+    quote: システムは、2 s未満の一時的な低レベル検知に対して警告を表示しないこと。
+- contract_id: C20-RQ-003
+  source_requirement_id: C20-RQ-003
+  source_anchor:
+    document_id: C20
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: WasherFluidWarningSystem
+  evidence:
+    quote: システムは、液量が正常状態で5 s継続した場合、警告を解除すること。
+generic_case:
+  package: C20WasherLowFluidWarning
+  context: このケースは、ウォッシャ液残量低下をデバウンス付きで検知し、補充後に警告を解除する機能を表します。
+  requirements_count: 3
+  structure:
+  - WasherFluidWarningSystem
+  - FluidLevelMonitor
+  - ClusterDisplay
+  interfaces:
+  - - FluidLevelPort
+    - fluidLow
+    - FluidLevelValue
+    - in
+  - - DisplayCommandPort
+    - displayCommand
+    - DisplayCommandValue
+    - out
+  part_ports:
+    FluidLevelMonitor:
+    - - fluidIn
+      - FluidLevelPort
+    - - displayOut
+      - DisplayCommandPort
+    ClusterDisplay:
+    - - commandIn
+      - ~DisplayCommandPort
+    WasherFluidWarningSystem: []
+  subparts:
+    WasherFluidWarningSystem:
+    - - monitor
+      - FluidLevelMonitor
+    - - display
+      - ClusterDisplay
+  interfaces_defs:
+  - - DisplayCommandInterface
+    - DisplayCommandPort
+    - DisplayCommandPort
+    - displayCommand
+  state_machine: null

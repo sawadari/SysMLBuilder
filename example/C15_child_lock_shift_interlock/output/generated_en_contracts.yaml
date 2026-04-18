@@ -1,0 +1,101 @@
+document:
+  document_id: C15
+  document_name: Child Lock Shift Interlock
+  language: en
+  domain: gated_capability
+contracts:
+- contract_id: C15-RQ-001
+  source_requirement_id: C15-RQ-001
+  source_anchor:
+    document_id: C15
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChildLockSystem
+  evidence:
+    quote: The system shall allow child-lock activation only when shift position is
+      P and vehicle speed is 0 km/h.
+- contract_id: C15-RQ-002
+  source_requirement_id: C15-RQ-002
+  source_anchor:
+    document_id: C15
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChildLockSystem
+  evidence:
+    quote: The system shall reject child-lock activation while any rear door is open.
+- contract_id: C15-RQ-003
+  source_requirement_id: C15-RQ-003
+  source_anchor:
+    document_id: C15
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChildLockSystem
+  evidence:
+    quote: When a valid child-lock deactivation request is received, the system shall
+      complete the deactivation within 500 ms.
+generic_case:
+  package: C15ChildLockShiftInterlock
+  context: This case allows child-lock state changes only under safe vehicle conditions.
+  requirements_count: 3
+  structure:
+  - ChildLockSystem
+  - ChildLockController
+  - RearDoorLockActuator
+  interfaces:
+  - - ShiftPositionPort
+    - shiftPosition
+    - ShiftPositionValue
+    - in
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - DoorStatusPort
+    - rearDoorOpen
+    - DoorStatusValue
+    - in
+  - - LockCommandPort
+    - childLockCommand
+    - LockCommandValue
+    - out
+  part_ports:
+    ChildLockController:
+    - - shiftIn
+      - ShiftPositionPort
+    - - speedIn
+      - VehicleSpeedPort
+    - - doorStatusIn
+      - DoorStatusPort
+    - - commandOut
+      - LockCommandPort
+    RearDoorLockActuator:
+    - - commandIn
+      - ~LockCommandPort
+    ChildLockSystem: []
+  subparts:
+    ChildLockSystem:
+    - - controller
+      - ChildLockController
+    - - actuator
+      - RearDoorLockActuator
+  interfaces_defs:
+  - - ChildLockCommandInterface
+    - LockCommandPort
+    - LockCommandPort
+    - childLockCommand
+  state_machine: null

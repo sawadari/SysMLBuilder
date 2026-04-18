@@ -1,0 +1,17 @@
+tool_jar: tools/MCSysMLv2.jar
+root: example/C19_drive_mode_state_transition/output
+file_count: 4
+failure_count: 0
+results:
+- file: example/C19_drive_mode_state_transition/output/expected_en.sysml
+  status: ok
+  output: ''
+- file: example/C19_drive_mode_state_transition/output/expected_ja.sysml
+  status: ok
+  output: ''
+- file: example/C19_drive_mode_state_transition/output/generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example/C19_drive_mode_state_transition/output/generated_ja_canonical.sysml
+  status: ok
+  output: ''

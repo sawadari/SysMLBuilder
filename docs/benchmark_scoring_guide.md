@@ -1,59 +1,77 @@
-# GfSE strict benchmark 採点ガイド
+# ベンチマーク採点ガイド
 
 ## この文書の目的
-この文書は、`testdata/gfse_derived/` にあるケースをどう採点するかを説明するものです。
 
-## 採点の原則
-### 1. strict benchmark は direct_file_grounded のみ
-厳密採点の対象は、参照元 `.sysml` ファイルを直接確認して作成したケースだけです。
+この文書は、`example/` にある benchmark ケースをどう評価するかを説明するものです。  
+「何を見て良し悪しを判断するのか」を、難しい言い方を避けてまとめています。
 
-### 2. case ごとに採点軸を変える
-Vehicle の定量 requirement と、UseCase の narrative では、成功条件が違います。
-そのため、1本の万能 rubric ではなく、case ごとに重みを持ちます。
+## 採点の基本方針
 
-### 3. canonical と overlay は別採点
-- canonical は **正式モデルとしての整合**
-- overlay は **不足の見つけ方と仮案の透明性**
+### 1. 根拠がはっきりしたケースを重視する
 
-を見ます。
+strict benchmark では、元になった `.sysml` ファイルを直接確認できるケースを重視します。  
+理由は、期待出力をぶれにくくするためです。
 
-## 主要な採点観点
-- Requirement Contract の slot 充足
-- pattern 分類の正しさ
-- requirement usage への parameterization
-- typed port / interface def / flow の保持
-- satisfy / allocation / view target の分離
-- use case actor / objective / main-exception flow の保持
-- missing slot / open question / llm proposal の overlay 分離
-- provenance と traceability
+### 2. ケースごとに見る点が違う
 
-## 充足性レベルごとの期待
+数値つき要求のケースと、use case 中心のケースでは、見るべき点が違います。  
+そのため、すべてを 1 つの同じ基準で見るのではなく、ケースごとに重点を変えます。
+
+### 3. canonical と overlay は別々に見る
+
+- `canonical.sysml`
+  正式モデルとして整っているかを見る
+- `review_overlay.sysml`
+  不足や曖昧さをきちんと分けているかを見る
+
+## 主な採点ポイント
+
+- Requirement Contract に必要な項目が入っているか
+- 要求の分類が大きく外れていないか
+- 数値、単位、条件が保たれているか
+- typed port や interface の情報が落ちていないか
+- use case の actor や flow が保たれているか
+- 足りない情報が overlay 側へ分けられているか
+- 入力と出力の対応を追えるか
+
+## 充足性レベルの見方
+
 ### high
-- canonical model を主成果物にする
-- overlay は不要か最小
-- threshold や IF は具体的に出るべき
+
+- canonical を主成果物として期待する
+- 数値や interface が具体的に出ていることを期待する
+- overlay はないか、あっても最小限が望ましい
 
 ### medium
-- canonical と overlay の両方を許可
-- narrative の保持と gap 可視化の両立が必要
+
+- canonical と overlay の両方があってよい
+- 正式化できた部分と、確認待ちの部分の分け方を見る
 
 ### low
-- canonical を無理に作らない
-- overlay 側で missing slot と review action を明示する
 
-## 採点の使い方
-1. `case_manifest.yaml` で case の期待 artifact を確認する
-2. `scoring_rubric.yaml` で case ごとの重みを読む
-3. expected contracts / expected `.sysml` と比較する
-4. strict lint を満たしているかを見る
-5. 総合点と fail-fast 条件を判定する
+- 無理に canonical を作らない方がよい
+- overlay に不足情報や確認事項が出ていることを重視する
 
-## fail-fast 条件
-次のいずれかが起きたら、その case は自動 fail にする方がよいです。
+## 採点するときの手順
 
-- canonical に draft / missing slot が混入している
-- requirement def に subject がない
-- untyped port がある
-- use case def に subject または objective がない
-- low case なのに overlay を出さずに canonical へ確定している
-- source trace が direct_file_grounded でないのに strict 採点へ入っている
+1. `case_manifest.yaml` で、そのケースが何を期待しているか見る
+2. `scoring_rubric.yaml` で、どこを重く評価するか見る
+3. 期待出力と実際の出力を比較する
+4. strict lint の条件を満たすか確認する
+5. 最後に全体として妥当か判断する
+
+## 自動で失敗にしやすい例
+
+次のような場合は、大きな問題として扱いやすいです。
+
+- canonical に仮置き情報や不足情報が混ざっている
+- requirement の対象が分からない
+- untyped port が出ている
+- use case に目的や主体がない
+- low ケースなのに、曖昧さを無視して canonical に確定している
+- 根拠が弱いケースを strict benchmark に入れている
+
+## ひとことで言うと
+
+この採点ガイドが見ているのは、「それっぽい SysML が出たか」ではありません。  
+「根拠を保ちながら、明確な内容と曖昧な内容を正しく分けられたか」を見ています。

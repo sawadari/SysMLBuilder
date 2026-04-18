@@ -1,28 +1,82 @@
-# どこを変えれば何が変わるか
+# 設定変更の早見表
 
-| 変えたいもの | 主に触るファイル | 補足 |
+## この文書の使い方
+
+「何を変えたいときに、どのファイルを見ればよいか」をすぐ分かるようにした一覧です。  
+細かい実装に入る前の入口として使ってください。
+
+## まず見る表
+
+| 変えたいこと | 主に触るファイル | ひとことで言うと |
 |---|---|---|
-| Requirement Contract の必須 slot | `profiles/requirement_contract.yaml` | context / actor / flow / IF slot を調整する |
-| pattern の分け方 | `profiles/requirement_patterns.yaml` | detect / required_slots / projectors を変える |
-| use case を canonical に出すか | `profiles/projection_profiles.yaml` | `use_cases` projector を調整する |
-| strict benchmark の採点対象 | `profiles/gfse_reference_benchmark_profile.yaml` | strict case 一覧と trace quality policy を変える |
-| 充足性レベルの意味 | `profiles/satisfiability_model.yaml` | high / medium / low の期待 artifact を変える |
-| strict lint の厳しさ | `profiles/benchmark_lints.yaml` と `profiles/model_lints.yaml` | fail-fast 条件を変える |
-| GfSE 由来の example retrieval | `profiles/example_retrieval.yaml` | 参照例のランキングや優先度を変える |
-| 採点基準 | `testdata/gfse_derived/scoring_rubric.yaml` | case ごとの重みを変える |
-| validator の具体的な検査 | `scripts/validate_pack.py` | regex / schema / file existence の検査を追加する |
+| Requirement Contract の項目を増やしたい | `profiles/requirement_contract.yaml` | 中間データの形を決める |
+| 要求の分類方法を変えたい | `profiles/requirement_patterns.yaml` | どの要求を何として読むかを決める |
+| canonical と overlay の出し分けを変えたい | `profiles/projection_profiles.yaml` | どの出力へ送るかを決める |
+| strict benchmark の対象を変えたい | `profiles/gfse_reference_benchmark_profile.yaml` | 厳密比較するケースを決める |
+| high / medium / low の考え方を変えたい | `profiles/satisfiability_model.yaml` | 期待する成果物のレベルを決める |
+| lint の厳しさを変えたい | `profiles/benchmark_lints.yaml` と `profiles/model_lints.yaml` | エラー判定の条件を決める |
+| 参考例の出し方を変えたい | `profiles/example_retrieval.yaml` | 参照例の優先度を決める |
+| 採点基準を変えたい | `example/scoring_rubric.yaml` | 何を重く評価するかを決める |
+| 検証スクリプトを変えたい | `scripts/validate_pack.py` | 実際のチェック内容を変える |
 
-## 開発優先順位
-1. `requirement_patterns.yaml`
-2. `projection_profiles.yaml`
-3. `requirement_contract.yaml`
-4. `scoring_rubric.yaml`
-5. `benchmark_lints.yaml`
+## よくある変更パターン
+
+### 新しい要求タイプを追加したい
+
+主に見るファイル:
+
+- `profiles/requirement_patterns.yaml`
+- `profiles/requirement_contract.yaml`
+- `profiles/projection_profiles.yaml`
+
+考える順番:
+
+1. その要求をどう見分けるか
+2. 中間データに何を持たせるか
+3. canonical に出すか overlay に出すか
+
+### use case の扱いを変えたい
+
+主に見るファイル:
+
+- `profiles/requirement_patterns.yaml`
+- `profiles/projection_profiles.yaml`
+
+確認したい点:
+
+- use case として扱う条件
+- actor や flow をどこまで残すか
+- canonical にどこまで入れるか
+
+### 厳密比較をもっと厳しくしたい
+
+主に見るファイル:
+
+- `profiles/benchmark_lints.yaml`
+- `profiles/model_lints.yaml`
+- `example/scoring_rubric.yaml`
+
+## 迷ったときの優先順
+
+何から触るか迷ったら、次の順で確認すると分かりやすいです。
+
+1. `profiles/requirement_patterns.yaml`
+2. `profiles/projection_profiles.yaml`
+3. `profiles/requirement_contract.yaml`
+4. `example/scoring_rubric.yaml`
+5. `profiles/benchmark_lints.yaml`
 6. `scripts/validate_pack.py`
 
-## よくある誤り
-- use case narrative を全部 requirement へ潰す
-- context 別 threshold を 1 本に潰す
-- typed port を省略する
-- low case でも canonical を無理に出す
-- direct trace が弱いケースを strict 採点へ入れる
+## よくあるミス
+
+- 項目を追加したのに、要求分類側でその項目を使っていない
+- canonical に出したいのに、出力方針では overlay のままになっている
+- lint だけ厳しくして、期待出力や採点基準を見直していない
+- use case を普通の requirement と同じように扱って情報を落としてしまう
+
+## 関連文書
+
+- 設計意図:
+  [developer_design_rationale.md](docs/developer_design_rationale.md)
+- 利用ガイド:
+  [user_input_to_sysml_flow.md](docs/user_input_to_sysml_flow.md)

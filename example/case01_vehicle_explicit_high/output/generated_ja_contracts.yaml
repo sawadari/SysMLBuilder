@@ -1,0 +1,107 @@
+document:
+  document_id: GFSE-CASE01
+  document_name: 車両の定量性能およびインタフェース要求
+  language: ja
+  domain: vehicle_system
+contracts:
+- contract_id: C-VEH-001
+  source_requirement_id: REQ-VEH-001
+  source_anchor:
+    document_id: GFSE-CASE01
+    section: Requirements
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: quantified_property_constraint
+    confidence: 0.97
+  subject:
+    kind: system
+    canonical_name: Vehicle
+  evidence:
+    quote: 車両の総質量は2000 kg以下でなければならない。
+  measured_property: mass
+  comparator: <=
+  threshold_value: 2000
+  threshold_unit: kg
+  responsible_module: Vehicle
+- contract_id: C-VEH-002
+  source_requirement_id: REQ-VEH-002
+  source_anchor:
+    document_id: GFSE-CASE01
+    section: Requirements
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: contextual_quantified_performance
+    confidence: 0.96
+  subject:
+    kind: system
+    canonical_name: Vehicle
+  evidence:
+    quote: 車両は、想定貨物質量が少なくとも500 kgの通常市街地走行シナリオにおいて、平均市街地燃費を少なくとも25 mpg維持しなければならない。
+  measured_property: fuelEconomy
+  operating_contexts:
+  - CityNominal
+  contextual_thresholds:
+  - context: CityNominal
+    comparator: '>='
+    value: 25
+    unit: mpg
+  assumption_constraints:
+  - lhs: assumedCargoMass
+    operator: '>='
+    rhs: 500
+    unit: kg
+- contract_id: C-VEH-003
+  source_requirement_id: REQ-VEH-003
+  source_anchor:
+    document_id: GFSE-CASE01
+    section: Requirements
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: contextual_quantified_performance
+    confidence: 0.96
+  subject:
+    kind: system
+    canonical_name: Vehicle
+  evidence:
+    quote: 車両は、想定貨物質量が少なくとも500 kgの通常高速走行シナリオにおいて、平均高速燃費を少なくとも30 mpg維持しなければならない。
+  measured_property: fuelEconomy
+  operating_contexts:
+  - HighwayNominal
+  contextual_thresholds:
+  - context: HighwayNominal
+    comparator: '>='
+    value: 30
+    unit: mpg
+  assumption_constraints:
+  - lhs: assumedCargoMass
+    operator: '>='
+    rhs: 500
+    unit: kg
+- contract_id: C-VEH-004
+  source_requirement_id: REQ-VEH-004
+  source_anchor:
+    document_id: GFSE-CASE01
+    section: Requirements
+    sentence_index: 4
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: interface_transfer
+    confidence: 0.95
+  subject:
+    kind: module
+    canonical_name: Engine
+  evidence:
+    quote: エンジンはクラッチインタフェースを介して生成トルクをトランスミッションへ伝達しなければならない。
+  interface_name: EngineToTransmissionInterface
+  interface_ends:
+  - role: p1
+    port_type: DrivePwrPort
+  - role: p2
+    port_type: ClutchPort
+  flows:
+  - item: Torque
+    from: p1
+    to: p2

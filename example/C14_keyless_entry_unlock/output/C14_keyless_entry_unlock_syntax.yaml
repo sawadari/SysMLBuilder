@@ -1,0 +1,17 @@
+tool_jar: tools/MCSysMLv2.jar
+root: example/C14_keyless_entry_unlock/output
+file_count: 4
+failure_count: 0
+results:
+- file: example/C14_keyless_entry_unlock/output/expected_en.sysml
+  status: ok
+  output: ''
+- file: example/C14_keyless_entry_unlock/output/expected_ja.sysml
+  status: ok
+  output: ''
+- file: example/C14_keyless_entry_unlock/output/generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example/C14_keyless_entry_unlock/output/generated_ja_canonical.sysml
+  status: ok
+  output: ''

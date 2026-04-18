@@ -1,0 +1,111 @@
+document:
+  document_id: C16
+  document_name: トレーラランプインタフェース
+  language: ja
+  domain: interface_contract
+contracts:
+- contract_id: C16-RQ-001
+  source_requirement_id: C16-RQ-001
+  source_anchor:
+    document_id: C16
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: TrailerLampSystem
+  evidence:
+    quote: トレーラランプコントローラは、左方向指示、右方向指示、および制動灯の各指令をトレーラコネクタインタフェースへ出力すること。
+- contract_id: C16-RQ-002
+  source_requirement_id: C16-RQ-002
+  source_anchor:
+    document_id: C16
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: TrailerLampSystem
+  evidence:
+    quote: システムは、コネクタ導通が失われた後500 ms以内にトレーラ切断を検知すること。
+- contract_id: C16-RQ-003
+  source_requirement_id: C16-RQ-003
+  source_anchor:
+    document_id: C16
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: TrailerLampSystem
+  evidence:
+    quote: システムは、トレーラ未接続時にトレーラランプ指令を抑止すること。
+generic_case:
+  package: C16TrailerLampInterface
+  context: このケースは、トレーラコントローラとトレーラランプコネクタ間の型付き信号インタフェースに焦点を当てます。
+  requirements_count: 3
+  structure:
+  - TrailerLampSystem
+  - TrailerLampController
+  - TrailerConnector
+  interfaces:
+  - - LeftTurnLampPort
+    - leftTurnLampCommand
+    - LampCommandValue
+    - out
+  - - RightTurnLampPort
+    - rightTurnLampCommand
+    - LampCommandValue
+    - out
+  - - StopLampPort
+    - stopLampCommand
+    - LampCommandValue
+    - out
+  - - TrailerPresencePort
+    - trailerDetected
+    - TrailerPresenceValue
+    - in
+  part_ports:
+    TrailerLampController:
+    - - trailerPresenceIn
+      - TrailerPresencePort
+    - - leftOut
+      - LeftTurnLampPort
+    - - rightOut
+      - RightTurnLampPort
+    - - stopOut
+      - StopLampPort
+    TrailerConnector:
+    - - leftIn
+      - ~LeftTurnLampPort
+    - - rightIn
+      - ~RightTurnLampPort
+    - - stopIn
+      - ~StopLampPort
+    TrailerLampSystem: []
+  subparts:
+    TrailerLampSystem:
+    - - controller
+      - TrailerLampController
+    - - connector
+      - TrailerConnector
+  interfaces_defs:
+  - - LeftTurnLampInterface
+    - LeftTurnLampPort
+    - LeftTurnLampPort
+    - leftTurnLampCommand
+  - - RightTurnLampInterface
+    - RightTurnLampPort
+    - RightTurnLampPort
+    - rightTurnLampCommand
+  - - StopLampInterface
+    - StopLampPort
+    - StopLampPort
+    - stopLampCommand
+  state_machine: null

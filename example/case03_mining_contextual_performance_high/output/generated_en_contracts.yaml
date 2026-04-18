@@ -1,0 +1,74 @@
+document:
+  document_id: GFSE-CASE03
+  document_name: Mining frigate contextual performance requirements
+  language: en
+  domain: space_system
+contracts:
+- contract_id: C-MF-001
+  source_requirement_id: REQ-MF-001
+  source_anchor:
+    document_id: GFSE-CASE03
+    section: Requirements
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: quantified_property_constraint
+    confidence: 0.98
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  evidence:
+    quote: The mining frigate shall have a cargo capacity of at least 5000 m3.
+  measured_property: cargoCapacity
+  comparator: '>='
+  threshold_value: 5000
+  threshold_unit: m3
+- contract_id: C-MF-002
+  source_requirement_id: REQ-MF-002
+  source_anchor:
+    document_id: GFSE-CASE03
+    section: Requirements
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: contextual_quantified_performance
+    confidence: 0.97
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  evidence:
+    quote: The mining frigate shall withstand at least 200 DPS in High Sec operations.
+  measured_property: shieldStrength
+  operating_contexts:
+  - HighSec
+  contextual_thresholds:
+  - context: HighSec
+    comparator: '>='
+    value: 200
+    unit: DPS
+- contract_id: C-MF-003
+  source_requirement_id: REQ-MF-003
+  source_anchor:
+    document_id: GFSE-CASE03
+    section: Requirements
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: contextual_quantified_performance
+    confidence: 0.97
+  subject:
+    kind: system
+    canonical_name: MiningFrigate
+  evidence:
+    quote: The mining frigate shall withstand at least 400 DPS in Low Sec, Null Sec,
+      and Wormhole operations.
+  measured_property: shieldStrength
+  operating_contexts:
+  - LowSec
+  - NullSec
+  - Wormhole
+  contextual_thresholds:
+  - context: LowSec|NullSec|Wormhole
+    comparator: '>='
+    value: 400
+    unit: DPS

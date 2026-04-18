@@ -1,0 +1,117 @@
+document:
+  document_id: C02
+  document_name: オートウインドウ挟み込み防止
+  language: ja
+  domain: fault_reaction
+contracts:
+- contract_id: C02-RQ-001
+  source_requirement_id: C02-RQ-001
+  source_anchor:
+    document_id: C02
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: AutoWindowSystem
+  evidence:
+    quote: オートウインドウシステムは、閉スイッチが300 ms以上押下された場合に自動閉動作を開始すること。
+- contract_id: C02-RQ-002
+  source_requirement_id: C02-RQ-002
+  source_anchor:
+    document_id: C02
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: AutoWindowSystem
+  evidence:
+    quote: システムは、対応するドアが開いている間、自動閉動作を禁止すること。
+- contract_id: C02-RQ-003
+  source_requirement_id: C02-RQ-003
+  source_anchor:
+    document_id: C02
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: AutoWindowSystem
+  evidence:
+    quote: システムは、自動閉動作中に挟み込みを検知した場合、30 ms以内に停止し、ガラスを少なくとも100 mm下降させること。
+generic_case:
+  package: C02AutoWindowAntiPinch
+  context: このケースは、挟み込み防止機能とドア開時の禁止条件を持つオートウインドウ機能を表します。
+  requirements_count: 3
+  structure:
+  - AutoWindowSystem
+  - WindowController
+  - WindowMotor
+  - PinchSensor
+  interfaces:
+  - - WindowSwitchPort
+    - closeRequest
+    - WindowSwitchValue
+    - in
+  - - DoorStatusPort
+    - doorOpen
+    - DoorStatusValue
+    - in
+  - - PinchSignalPort
+    - pinchDetected
+    - PinchSignalValue
+    - in
+  - - WindowMotorCommandPort
+    - windowCommand
+    - WindowMotorCommandValue
+    - out
+  part_ports:
+    WindowController:
+    - - switchIn
+      - WindowSwitchPort
+    - - doorStatusIn
+      - DoorStatusPort
+    - - pinchIn
+      - PinchSignalPort
+    - - commandOut
+      - WindowMotorCommandPort
+    WindowMotor:
+    - - commandIn
+      - ~WindowMotorCommandPort
+    PinchSensor:
+    - - pinchOut
+      - PinchSignalPort
+    AutoWindowSystem: []
+  subparts:
+    AutoWindowSystem:
+    - - controller
+      - WindowController
+    - - motor
+      - WindowMotor
+    - - sensor
+      - PinchSensor
+  interfaces_defs:
+  - - WindowMotorCommandInterface
+    - WindowMotorCommandPort
+    - WindowMotorCommandPort
+    - windowCommand
+  state_machine:
+    name: WindowMotionStates
+    states:
+    - idle
+    - autoClosing
+    - reverseOpen
+    transitions:
+    - - idle
+      - autoClosing
+    - - autoClosing
+      - reverseOpen
+    - - reverseOpen
+      - idle

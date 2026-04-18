@@ -1,0 +1,99 @@
+document:
+  document_id: C03
+  document_name: ドアロック車速連動
+  language: ja
+  domain: timed_gated_capability
+contracts:
+- contract_id: C03-RQ-001
+  source_requirement_id: C03-RQ-001
+  source_anchor:
+    document_id: C03
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DoorLockSystem
+  evidence:
+    quote: ドアロックシステムは、車速が20 km/h以上の状態が3 s継続した場合、全ドアを施錠すること。
+- contract_id: C03-RQ-002
+  source_requirement_id: C03-RQ-002
+  source_anchor:
+    document_id: C03
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DoorLockSystem
+  evidence:
+    quote: システムは、いずれかのドアが半ドアの間、自動施錠を実行しないこと。
+- contract_id: C03-RQ-003
+  source_requirement_id: C03-RQ-003
+  source_anchor:
+    document_id: C03
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DoorLockSystem
+  evidence:
+    quote: システムは、イグニッションがOFFでシフト位置がPに変化した場合、500 ms以内に運転席ドアを解錠すること。
+generic_case:
+  package: C03DoorLockSpeedInterlock
+  context: このケースは、車速、シフト位置、ドア状態に基づく自動ロック・自動アンロックを表します。
+  requirements_count: 3
+  structure:
+  - DoorLockSystem
+  - DoorLockController
+  - DoorLockActuator
+  interfaces:
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - DoorStatusPort
+    - doorAjar
+    - DoorStatusValue
+    - in
+  - - ShiftPositionPort
+    - shiftPosition
+    - ShiftPositionValue
+    - in
+  - - DoorLockCommandPort
+    - lockCommand
+    - DoorLockCommandValue
+    - out
+  part_ports:
+    DoorLockController:
+    - - speedIn
+      - VehicleSpeedPort
+    - - doorStatusIn
+      - DoorStatusPort
+    - - shiftIn
+      - ShiftPositionPort
+    - - commandOut
+      - DoorLockCommandPort
+    DoorLockActuator:
+    - - commandIn
+      - ~DoorLockCommandPort
+    DoorLockSystem: []
+  subparts:
+    DoorLockSystem:
+    - - controller
+      - DoorLockController
+    - - actuator
+      - DoorLockActuator
+  interfaces_defs:
+  - - DoorLockCommandInterface
+    - DoorLockCommandPort
+    - DoorLockCommandPort
+    - lockCommand
+  state_machine: null

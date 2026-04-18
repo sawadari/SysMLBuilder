@@ -8,16 +8,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-import generate_japanese_suite
 from sysml_builder.pipeline import transform_markdown
 from sysml_builder.renderer import JA_RENDER_REPLACEMENTS
 
 
 def _replacement_pairs() -> list[tuple[str, str]]:
     pairs: list[tuple[str, str]] = []
-    for replacements in generate_japanese_suite.FILE_REPLACEMENTS.values():
-        pairs.extend((target, source) for source, target in replacements)
-    pairs.extend((target, source) for source, target in generate_japanese_suite.GLOBAL_REPLACEMENTS)
     pairs.extend((target, source) for source, target in JA_RENDER_REPLACEMENTS)
     return pairs
 
@@ -53,15 +49,13 @@ def _normalize_value(value: Any) -> Any:
 
 
 def main() -> int:
-    generate_japanese_suite.main()
-    en_root = ROOT / "testdata" / "gfse_derived"
-    ja_root = ROOT / "testdata" / "gfse_derived_ja"
-    case_ids = sorted(path.name.replace("_requirements.md", "") for path in en_root.glob("*_requirements.md"))
+    suite_root = ROOT / "example"
+    case_ids = sorted(path.name for path in suite_root.glob("case*") if path.is_dir())
     failures = 0
 
     for case_id in case_ids:
-        en_result = transform_markdown(en_root / f"{case_id}_requirements.md")
-        ja_result = transform_markdown(ja_root / f"{case_id}_requirements.md")
+        en_result = transform_markdown(suite_root / case_id / "input" / "requirements_en.md")
+        ja_result = transform_markdown(suite_root / case_id / "input" / "requirements_ja.md")
 
         if _normalize_value(ja_result.contracts) != _normalize_value(en_result.contracts):
             print(f"FAIL contracts: {case_id}")

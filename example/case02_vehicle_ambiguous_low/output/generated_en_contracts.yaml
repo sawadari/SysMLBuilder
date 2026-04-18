@@ -1,0 +1,87 @@
+document:
+  document_id: GFSE-CASE02
+  document_name: Vehicle ambiguous performance requirements
+  language: en
+  domain: vehicle_system
+contracts:
+- contract_id: C-VEH-L-001
+  source_requirement_id: REQ-VEH-L-001
+  source_anchor:
+    document_id: GFSE-CASE02
+    section: Requirements
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: ambiguous_quality_claim
+    confidence: 0.91
+  subject:
+    kind: system
+    canonical_name: Vehicle
+  evidence:
+    quote: The vehicle shall be lightweight.
+  gaps:
+  - threshold_value
+  - threshold_unit
+  - measured_property
+  llm_proposals:
+  - proposal_id: P-VEH-L-001
+    missing_slot: threshold_value
+    proposed_value: '2000'
+    confidence: 0.56
+    rationale: Mass requirement in VehicleModel uses a 2000 kg style threshold.
+  - proposal_id: P-VEH-L-002
+    missing_slot: measured_property
+    proposed_value: mass
+    confidence: 0.79
+    rationale: The phrase lightweight most likely maps to vehicle mass.
+- contract_id: C-VEH-L-002
+  source_requirement_id: REQ-VEH-L-002
+  source_anchor:
+    document_id: GFSE-CASE02
+    section: Requirements
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: ambiguous_quality_claim
+    confidence: 0.9
+  subject:
+    kind: system
+    canonical_name: Vehicle
+  evidence:
+    quote: The vehicle shall be fuel efficient.
+  gaps:
+  - operating_contexts
+  - threshold_value
+  - threshold_unit
+  llm_proposals:
+  - proposal_id: P-VEH-L-003
+    missing_slot: operating_contexts
+    proposed_value: CityNominal and HighwayNominal
+    confidence: 0.58
+    rationale: VehicleModel separates city and highway fuel economy requirements.
+- contract_id: C-VEH-L-003
+  source_requirement_id: REQ-VEH-L-003
+  source_anchor:
+    document_id: GFSE-CASE02
+    section: Requirements
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: interface_transfer
+    confidence: 0.74
+  subject:
+    kind: module
+    canonical_name: Engine
+  evidence:
+    quote: The engine shall provide drive power to the transmission reliably.
+  gaps:
+  - interface_name
+  - interface_ends
+  - flows
+  llm_proposals:
+  - proposal_id: P-VEH-L-004
+    missing_slot: interface_name
+    proposed_value: EngineToTransmissionInterface
+    confidence: 0.68
+    rationale: VehicleModel defines an EngineToTransmissionInterface between engine
+      and transmission.

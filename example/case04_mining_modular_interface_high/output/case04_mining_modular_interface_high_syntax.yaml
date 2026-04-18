@@ -1,0 +1,89 @@
+tool_jar: tools/MCSysMLv2.jar
+root: example/case04_mining_modular_interface_high/output
+file_count: 4
+failure_count: 0
+results:
+- file: example/case04_mining_modular_interface_high/output/expected_en_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningLaserModule was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.ShieldHardenerModule was not set.'
+- file: example/case04_mining_modular_interface_high/output/expected_ja_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningLaserModule was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.ShieldHardenerModule was not set.'
+- file: example/case04_mining_modular_interface_high/output/generated_en_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningLaserModule was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.ShieldHardenerModule was not set.'
+- file: example/case04_mining_modular_interface_high/output/generated_ja_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Boolean was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigateHull was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningLaserModule was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.ShieldHardenerModule was not set.'

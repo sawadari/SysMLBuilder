@@ -8,7 +8,7 @@ import yaml
 
 from .parser import parse_markdown
 from .common_ir import CommonIrModel, build_common_ir
-from .renderer import render_canonical, render_overlay, render_projection_manifest
+from .renderer import render_cameo_display_guide, render_canonical, render_overlay, render_projection_manifest
 from .v1_projector import V1ProjectionModel, project_to_sysml_v1
 from .transformer import build_contracts
 from .xmi import generate_sysml_v1_xmi
@@ -20,6 +20,7 @@ class TransformResult:
     contracts: dict[str, Any]
     canonical: str | None
     overlay: str | None
+    cameo_display_guide: str | None
     projection_manifest: dict[str, Any] | None
     common_ir: CommonIrModel
     v1_projection: V1ProjectionModel
@@ -42,6 +43,7 @@ def transform_markdown(path: Path) -> TransformResult:
         contracts=contracts,
         canonical=canonical,
         overlay=render_overlay(parsed.case_id, contracts),
+        cameo_display_guide=render_cameo_display_guide(parsed.case_id),
         projection_manifest=projection_manifest,
         common_ir=common_ir,
         v1_projection=v1_projection,
@@ -66,6 +68,11 @@ def write_result(result: TransformResult, output_dir: Path, xmi_targets: tuple[s
         overlay_path = output_dir / f"{result.case_id}_review_overlay.sysml"
         overlay_path.write_text(result.overlay, encoding="utf-8")
         written.append(overlay_path)
+
+    if result.cameo_display_guide:
+        guide_path = output_dir / f"{result.case_id}_cameo_display_guide.md"
+        guide_path.write_text(result.cameo_display_guide, encoding="utf-8")
+        written.append(guide_path)
 
     if result.projection_manifest:
         manifest_path = output_dir / f"{result.case_id}_projection_manifest.yaml"

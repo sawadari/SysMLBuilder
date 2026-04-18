@@ -1,0 +1,119 @@
+document:
+  document_id: C08
+  document_name: CAN Heartbeat Timeout Reaction
+  language: en
+  domain: fault_reaction
+contracts:
+- contract_id: C08-RQ-001
+  source_requirement_id: C08-RQ-001
+  source_anchor:
+    document_id: C08
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: CommunicationMonitoringSystem
+  evidence:
+    quote: When the brake controller heartbeat is missing for 100 ms, the system shall
+      set a communication-timeout fault.
+- contract_id: C08-RQ-002
+  source_requirement_id: C08-RQ-002
+  source_anchor:
+    document_id: C08
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: CommunicationMonitoringSystem
+  evidence:
+    quote: The system shall disable cruise control within 50 ms after the communication-timeout
+      fault is set.
+- contract_id: C08-RQ-003
+  source_requirement_id: C08-RQ-003
+  source_anchor:
+    document_id: C08
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: CommunicationMonitoringSystem
+  evidence:
+    quote: The system shall store a diagnostic trouble code and send a fault status
+      message within 100 ms.
+generic_case:
+  package: C08CanHeartbeatTimeout
+  context: This case reacts to a missing heartbeat from a brake controller by disabling
+    a dependent function and storing a fault.
+  requirements_count: 3
+  structure:
+  - CommunicationMonitoringSystem
+  - HeartbeatMonitor
+  - CruiseControlGate
+  - DiagnosticManager
+  interfaces:
+  - - HeartbeatPort
+    - heartbeat
+    - HeartbeatValue
+    - in
+  - - FunctionControlPort
+    - cruiseEnable
+    - FunctionControlValue
+    - out
+  - - DiagnosticStatusPort
+    - diagnosticStatus
+    - DiagnosticStatusValue
+    - out
+  part_ports:
+    HeartbeatMonitor:
+    - - heartbeatIn
+      - HeartbeatPort
+    - - functionOut
+      - FunctionControlPort
+    - - diagOut
+      - DiagnosticStatusPort
+    CruiseControlGate:
+    - - functionIn
+      - ~FunctionControlPort
+    DiagnosticManager:
+    - - diagIn
+      - ~DiagnosticStatusPort
+    CommunicationMonitoringSystem: []
+  subparts:
+    CommunicationMonitoringSystem:
+    - - monitor
+      - HeartbeatMonitor
+    - - gate
+      - CruiseControlGate
+    - - diagnostics
+      - DiagnosticManager
+  interfaces_defs:
+  - - CruiseControlInterface
+    - FunctionControlPort
+    - FunctionControlPort
+    - cruiseEnable
+  - - DiagnosticStatusInterface
+    - DiagnosticStatusPort
+    - DiagnosticStatusPort
+    - diagnosticStatus
+  state_machine:
+    name: CommunicationStates
+    states:
+    - healthy
+    - timeoutDetected
+    - safeState
+    transitions:
+    - - healthy
+      - timeoutDetected
+    - - timeoutDetected
+      - safeState
+    - - safeState
+      - healthy

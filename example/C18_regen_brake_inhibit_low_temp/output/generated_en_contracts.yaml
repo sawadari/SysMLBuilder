@@ -1,0 +1,91 @@
+document:
+  document_id: C18
+  document_name: Regenerative Brake Inhibit at Low Temperature
+  language: en
+  domain: contextual_threshold
+contracts:
+- contract_id: C18-RQ-001
+  source_requirement_id: C18-RQ-001
+  source_anchor:
+    document_id: C18
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: RegenBrakeSystem
+  evidence:
+    quote: When battery temperature is below -10 degC, the system shall inhibit the
+      HIGH regenerative braking level.
+- contract_id: C18-RQ-002
+  source_requirement_id: C18-RQ-002
+  source_anchor:
+    document_id: C18
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: RegenBrakeSystem
+  evidence:
+    quote: When battery temperature is below -20 degC, the system shall inhibit all
+      regenerative braking levels.
+- contract_id: C18-RQ-003
+  source_requirement_id: C18-RQ-003
+  source_anchor:
+    document_id: C18
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: RegenBrakeSystem
+  evidence:
+    quote: The system shall restore the HIGH regenerative braking level only after
+      battery temperature rises above -8 degC.
+generic_case:
+  package: C18RegenBrakeInhibitLowTemp
+  context: This case applies different regenerative braking limits according to battery
+    temperature.
+  requirements_count: 3
+  structure:
+  - RegenBrakeSystem
+  - RegenBrakeController
+  - BatteryTemperatureMonitor
+  interfaces:
+  - - BatteryTemperaturePort
+    - batteryTemperature
+    - TemperatureValue
+    - in
+  - - RegenLevelPort
+    - regenLevelCommand
+    - RegenLevelValue
+    - out
+  part_ports:
+    RegenBrakeController:
+    - - temperatureIn
+      - BatteryTemperaturePort
+    - - regenLevelOut
+      - RegenLevelPort
+    BatteryTemperatureMonitor:
+    - - temperatureOut
+      - BatteryTemperaturePort
+    RegenBrakeSystem: []
+  subparts:
+    RegenBrakeSystem:
+    - - controller
+      - RegenBrakeController
+    - - monitor
+      - BatteryTemperatureMonitor
+  interfaces_defs:
+  - - RegenLevelInterface
+    - RegenLevelPort
+    - RegenLevelPort
+    - regenLevelCommand
+  state_machine: null

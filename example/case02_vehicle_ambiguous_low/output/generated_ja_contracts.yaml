@@ -1,0 +1,86 @@
+document:
+  document_id: GFSE-CASE02
+  document_name: 車両の曖昧な性能要求
+  language: ja
+  domain: vehicle_system
+contracts:
+- contract_id: C-VEH-L-001
+  source_requirement_id: REQ-VEH-L-001
+  source_anchor:
+    document_id: GFSE-CASE02
+    section: Requirements
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: ambiguous_quality_claim
+    confidence: 0.91
+  subject:
+    kind: system
+    canonical_name: Vehicle
+  evidence:
+    quote: 車両は軽量でなければならない。
+  gaps:
+  - threshold_value
+  - threshold_unit
+  - measured_property
+  llm_proposals:
+  - proposal_id: P-VEH-L-001
+    missing_slot: threshold_value
+    proposed_value: '2000'
+    confidence: 0.56
+    rationale: VehicleModel では 2000 kg 級の質量閾値が使われている。
+  - proposal_id: P-VEH-L-002
+    missing_slot: measured_property
+    proposed_value: mass
+    confidence: 0.79
+    rationale: 軽量という表現は車両質量を指す可能性が高い。
+- contract_id: C-VEH-L-002
+  source_requirement_id: REQ-VEH-L-002
+  source_anchor:
+    document_id: GFSE-CASE02
+    section: Requirements
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: ambiguous_quality_claim
+    confidence: 0.9
+  subject:
+    kind: system
+    canonical_name: Vehicle
+  evidence:
+    quote: 車両は燃費が良くなければならない。
+  gaps:
+  - operating_contexts
+  - threshold_value
+  - threshold_unit
+  llm_proposals:
+  - proposal_id: P-VEH-L-003
+    missing_slot: operating_contexts
+    proposed_value: CityNominal and HighwayNominal
+    confidence: 0.58
+    rationale: VehicleModel では市街地と高速の燃費要求が分離されている。
+- contract_id: C-VEH-L-003
+  source_requirement_id: REQ-VEH-L-003
+  source_anchor:
+    document_id: GFSE-CASE02
+    section: Requirements
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: interface_transfer
+    confidence: 0.74
+  subject:
+    kind: module
+    canonical_name: Engine
+  evidence:
+    quote: エンジンはトランスミッションへ駆動力を確実に供給しなければならない。
+  gaps:
+  - interface_name
+  - interface_ends
+  - flows
+  llm_proposals:
+  - proposal_id: P-VEH-L-004
+    missing_slot: interface_name
+    proposed_value: EngineToTransmissionInterface
+    confidence: 0.68
+    rationale: VehicleModel ではエンジンとトランスミッション間に EngineToTransmissionInterface が定義されている。

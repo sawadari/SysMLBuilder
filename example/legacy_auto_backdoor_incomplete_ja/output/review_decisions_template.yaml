@@ -1,0 +1,11 @@
+decisions:
+- proposal_id: ABD-PROP-001
+  decision: accept
+  decided_by: reviewer_name
+  modified_value: null
+  comment: ''
+- proposal_id: ABD-PROP-002
+  decision: defer
+  decided_by: reviewer_name
+  modified_value: null
+  comment: ''

@@ -1,0 +1,93 @@
+document:
+  document_id: C13
+  document_name: 充電フラップロック制御
+  language: ja
+  domain: contextual_locking
+contracts:
+- contract_id: C13-RQ-001
+  source_requirement_id: C13-RQ-001
+  source_anchor:
+    document_id: C13
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChargeFlapLockSystem
+  evidence:
+    quote: システムは、車両走行中に充電フラップを施錠すること。
+- contract_id: C13-RQ-002
+  source_requirement_id: C13-RQ-002
+  source_anchor:
+    document_id: C13
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChargeFlapLockSystem
+  evidence:
+    quote: システムは、充電中に充電フラップを施錠すること。
+- contract_id: C13-RQ-003
+  source_requirement_id: C13-RQ-003
+  source_anchor:
+    document_id: C13
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: ChargeFlapLockSystem
+  evidence:
+    quote: システムは、車両が駐車状態で充電完了時、または有効なユーザー解錠要求を受信した場合、充電フラップを解錠すること。
+generic_case:
+  package: C13ChargeFlapLockControl
+  context: このケースは、走行状態と充電状態に応じて充電フラップを施錠・解錠する機能を表します。
+  requirements_count: 3
+  structure:
+  - ChargeFlapLockSystem
+  - ChargeFlapController
+  - ChargeFlapActuator
+  interfaces:
+  - - VehicleMotionPort
+    - vehicleMoving
+    - VehicleMotionValue
+    - in
+  - - ChargingStatusPort
+    - chargingActive
+    - ChargingStatusValue
+    - in
+  - - LockCommandPort
+    - lockCommand
+    - LockCommandValue
+    - out
+  part_ports:
+    ChargeFlapController:
+    - - motionIn
+      - VehicleMotionPort
+    - - chargingIn
+      - ChargingStatusPort
+    - - commandOut
+      - LockCommandPort
+    ChargeFlapActuator:
+    - - commandIn
+      - ~LockCommandPort
+    ChargeFlapLockSystem: []
+  subparts:
+    ChargeFlapLockSystem:
+    - - controller
+      - ChargeFlapController
+    - - actuator
+      - ChargeFlapActuator
+  interfaces_defs:
+  - - LockCommandInterface
+    - LockCommandPort
+    - LockCommandPort
+    - lockCommand
+  state_machine: null

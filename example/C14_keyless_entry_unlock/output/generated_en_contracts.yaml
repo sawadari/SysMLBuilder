@@ -1,0 +1,111 @@
+document:
+  document_id: C14
+  document_name: Keyless Entry Unlock
+  language: en
+  domain: timed_secure_access
+contracts:
+- contract_id: C14-RQ-001
+  source_requirement_id: C14-RQ-001
+  source_anchor:
+    document_id: C14
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: KeylessEntrySystem
+  evidence:
+    quote: When a valid key is within 1 m and the driver door handle is touched, the
+      system shall unlock the driver door within 300 ms.
+- contract_id: C14-RQ-002
+  source_requirement_id: C14-RQ-002
+  source_anchor:
+    document_id: C14
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: KeylessEntrySystem
+  evidence:
+    quote: The system shall reject unlock requests from invalid keys.
+- contract_id: C14-RQ-003
+  source_requirement_id: C14-RQ-003
+  source_anchor:
+    document_id: C14
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: KeylessEntrySystem
+  evidence:
+    quote: When 5 invalid key attempts occur within 60 s, the system shall inhibit
+      further keyless unlock processing for 5 min.
+generic_case:
+  package: C14KeylessEntryUnlock
+  context: This case models valid key detection, unlock timing, and a lockout after
+    repeated invalid attempts.
+  requirements_count: 3
+  structure:
+  - KeylessEntrySystem
+  - AccessController
+  - RfReceiver
+  - DoorLockActuator
+  interfaces:
+  - - KeyPresencePort
+    - validKeyPresent
+    - KeyPresenceValue
+    - in
+  - - HandleTouchPort
+    - handleTouched
+    - HandleTouchValue
+    - in
+  - - DoorLockCommandPort
+    - doorUnlockCommand
+    - DoorLockCommandValue
+    - out
+  part_ports:
+    AccessController:
+    - - keyIn
+      - KeyPresencePort
+    - - touchIn
+      - HandleTouchPort
+    - - commandOut
+      - DoorLockCommandPort
+    RfReceiver:
+    - - keyOut
+      - KeyPresencePort
+    DoorLockActuator:
+    - - commandIn
+      - ~DoorLockCommandPort
+    KeylessEntrySystem: []
+  subparts:
+    KeylessEntrySystem:
+    - - controller
+      - AccessController
+    - - receiver
+      - RfReceiver
+    - - actuator
+      - DoorLockActuator
+  interfaces_defs:
+  - - DoorUnlockInterface
+    - DoorLockCommandPort
+    - DoorLockCommandPort
+    - doorUnlockCommand
+  state_machine:
+    name: AccessStates
+    states:
+    - ready
+    - lockedOut
+    transitions:
+    - - ready
+      - lockedOut
+    - - lockedOut
+      - ready

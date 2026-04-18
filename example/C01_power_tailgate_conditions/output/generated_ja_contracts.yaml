@@ -1,0 +1,117 @@
+document:
+  document_id: C01
+  document_name: パワーバックドア開条件
+  language: ja
+  domain: timed_response
+contracts:
+- contract_id: C01-RQ-001
+  source_requirement_id: C01-RQ-001
+  source_anchor:
+    document_id: C01
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: PowerTailgateSystem
+  evidence:
+    quote: パワーバックドアシステムは、車速が3 km/h未満かつシフト位置がPの場合にのみ開要求を受け付けること。
+- contract_id: C01-RQ-002
+  source_requirement_id: C01-RQ-002
+  source_anchor:
+    document_id: C01
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: PowerTailgateSystem
+  evidence:
+    quote: システムは、有効な閉要求の後、200 ms以内に閉動作を開始すること。
+- contract_id: C01-RQ-003
+  source_requirement_id: C01-RQ-003
+  source_anchor:
+    document_id: C01
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: PowerTailgateSystem
+  evidence:
+    quote: システムは、閉動作中に障害物を検知した場合、50 ms以内に停止し、少なくとも200 msは反転動作すること。
+generic_case:
+  package: C01PowerTailgateConditions
+  context: このケースは、開動作前に車両条件を確認し、閉動作中の障害物にも反応するパワーバックドアを表します。
+  requirements_count: 3
+  structure:
+  - PowerTailgateSystem
+  - TailgateController
+  - TailgateActuator
+  - ObstacleSensor
+  interfaces:
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - ShiftPositionPort
+    - shiftPosition
+    - ShiftPositionValue
+    - in
+  - - TailgateCommandPort
+    - tailgateCommand
+    - TailgateCommandValue
+    - out
+  - - ObstacleSignalPort
+    - obstacleDetected
+    - ObstacleSignalValue
+    - in
+  part_ports:
+    TailgateController:
+    - - speedIn
+      - VehicleSpeedPort
+    - - shiftIn
+      - ShiftPositionPort
+    - - obstacleIn
+      - ObstacleSignalPort
+    - - commandOut
+      - TailgateCommandPort
+    TailgateActuator:
+    - - commandIn
+      - ~TailgateCommandPort
+    ObstacleSensor:
+    - - obstacleOut
+      - ObstacleSignalPort
+    PowerTailgateSystem: []
+  subparts:
+    PowerTailgateSystem:
+    - - controller
+      - TailgateController
+    - - actuator
+      - TailgateActuator
+    - - sensor
+      - ObstacleSensor
+  interfaces_defs:
+  - - TailgateCommandInterface
+    - TailgateCommandPort
+    - TailgateCommandPort
+    - tailgateCommand
+  state_machine:
+    name: TailgateMotionStates
+    states:
+    - idle
+    - closing
+    - reversing
+    transitions:
+    - - idle
+      - closing
+    - - closing
+      - reversing
+    - - reversing
+      - idle

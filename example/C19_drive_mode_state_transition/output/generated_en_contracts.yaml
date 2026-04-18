@@ -1,0 +1,104 @@
+document:
+  document_id: C19
+  document_name: Drive Mode State Transition
+  language: en
+  domain: state_machine
+contracts:
+- contract_id: C19-RQ-001
+  source_requirement_id: C19-RQ-001
+  source_anchor:
+    document_id: C19
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DriveModeSystem
+  evidence:
+    quote: The system shall support ECO, NORMAL, and SPORT drive modes.
+- contract_id: C19-RQ-002
+  source_requirement_id: C19-RQ-002
+  source_anchor:
+    document_id: C19
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DriveModeSystem
+  evidence:
+    quote: The system shall accept a drive-mode change request only when accelerator
+      pedal opening is less than 20 percent.
+- contract_id: C19-RQ-003
+  source_requirement_id: C19-RQ-003
+  source_anchor:
+    document_id: C19
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: DriveModeSystem
+  evidence:
+    quote: When a drive-mode fault is detected, the system shall return to NORMAL
+      mode within 100 ms.
+generic_case:
+  package: C19DriveModeStateTransition
+  context: This case models Eco, Normal, and Sport drive modes with transition guards
+    and a fault fallback.
+  requirements_count: 3
+  structure:
+  - DriveModeSystem
+  - DriveModeController
+  interfaces:
+  - - AcceleratorPort
+    - acceleratorOpening
+    - AcceleratorValue
+    - in
+  - - DriveModeRequestPort
+    - driveModeRequest
+    - DriveModeRequestValue
+    - in
+  - - DriveModeStatusPort
+    - driveModeStatus
+    - DriveModeStatusValue
+    - out
+  part_ports:
+    DriveModeController:
+    - - acceleratorIn
+      - AcceleratorPort
+    - - requestIn
+      - DriveModeRequestPort
+    - - statusOut
+      - DriveModeStatusPort
+    DriveModeSystem: []
+  subparts:
+    DriveModeSystem:
+    - - controller
+      - DriveModeController
+  interfaces_defs:
+  - - DriveModeStatusInterface
+    - DriveModeStatusPort
+    - DriveModeStatusPort
+    - driveModeStatus
+  state_machine:
+    name: DriveModes
+    states:
+    - eco
+    - normal
+    - sport
+    transitions:
+    - - normal
+      - eco
+    - - normal
+      - sport
+    - - eco
+      - normal
+    - - sport
+      - normal

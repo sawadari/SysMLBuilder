@@ -1,0 +1,103 @@
+document:
+  document_id: C07
+  document_name: 低電圧警告
+  language: ja
+  domain: threshold_monitoring
+contracts:
+- contract_id: C07-RQ-001
+  source_requirement_id: C07-RQ-001
+  source_anchor:
+    document_id: C07
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatteryWarningSystem
+  evidence:
+    quote: システムは、バッテリ電圧が11.5 V未満の状態が5 s継続した場合、低電圧警告灯を点灯すること。
+- contract_id: C07-RQ-002
+  source_requirement_id: C07-RQ-002
+  source_anchor:
+    document_id: C07
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatteryWarningSystem
+  evidence:
+    quote: システムは、警告灯点灯後100 ms以内に車載ネットワークへ低電圧状態メッセージを送信すること。
+- contract_id: C07-RQ-003
+  source_requirement_id: C07-RQ-003
+  source_anchor:
+    document_id: C07
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatteryWarningSystem
+  evidence:
+    quote: システムは、バッテリ電圧が12.1 Vを超える状態が10 s継続した場合、警告を解除すること。
+generic_case:
+  package: C07BatteryLowVoltageWarning
+  context: このケースは、バッテリ電圧を監視し、デバウンス後に警告表示とメッセージ送信を行う機能を表します。
+  requirements_count: 3
+  structure:
+  - BatteryWarningSystem
+  - BatteryMonitor
+  - WarningLamp
+  - NetworkPublisher
+  interfaces:
+  - - VoltageInputPort
+    - batteryVoltage
+    - VoltageValue
+    - in
+  - - LampCommandPort
+    - lampCommand
+    - LampCommandValue
+    - out
+  - - NetworkStatusPort
+    - statusMessage
+    - NetworkStatusValue
+    - out
+  part_ports:
+    BatteryMonitor:
+    - - voltageIn
+      - VoltageInputPort
+    - - lampOut
+      - LampCommandPort
+    - - networkOut
+      - NetworkStatusPort
+    WarningLamp:
+    - - commandIn
+      - ~LampCommandPort
+    NetworkPublisher:
+    - - statusIn
+      - ~NetworkStatusPort
+    BatteryWarningSystem: []
+  subparts:
+    BatteryWarningSystem:
+    - - monitor
+      - BatteryMonitor
+    - - lamp
+      - WarningLamp
+    - - publisher
+      - NetworkPublisher
+  interfaces_defs:
+  - - LampCommandInterface
+    - LampCommandPort
+    - LampCommandPort
+    - lampCommand
+  - - NetworkStatusInterface
+    - NetworkStatusPort
+    - NetworkStatusPort
+    - statusMessage
+  state_machine: null

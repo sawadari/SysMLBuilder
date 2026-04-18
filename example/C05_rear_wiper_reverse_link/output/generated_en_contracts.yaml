@@ -1,0 +1,97 @@
+document:
+  document_id: C05
+  document_name: Rear Wiper Reverse Link
+  language: en
+  domain: contextual_trigger
+contracts:
+- contract_id: C05-RQ-001
+  source_requirement_id: C05-RQ-001
+  source_anchor:
+    document_id: C05
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: RearWiperLinkSystem
+  evidence:
+    quote: When reverse gear is engaged while the front wiper is active, the system
+      shall command one rear-wiper wipe within 1 s.
+- contract_id: C05-RQ-002
+  source_requirement_id: C05-RQ-002
+  source_anchor:
+    document_id: C05
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: RearWiperLinkSystem
+  evidence:
+    quote: The system shall not issue more than one reverse-linked rear-wiper wipe
+      within 10 s.
+- contract_id: C05-RQ-003
+  source_requirement_id: C05-RQ-003
+  source_anchor:
+    document_id: C05
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: RearWiperLinkSystem
+  evidence:
+    quote: The system shall disable the reverse-linked wipe while the rear wiper service
+      mode is active.
+generic_case:
+  package: C05RearWiperReverseLink
+  context: This case links a rear wiper one-wipe action to reverse gear when the front
+    wiper is already active.
+  requirements_count: 3
+  structure:
+  - RearWiperLinkSystem
+  - RearWiperController
+  - RearWiperMotor
+  interfaces:
+  - - WiperStatusPort
+    - frontWiperActive
+    - WiperStatusValue
+    - in
+  - - ShiftPositionPort
+    - shiftPosition
+    - ShiftPositionValue
+    - in
+  - - WiperCommandPort
+    - rearWiperCommand
+    - WiperCommandValue
+    - out
+  part_ports:
+    RearWiperController:
+    - - frontWiperIn
+      - WiperStatusPort
+    - - shiftIn
+      - ShiftPositionPort
+    - - commandOut
+      - WiperCommandPort
+    RearWiperMotor:
+    - - commandIn
+      - ~WiperCommandPort
+    RearWiperLinkSystem: []
+  subparts:
+    RearWiperLinkSystem:
+    - - controller
+      - RearWiperController
+    - - motor
+      - RearWiperMotor
+  interfaces_defs:
+  - - RearWiperCommandInterface
+    - WiperCommandPort
+    - WiperCommandPort
+    - rearWiperCommand
+  state_machine: null

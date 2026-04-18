@@ -1,0 +1,136 @@
+document:
+  document_id: BATMOBILE-DP-001
+  document_name: Don't Panic Batmobile public sample
+  language: en
+  domain: public_reference
+contracts:
+- contract_id: C-BAT-001
+  source_requirement_id: REQ-BAT-001
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_structure_core
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: Batmobile
+  evidence:
+    quote: Define the core vehicle domain including Vehicle, Wheel, BatmobileEngine,
+      PowerInterface, PowerIP, Power, and EngineCommand.
+- contract_id: C-BAT-002
+  source_requirement_id: REQ-BAT-002
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_system_decomposition
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: Batmobile
+  evidence:
+    quote: Define the Batmobile system with seats, body, wheels, battery, engine,
+      and the `bat2eng` power interface connection.
+- contract_id: C-BAT-003
+  source_requirement_id: REQ-BAT-003
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_specialization_and_variability
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatmobileConfigurations
+  evidence:
+    quote: Define specialization and variability elements including BatmobileNG, EngineChoices,
+      WheelChoices, BatmobileConfigurations, and XBatmobile.
+- contract_id: C-BAT-004
+  source_requirement_id: REQ-BAT-004
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 4
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_occurrence_and_timeslice
+    confidence: 1.0
+  subject:
+    kind: occurrence
+    canonical_name: bm1
+  evidence:
+    quote: Define the Batman and Hero related items and the `bm1` system occurrence
+      with driving and charging timeslices.
+- contract_id: C-BAT-005
+  source_requirement_id: REQ-BAT-005
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 5
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_behavior
+    confidence: 1.0
+  subject:
+    kind: behavior
+    canonical_name: Drive Batmobile
+  evidence:
+    quote: Define operational behavior including `Drive Batmobile`, `Activate rocket
+      booster`, and `ActivateRocketBooster`.
+- contract_id: C-BAT-006
+  source_requirement_id: REQ-BAT-006
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 6
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_requirements
+    confidence: 1.0
+  subject:
+    kind: requirement
+    canonical_name: batmobileSpecification
+  evidence:
+    quote: Define the VehicleMaxSpeed requirement, the batmobileSpecification requirements
+      package, and the satisfy relation on `batmobileDesignV23`.
+- contract_id: C-BAT-007
+  source_requirement_id: REQ-BAT-007
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 7
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_viewpoint_and_tabular_view
+    confidence: 1.0
+  subject:
+    kind: viewpoint
+    canonical_name: system components
+  evidence:
+    quote: Define concern, viewpoint, tabular view, and the `batmobileParts` exposed
+      view filtered to non-standard library elements.
+- contract_id: C-BAT-008
+  source_requirement_id: REQ-BAT-008
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: Requirements
+    sentence_index: 8
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_symbolic_views
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: definition and usage
+  evidence:
+    quote: Define the generic symbolic views `definition and usage`, `subclassification`,
+      `subsetting`, `redefinition`, `structural Modeling`, `default value`, `timeslice
+      modelling`, `behavioral modelling`, `use cases modelling`, `requirements modelling`,
+      and top-level `index`.

@@ -1,0 +1,107 @@
+document:
+  document_id: C07
+  document_name: Battery Low Voltage Warning
+  language: en
+  domain: threshold_monitoring
+contracts:
+- contract_id: C07-RQ-001
+  source_requirement_id: C07-RQ-001
+  source_anchor:
+    document_id: C07
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatteryWarningSystem
+  evidence:
+    quote: When battery voltage is below 11.5 V for 5 s, the system shall turn on
+      the low-voltage warning lamp.
+- contract_id: C07-RQ-002
+  source_requirement_id: C07-RQ-002
+  source_anchor:
+    document_id: C07
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatteryWarningSystem
+  evidence:
+    quote: The system shall send a low-voltage status message on the vehicle network
+      within 100 ms after the warning lamp is turned on.
+- contract_id: C07-RQ-003
+  source_requirement_id: C07-RQ-003
+  source_anchor:
+    document_id: C07
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatteryWarningSystem
+  evidence:
+    quote: The system shall clear the warning after battery voltage is above 12.1
+      V for 10 s.
+generic_case:
+  package: C07BatteryLowVoltageWarning
+  context: This case monitors battery voltage, shows a warning, and reports a message
+    after a debounce period.
+  requirements_count: 3
+  structure:
+  - BatteryWarningSystem
+  - BatteryMonitor
+  - WarningLamp
+  - NetworkPublisher
+  interfaces:
+  - - VoltageInputPort
+    - batteryVoltage
+    - VoltageValue
+    - in
+  - - LampCommandPort
+    - lampCommand
+    - LampCommandValue
+    - out
+  - - NetworkStatusPort
+    - statusMessage
+    - NetworkStatusValue
+    - out
+  part_ports:
+    BatteryMonitor:
+    - - voltageIn
+      - VoltageInputPort
+    - - lampOut
+      - LampCommandPort
+    - - networkOut
+      - NetworkStatusPort
+    WarningLamp:
+    - - commandIn
+      - ~LampCommandPort
+    NetworkPublisher:
+    - - statusIn
+      - ~NetworkStatusPort
+    BatteryWarningSystem: []
+  subparts:
+    BatteryWarningSystem:
+    - - monitor
+      - BatteryMonitor
+    - - lamp
+      - WarningLamp
+    - - publisher
+      - NetworkPublisher
+  interfaces_defs:
+  - - LampCommandInterface
+    - LampCommandPort
+    - LampCommandPort
+    - lampCommand
+  - - NetworkStatusInterface
+    - NetworkStatusPort
+    - NetworkStatusPort
+    - statusMessage
+  state_machine: null

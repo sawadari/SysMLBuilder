@@ -1,0 +1,115 @@
+document:
+  document_id: C17
+  document_name: OTA Update Preconditions
+  language: en
+  domain: multi_precondition
+contracts:
+- contract_id: C17-RQ-001
+  source_requirement_id: C17-RQ-001
+  source_anchor:
+    document_id: C17
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: OtaUpdateSystem
+  evidence:
+    quote: The OTA update system shall start an update only when the vehicle is parked,
+      doors are locked, and battery state of charge is at least 40 percent.
+- contract_id: C17-RQ-002
+  source_requirement_id: C17-RQ-002
+  source_anchor:
+    document_id: C17
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: OtaUpdateSystem
+  evidence:
+    quote: When ignition turns ON during an update, the system shall suspend the update
+      within 1 s.
+- contract_id: C17-RQ-003
+  source_requirement_id: C17-RQ-003
+  source_anchor:
+    document_id: C17
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: OtaUpdateSystem
+  evidence:
+    quote: When any door is unlocked during an update, the system shall suspend the
+      update within 1 s.
+generic_case:
+  package: C17OtaUpdatePreconditions
+  context: This case models update-start gating and suspension conditions during an
+    over-the-air software update.
+  requirements_count: 3
+  structure:
+  - OtaUpdateSystem
+  - UpdateManager
+  - VehicleConditionMonitor
+  interfaces:
+  - - VehicleParkPort
+    - vehicleParked
+    - VehicleParkValue
+    - in
+  - - DoorLockStatusPort
+    - doorsLocked
+    - DoorLockStatusValue
+    - in
+  - - BatterySocPort
+    - batterySoc
+    - BatterySocValue
+    - in
+  - - UpdateControlPort
+    - updateControl
+    - UpdateControlValue
+    - out
+  part_ports:
+    UpdateManager:
+    - &id001
+      - updateControlOut
+      - UpdateControlPort
+    VehicleConditionMonitor:
+    - - parkIn
+      - VehicleParkPort
+    - - lockIn
+      - DoorLockStatusPort
+    - - socIn
+      - BatterySocPort
+    - *id001
+    OtaUpdateSystem: []
+  subparts:
+    OtaUpdateSystem:
+    - - manager
+      - UpdateManager
+    - - monitor
+      - VehicleConditionMonitor
+  interfaces_defs:
+  - - UpdateControlInterface
+    - UpdateControlPort
+    - UpdateControlPort
+    - updateControl
+  state_machine:
+    name: UpdateStates
+    states:
+    - idle
+    - updating
+    - suspended
+    transitions:
+    - - idle
+      - updating
+    - - updating
+      - suspended
+    - - suspended
+      - idle

@@ -1,0 +1,99 @@
+document:
+  document_id: C11
+  document_name: 車線逸脱警報
+  language: ja
+  domain: multi_condition_alert
+contracts:
+- contract_id: C11-RQ-001
+  source_requirement_id: C11-RQ-001
+  source_anchor:
+    document_id: C11
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: LaneDepartureWarningSystem
+  evidence:
+    quote: システムは、車速60 km/h以上かつ方向指示器OFFの状態で車線逸脱を検知した場合、150 ms以内に可聴警報を生成すること。
+- contract_id: C11-RQ-002
+  source_requirement_id: C11-RQ-002
+  source_anchor:
+    document_id: C11
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: LaneDepartureWarningSystem
+  evidence:
+    quote: システムは、方向指示器が有効な間、警報を抑止すること。
+- contract_id: C11-RQ-003
+  source_requirement_id: C11-RQ-003
+  source_anchor:
+    document_id: C11
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: LaneDepartureWarningSystem
+  evidence:
+    quote: システムは、車線逸脱条件が解消された後300 ms以内に可聴警報を停止すること。
+generic_case:
+  package: C11LaneDepartureWarning
+  context: このケースは、有効条件下で車線逸脱が発生したときに可聴警報を出す機能を表します。
+  requirements_count: 3
+  structure:
+  - LaneDepartureWarningSystem
+  - LaneMonitor
+  - Buzzer
+  interfaces:
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - TurnSignalPort
+    - turnSignalActive
+    - TurnSignalValue
+    - in
+  - - LaneDeparturePort
+    - laneDepartureDetected
+    - LaneDepartureValue
+    - in
+  - - BuzzerCommandPort
+    - buzzerCommand
+    - BuzzerCommandValue
+    - out
+  part_ports:
+    LaneMonitor:
+    - - speedIn
+      - VehicleSpeedPort
+    - - turnSignalIn
+      - TurnSignalPort
+    - - laneIn
+      - LaneDeparturePort
+    - - buzzerOut
+      - BuzzerCommandPort
+    Buzzer:
+    - - commandIn
+      - ~BuzzerCommandPort
+    LaneDepartureWarningSystem: []
+  subparts:
+    LaneDepartureWarningSystem:
+    - - monitor
+      - LaneMonitor
+    - - buzzer
+      - Buzzer
+  interfaces_defs:
+  - - BuzzerCommandInterface
+    - BuzzerCommandPort
+    - BuzzerCommandPort
+    - buzzerCommand
+  state_machine: null

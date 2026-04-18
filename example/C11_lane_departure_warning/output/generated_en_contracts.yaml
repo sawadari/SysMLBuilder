@@ -1,0 +1,103 @@
+document:
+  document_id: C11
+  document_name: Lane Departure Warning
+  language: en
+  domain: multi_condition_alert
+contracts:
+- contract_id: C11-RQ-001
+  source_requirement_id: C11-RQ-001
+  source_anchor:
+    document_id: C11
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: LaneDepartureWarningSystem
+  evidence:
+    quote: When lane departure is detected at vehicle speed of at least 60 km/h and
+      the turn signal is OFF, the system shall generate an audible warning within
+      150 ms.
+- contract_id: C11-RQ-002
+  source_requirement_id: C11-RQ-002
+  source_anchor:
+    document_id: C11
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: LaneDepartureWarningSystem
+  evidence:
+    quote: The system shall suppress the warning while the turn signal is active.
+- contract_id: C11-RQ-003
+  source_requirement_id: C11-RQ-003
+  source_anchor:
+    document_id: C11
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: LaneDepartureWarningSystem
+  evidence:
+    quote: The system shall stop the audible warning within 300 ms after the lane
+      departure condition is cleared.
+generic_case:
+  package: C11LaneDepartureWarning
+  context: This case triggers an audible warning when lane departure occurs under
+    valid operating conditions.
+  requirements_count: 3
+  structure:
+  - LaneDepartureWarningSystem
+  - LaneMonitor
+  - Buzzer
+  interfaces:
+  - - VehicleSpeedPort
+    - vehicleSpeed
+    - VehicleSpeedValue
+    - in
+  - - TurnSignalPort
+    - turnSignalActive
+    - TurnSignalValue
+    - in
+  - - LaneDeparturePort
+    - laneDepartureDetected
+    - LaneDepartureValue
+    - in
+  - - BuzzerCommandPort
+    - buzzerCommand
+    - BuzzerCommandValue
+    - out
+  part_ports:
+    LaneMonitor:
+    - - speedIn
+      - VehicleSpeedPort
+    - - turnSignalIn
+      - TurnSignalPort
+    - - laneIn
+      - LaneDeparturePort
+    - - buzzerOut
+      - BuzzerCommandPort
+    Buzzer:
+    - - commandIn
+      - ~BuzzerCommandPort
+    LaneDepartureWarningSystem: []
+  subparts:
+    LaneDepartureWarningSystem:
+    - - monitor
+      - LaneMonitor
+    - - buzzer
+      - Buzzer
+  interfaces_defs:
+  - - BuzzerCommandInterface
+    - BuzzerCommandPort
+    - BuzzerCommandPort
+    - buzzerCommand
+  state_machine: null

@@ -1,0 +1,17 @@
+tool_jar: tools/MCSysMLv2.jar
+root: example/C18_regen_brake_inhibit_low_temp/output
+file_count: 4
+failure_count: 0
+results:
+- file: example/C18_regen_brake_inhibit_low_temp/output/expected_en.sysml
+  status: ok
+  output: ''
+- file: example/C18_regen_brake_inhibit_low_temp/output/expected_ja.sysml
+  status: ok
+  output: ''
+- file: example/C18_regen_brake_inhibit_low_temp/output/generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example/C18_regen_brake_inhibit_low_temp/output/generated_ja_canonical.sysml
+  status: ok
+  output: ''

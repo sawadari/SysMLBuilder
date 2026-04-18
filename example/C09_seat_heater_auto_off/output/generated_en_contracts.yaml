@@ -1,0 +1,102 @@
+document:
+  document_id: C09
+  document_name: Seat Heater Auto-Off
+  language: en
+  domain: timed_state_change
+contracts:
+- contract_id: C09-RQ-001
+  source_requirement_id: C09-RQ-001
+  source_anchor:
+    document_id: C09
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: SeatHeaterSystem
+  evidence:
+    quote: The seat heater shall allow the HIGH level immediately after user activation.
+- contract_id: C09-RQ-002
+  source_requirement_id: C09-RQ-002
+  source_anchor:
+    document_id: C09
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: SeatHeaterSystem
+  evidence:
+    quote: After 30 min of continuous HIGH operation, the system shall change the
+      level from HIGH to MEDIUM.
+- contract_id: C09-RQ-003
+  source_requirement_id: C09-RQ-003
+  source_anchor:
+    document_id: C09
+    section: Functional Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: generic_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: SeatHeaterSystem
+  evidence:
+    quote: After 60 min of total heating operation, the system shall turn the seat
+      heater OFF.
+generic_case:
+  package: C09SeatHeaterAutoOff
+  context: This case models a seat heater that steps down and turns off after timed
+    operation.
+  requirements_count: 3
+  structure:
+  - SeatHeaterSystem
+  - SeatHeaterController
+  - SeatHeaterElement
+  interfaces:
+  - - HeatingRequestPort
+    - heaterRequest
+    - HeatingRequestValue
+    - in
+  - - HeatingLevelPort
+    - heatingLevelCommand
+    - HeatingLevelValue
+    - out
+  part_ports:
+    SeatHeaterController:
+    - - requestIn
+      - HeatingRequestPort
+    - - levelOut
+      - HeatingLevelPort
+    SeatHeaterElement:
+    - - levelIn
+      - ~HeatingLevelPort
+    SeatHeaterSystem: []
+  subparts:
+    SeatHeaterSystem:
+    - - controller
+      - SeatHeaterController
+    - - element
+      - SeatHeaterElement
+  interfaces_defs:
+  - - HeatingLevelInterface
+    - HeatingLevelPort
+    - HeatingLevelPort
+    - heatingLevelCommand
+  state_machine:
+    name: SeatHeaterLevels
+    states:
+    - 'off'
+    - high
+    - medium
+    transitions:
+    - - 'off'
+      - high
+    - - high
+      - medium
+    - - medium
+      - 'off'
