@@ -49,6 +49,25 @@ package C15ChildLockShiftInterlock {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C15-RQ-001: The system shall allow child-lock activation only when shift position is P and vehicle speed is 0 km/h. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C15-RQ-002: The system shall reject child-lock activation while any rear door is open. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C15-RQ-003: When a valid child-lock deactivation request is received, the system shall complete the deactivation within 500 ms. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def ChildLockController {
         port shiftIn : ShiftPositionPort;
         port speedIn : VehicleSpeedPort;
@@ -71,14 +90,29 @@ package C15ChildLockShiftInterlock {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C15ChildLockShiftInterlock::systemUnderTest;
-            expose C15ChildLockShiftInterlock::systemUnderTest::controller;
-            expose C15ChildLockShiftInterlock::systemUnderTest::actuator;
-        }
+package C15ChildLockShiftInterlockStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C15ChildLockShiftInterlock::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C15ChildLockShiftInterlock::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C15ChildLockShiftInterlock::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C15ChildLockShiftInterlock::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C15ChildLockShiftInterlock::**;
     }
 }

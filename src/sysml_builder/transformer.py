@@ -152,6 +152,24 @@ def _build_profile_driven_contracts(parsed: ParsedDocument, case_profile: dict[s
 
 def build_contracts(parsed: ParsedDocument) -> dict[str, Any]:
     payload = _base_document_metadata(parsed)
+    if parsed.metadata.get("structured_model"):
+        payload["contracts"] = [
+            {
+                "contract_id": requirement.identifier,
+                "source_requirement_id": requirement.identifier,
+                "source_anchor": {"document_id": parsed.document["document_id"], "section": requirement.section},
+                "trace_quality": "direct_file_grounded",
+                "classification": {"pattern_id": "structured_model_requirement_doc", "confidence": 1.0},
+                "subject": {
+                    "kind": "system",
+                    "canonical_name": parsed.metadata["structured_model"].get("default_subject", parsed.case_id),
+                },
+                "evidence": {"quote": requirement.text},
+            }
+            for requirement in parsed.requirements
+        ]
+        payload["structured_model"] = parsed.metadata["structured_model"]
+        return payload
     if parsed.metadata.get("generic_case"):
         generic_profile = load_generic_case_profile()
         classification = generic_profile["contracts"]["classification"]

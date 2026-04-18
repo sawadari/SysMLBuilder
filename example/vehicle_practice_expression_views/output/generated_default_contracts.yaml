@@ -1,89 +1,494 @@
 document:
   document_id: VPV-001
   document_name: Vehicle Practice Expression Views
-  language: ja
+  language: en
   domain: cameo_symbolic_views
 contracts:
-- contract_id: C-VPV-001
+- contract_id: REQ-VPV-001
   source_requirement_id: REQ-VPV-001
   source_anchor:
     document_id: VPV-001
     section: Requirements
-    sentence_index: 1
   trace_quality: direct_file_grounded
   classification:
-    pattern_id: requirement_tree_view_practice
+    pattern_id: structured_model_requirement_doc
     confidence: 1.0
   subject:
-    kind: view
-    canonical_name: Requirements Tree
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
   evidence:
-    quote: Define a requirement package with a mass requirement and a requirements
-      tree view that recursively exposes the requirement package.
-- contract_id: C-VPV-002
+    quote: The sample shall provide a requirement package that checks actual mass
+      against limit mass for both a vehicle and an engine.
+- contract_id: REQ-VPV-002
   source_requirement_id: REQ-VPV-002
   source_anchor:
     document_id: VPV-001
     section: Requirements
-    sentence_index: 2
   trace_quality: direct_file_grounded
   classification:
-    pattern_id: structural_expression_view_practice
+    pattern_id: structured_model_requirement_doc
     confidence: 1.0
   subject:
-    kind: view
-    canonical_name: Parts Tree
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
   evidence:
-    quote: Define a structure package with parts, ports, an interface connection,
-      parts tree views, and a parts-and-ports nested view that recursively exposes
-      the structure package.
-- contract_id: C-VPV-003
+    quote: The sample shall provide a structural package with a vehicle, an engine,
+      a transmission, one drive-power port type, and one explicit engine-to-transmission
+      interface.
+- contract_id: REQ-VPV-003
   source_requirement_id: REQ-VPV-003
   source_anchor:
     document_id: VPV-001
     section: Requirements
-    sentence_index: 3
   trace_quality: direct_file_grounded
   classification:
-    pattern_id: action_expression_view_practice
+    pattern_id: structured_model_requirement_doc
     confidence: 1.0
   subject:
-    kind: view
-    canonical_name: Actions Nested
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
   evidence:
-    quote: Define an action behavior package with action definitions, an action usage
-      with flow, and nested or tree action views that recursively expose the action
-      package.
-- contract_id: C-VPV-004
+    quote: The structural package shall also include a concrete vehicle part usage
+      so that tree, nested, and interconnection views have something to expose.
+- contract_id: REQ-VPV-004
   source_requirement_id: REQ-VPV-004
   source_anchor:
     document_id: VPV-001
     section: Requirements
-    sentence_index: 4
   trace_quality: direct_file_grounded
   classification:
-    pattern_id: state_expression_view_practice
+    pattern_id: structured_model_requirement_doc
     confidence: 1.0
   subject:
-    kind: view
-    canonical_name: States Nested
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
   evidence:
-    quote: Define a state behavior package with start and off signals, a controller
-      state machine, and a states nested view that recursively exposes the state package.
-- contract_id: C-VPV-005
+    quote: The sample shall provide an action package in which torque is generated
+      and then transferred through one explicit flow.
+- contract_id: REQ-VPV-005
   source_requirement_id: REQ-VPV-005
   source_anchor:
     document_id: VPV-001
     section: Requirements
-    sentence_index: 5
   trace_quality: direct_file_grounded
   classification:
-    pattern_id: interconnection_render_view_practice
+    pattern_id: structured_model_requirement_doc
     confidence: 1.0
   subject:
-    kind: view
-    canonical_name: System Interconnection
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
   evidence:
-    quote: Define complementary render-based views for interconnection, action flow,
-      and state transitions so the same model can be opened with connector-oriented
-      renderers in Cameo.
+    quote: The sample shall provide a state package in which a controller moves between
+      `off` and `on` in response to start and off signals.
+- contract_id: REQ-VPV-006
+  source_requirement_id: REQ-VPV-006
+  source_anchor:
+    document_id: VPV-001
+    section: Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: structured_model_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
+  evidence:
+    quote: The sample shall provide a requirements tree view for the requirements
+      package.
+- contract_id: REQ-VPV-007
+  source_requirement_id: REQ-VPV-007
+  source_anchor:
+    document_id: VPV-001
+    section: Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: structured_model_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
+  evidence:
+    quote: The sample shall provide structural views for parts tree, parts nested,
+      parts and ports nested, and system interconnection.
+- contract_id: REQ-VPV-008
+  source_requirement_id: REQ-VPV-008
+  source_anchor:
+    document_id: VPV-001
+    section: Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: structured_model_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
+  evidence:
+    quote: The sample shall provide action views for actions nested, actions tree,
+      and action flow.
+- contract_id: REQ-VPV-009
+  source_requirement_id: REQ-VPV-009
+  source_anchor:
+    document_id: VPV-001
+    section: Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: structured_model_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
+  evidence:
+    quote: The sample shall provide state views for states nested and state transition.
+- contract_id: REQ-VPV-010
+  source_requirement_id: REQ-VPV-010
+  source_anchor:
+    document_id: VPV-001
+    section: Requirements
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: structured_model_requirement_doc
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: VehiclePracticeExpressionViews
+  evidence:
+    quote: The sample shall remain Cameo-oriented, so the views should be useful after
+      `Display > Display Exposed Elements`, and connector-focused views should also
+      work with `Display > Display Connectors` when needed.
+structured_model:
+  package_name: VehiclePracticeExpressionViews
+  default_subject: VehiclePracticeExpressionViews
+  packages:
+  - name: RequirementsModel
+    imports:
+    - DS_Views::*
+    requirement_defs:
+    - name: MassRequirement
+      doc: The actual mass shall be less than or equal to the limit.
+      attributes:
+      - name: massActual
+        type: ScalarValues::Real
+      - name: massLimit
+        type: ScalarValues::Real
+      constraint: massActual <= massLimit
+    requirement_groups:
+    - name: vehicleSpecification
+      nested_requirements:
+      - name: vehicleMass
+        type: MassRequirement
+        attributes:
+        - name: massActual
+          value: 1450
+        - name: massLimit
+          value: 1800
+      - name: engineMass
+        type: MassRequirement
+        attributes:
+        - name: massActual
+          value: 220
+        - name: massLimit
+          value: 250
+    views:
+    - name: Requirements Tree
+      type: DS_Views::SymbolicViewsByExpression::RequirementsTreeView
+      comment: If your Cameo build resolves only RequirementTreeView, replace the
+        type name below.
+      expose:
+      - VehiclePracticeExpressionViews::RequirementsModel::**
+  - name: StructureModel
+    imports:
+    - DS_Views::*
+    item_defs:
+    - name: DriveTorque
+      attributes:
+      - name: value
+        type: ScalarValues::Real
+    port_defs:
+    - name: DrivePwrPort
+      items:
+      - direction: out
+        name: torque
+        type: DriveTorque
+    interface_defs:
+    - name: EngineToTransmissionInterface
+      ends:
+      - name: enginePort
+        type: DrivePwrPort
+      - name: transmissionPort
+        type: ~DrivePwrPort
+      flows:
+      - item_type: DriveTorque
+        source: enginePort.torque
+        target: transmissionPort.torque
+    part_defs:
+    - name: Engine
+      ports:
+      - name: drivePwrPort
+        type: DrivePwrPort
+    - name: Transmission
+      ports:
+      - name: clutchPort
+        type: ~DrivePwrPort
+    - name: Vehicle
+      parts:
+      - name: engine
+        type: Engine
+      - name: transmission
+        type: Transmission
+      interfaces:
+      - name: engineToTransmission
+        type: EngineToTransmissionInterface
+        from: engine::drivePwrPort
+        to: transmission::clutchPort
+    part_usages:
+    - name: vehicle1
+      type: Vehicle
+    views:
+    - name: Parts Tree
+      type: DS_Views::SymbolicViewsByExpression::PartsTreeView
+      expose:
+      - VehiclePracticeExpressionViews::StructureModel::**
+    - name: Parts Nested
+      type: DS_Views::SymbolicViewsByExpression::PartsNestedView
+      expose:
+      - VehiclePracticeExpressionViews::StructureModel::**
+    - name: Parts & Ports Nested
+      type: DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView'
+      expose:
+      - VehiclePracticeExpressionViews::StructureModel::**
+    - name: System Interconnection
+      type: DS_Views::SymbolicViews::iv
+      expose:
+      - VehiclePracticeExpressionViews::StructureModel::**
+  - name: BehaviorActionModel
+    imports:
+    - DS_Views::*
+    item_defs:
+    - name: Command
+    - name: Torque
+    action_defs:
+    - name: GenerateTorque
+      inputs:
+      - name: cmd
+        type: Command
+      outputs:
+      - name: torque
+        type: Torque
+    - name: TransferTorque
+      inputs:
+      - name: inTorque
+        type: Torque
+      outputs:
+      - name: outTorque
+        type: Torque
+    action_usages:
+    - name: providePower
+      nested_actions:
+      - name: generateTorque
+        type: GenerateTorque
+      - name: transferTorque
+        type: TransferTorque
+      flows:
+      - item_type: Torque
+        source: generateTorque.torque
+        target: transferTorque.inTorque
+    views:
+    - name: Actions Nested
+      type: DS_Views::SymbolicViewsByExpression::ActionsNestedView
+      expose:
+      - VehiclePracticeExpressionViews::BehaviorActionModel::**
+    - name: Actions Tree
+      type: DS_Views::SymbolicViewsByExpression::ActionsTreeView
+      expose:
+      - VehiclePracticeExpressionViews::BehaviorActionModel::**
+    - name: Action Flow View
+      type: DS_Views::SymbolicViews::afv
+      expose:
+      - VehiclePracticeExpressionViews::BehaviorActionModel::**
+  - name: BehaviorStateModel
+    imports:
+    - DS_Views::*
+    attribute_defs:
+    - name: StartSignal
+    - name: OffSignal
+    part_defs:
+    - name: Controller
+      state_machines:
+      - name: controllerStates
+        modifier: parallel
+        composites:
+        - name: operatingStates
+          entry_action: initial
+          states:
+          - 'off'
+          - 'on'
+          transitions:
+          - name: initial
+            then: 'off'
+            inline: true
+          - name: off_to_on
+            first: 'off'
+            accept: StartSignal
+            then: 'on'
+          - name: on_to_off
+            first: 'on'
+            accept: OffSignal
+            then: 'off'
+    part_usages:
+    - name: controller1
+      type: Controller
+    views:
+    - name: States Nested
+      type: DS_Views::SymbolicViewsByExpression::StatesNestedView
+      expose:
+      - VehiclePracticeExpressionViews::BehaviorStateModel::**
+    - name: State Transition View
+      type: DS_Views::SymbolicViews::stv
+      expose:
+      - VehiclePracticeExpressionViews::BehaviorStateModel::**
+  cameo_display_guide:
+    title: Vehicle Practice Expression Views Cameo Display Guide
+    intro:
+    - このガイドは `vehicle_practice_expression_views_canonical.sysml` を Cameo / CATIA Magic
+      で開いた後、どの view に対してどの Display 操作を選ぶと見たい情報が出やすいかを整理したものです。
+    - expression-based view は built-in filter を持つので、まずはこちらを使い、線や関係を見たいときだけ `iv` /
+      `afv` / `stv` 側へ切り替える運用を前提にしています。
+    basics:
+    - Textual Editor で読み込んだ後は `Synchronize` を実行する。
+    - まず各 view で `Display > Display Exposed Elements` を実行する。これは expose 済み要素を view
+      に出す基本操作です。
+    - 線が不足する場合は、対象シンボルを選んで `Display > Display Connectors` を追加実行する。
+    - 2026x Hot Fix 1 以降では `Display Connectors` 周りの不具合修正が入っている。モデリングツール本体と SysML v2
+      Plugin の Hot Fix 番号は一致させる。
+    views:
+    - view_name: Requirements Tree
+      model_elements:
+      - requirement def MassRequirement
+      - requirement vehicleSpecification
+      - requirement vehicleMass
+      - requirement engineMass
+      use_when:
+      - 要求階層と requirement usage を最短で確認したいとき
+      - 標準ライブラリ要素を極力見たくないとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      notes:
+      - expression-based tree view なので、通常はこれだけで十分です。
+      - '`RequirementsTreeView` が名前解決できない build では `RequirementTreeView` に置き換えます。'
+    - view_name: Parts Tree
+      model_elements:
+      - part def Vehicle
+      - part vehicle1
+      - engine / transmission の part 階層
+      use_when:
+      - 部品階層だけを軽く確認したいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      notes:
+      - tree view は線より階層確認向きです。
+    - view_name: Parts Nested
+      model_elements:
+      - part def Vehicle
+      - nested part hierarchy
+      use_when:
+      - ネストされた containment を箱の入れ子で見たいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      - 必要なら対象シンボルに対して `Display > Display Parts`
+      notes:
+      - nested view なので、部品の内包関係が tree view より視覚的です。
+    - view_name: Parts & Ports Nested
+      model_elements:
+      - Vehicle / Engine / Transmission
+      - drivePwrPort / clutchPort
+      use_when:
+      - 部品に加えてポートも見たいとき
+      - IBD に近い入口が欲しいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      - ポートが不足する場合は `Display > Display Ports`
+      - 線が不足する場合は `Display > Display Connectors`
+      notes:
+      - expression-based view なのでノイズは少ないですが、線は追加表示が必要なことがあります。
+    - view_name: System Interconnection
+      model_elements:
+      - EngineToTransmissionInterface
+      - engine.drivePwrPort to transmission.clutchPort
+      use_when:
+      - connection / interface / flow の線を優先して見たいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      - '`Display > Display Connectors`'
+      notes:
+      - '`iv` は interconnection representation 向けです。構造の線を見るときは最初にこの view を試すのが分かりやすいです。'
+    - view_name: Actions Nested
+      model_elements:
+      - action providePower
+      - action generateTorque
+      - action transferTorque
+      use_when:
+      - action の入れ子や所有関係を確認したいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      - 必要なら対象 action に対して `Display > Display Actions`
+      notes:
+      - flow 線より action 階層の確認向きです。
+    - view_name: Actions Tree
+      model_elements:
+      - action providePower
+      - action generateTorque
+      - action transferTorque
+      use_when:
+      - action の構成を tree で一覧したいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      notes:
+      - tree 表示なので軽い確認向きです。
+    - view_name: Action Flow View
+      model_elements:
+      - flow of Torque from generateTorque.torque to transferTorque.inTorque
+      - providePower 配下の action 群
+      use_when:
+      - action 間の flow を線で見たいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      - 線が不足する場合は `Display > Display Connectors`
+      notes:
+      - '`Action Flow View` は renderer 名ではなく標準 predefined symbolic view definition
+        の `DS_Views::SymbolicViews::afv` を使っています。'
+    - view_name: States Nested
+      model_elements:
+      - part def Controller
+      - exhibit state controllerStates
+      - state operatingStates / off / on
+      use_when:
+      - state の所有構造を確認したいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      - 内部 state が不足する場合は対象 state machine または state に対して `Display > Display Features`
+      notes:
+      - nested view は state hierarchy を追うのに向いています。
+    - view_name: State Transition View
+      model_elements:
+      - transition initial
+      - transition off_to_on
+      - transition on_to_off
+      use_when:
+      - 遷移矢印を優先して確認したいとき
+      display_steps:
+      - '`Display > Display Exposed Elements`'
+      - 必要なら state / state machine に対して `Display > Display Features`
+      notes:
+      - '`State Transition View` は標準 predefined symbolic view definition の `DS_Views::SymbolicViews::stv`
+        を使っています。'
+    links:
+    - label: Exposing elements for views
+      url: https://docs.nomagic.com/SYSML2P/2026x/exposing-elements-for-views-254423168.html
+    - label: Displaying elements in symbolic views
+      url: https://docs.nomagic.com/SYSML2P/2026x/displaying-elements-in-symbolic-views-254422731.html
+    - label: Filtering elements for views
+      url: https://docs.nomagic.com/SYSML2P/2026x/filtering-elements-for-views-254423172.html
+    - label: Rendering views
+      url: https://docs.nomagic.com/SYSML2P/2026x/rendering-views-254422759.html
+    - label: 2026x Hot Fix 1
+      url: https://docs.nomagic.com/VN/latest/2026x-hot-fix-1-278725663.html

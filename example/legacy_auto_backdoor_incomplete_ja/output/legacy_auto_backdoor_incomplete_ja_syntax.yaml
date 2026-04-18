@@ -1,39 +1,14 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/legacy_auto_backdoor_incomplete_ja/output
-file_count: 2
+tool_jar: tools\MCSysMLv2.jar
+root: example\legacy_auto_backdoor_incomplete_ja\output
+file_count: 3
 failure_count: 0
 results:
-- file: example/legacy_auto_backdoor_incomplete_ja/output/expected_ja_review_overlay.sysml
+- file: example\legacy_auto_backdoor_incomplete_ja\output\expected_ja_canonical.sysml
   status: ok
-  output: '[WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.PowerBackDoorSystem
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.PowerBackDoorSystem
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.
-
-    [WARN]  Defining symbol for AutoBackDoorCanonicalModel.Structure.BackDoorController
-    was not set.'
-- file: example/legacy_auto_backdoor_incomplete_ja/output/legacy_auto_backdoor_incomplete_ja_canonical.sysml
+  output: ''
+- file: example\legacy_auto_backdoor_incomplete_ja\output\generated_ja_canonical.sysml
+  status: ok
+  output: ''
+- file: example\legacy_auto_backdoor_incomplete_ja\output\legacy_auto_backdoor_incomplete_ja_canonical.sysml
   status: ok
   output: ''

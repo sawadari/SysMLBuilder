@@ -8,7 +8,7 @@ contracts:
   source_requirement_id: C13-RQ-001
   source_anchor:
     document_id: C13
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -22,7 +22,7 @@ contracts:
   source_requirement_id: C13-RQ-002
   source_anchor:
     document_id: C13
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -36,7 +36,7 @@ contracts:
   source_requirement_id: C13-RQ-003
   source_anchor:
     document_id: C13
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc

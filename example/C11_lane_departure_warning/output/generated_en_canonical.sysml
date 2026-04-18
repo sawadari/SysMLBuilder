@@ -49,6 +49,25 @@ package C11LaneDepartureWarning {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C11-RQ-001: When lane departure is detected at vehicle speed of at least 60 km/h and the turn signal is OFF, the system shall generate an audible warning within 150 ms. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C11-RQ-002: The system shall suppress the warning while the turn signal is active. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C11-RQ-003: The system shall stop the audible warning within 300 ms after the lane departure condition is cleared. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def LaneMonitor {
         port speedIn : VehicleSpeedPort;
         port turnSignalIn : TurnSignalPort;
@@ -71,14 +90,29 @@ package C11LaneDepartureWarning {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C11LaneDepartureWarning::systemUnderTest;
-            expose C11LaneDepartureWarning::systemUnderTest::monitor;
-            expose C11LaneDepartureWarning::systemUnderTest::buzzer;
-        }
+package C11LaneDepartureWarningStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C11LaneDepartureWarning::**;
     }
 }

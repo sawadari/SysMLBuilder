@@ -6,6 +6,8 @@
 
 - 入力 Markdown:
   [vehicle_practice_expression_views_requirements.md](example/vehicle_practice_expression_views/input/vehicle_practice_expression_views_requirements.md)
+- ローカル profile:
+  [case.yaml](example/vehicle_practice_expression_views/input/case.yaml)
 - サンプル出力 `.sysml`:
   [vehicle_practice_expression_views_canonical.sysml](example/vehicle_practice_expression_views/output/vehicle_practice_expression_views_canonical.sysml)
 - サンプル出力 Cameo ガイド:
@@ -13,6 +15,8 @@
 
 ## 方針
 
+- Markdown は人がレビューできる自然な要求仕様書として保つ
+- package 名、要素名、view 定義、Cameo 表示ガイドは `input/case.yaml` に置く
 - 要求は `RequirementsTreeView`
 - 構造は `PartsTreeView` / `PartsNestedView` / `'Parts&PortsNestedView'`
 - アクションは `ActionsNestedView` / `ActionsTreeView`

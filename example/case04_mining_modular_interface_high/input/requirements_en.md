@@ -1,6 +1,6 @@
 # Case 04: Mining frigate modular interface requirements
 
-## Scope
+## Context
 This requirement specification is a bottom-up reconstruction derived from `standardPortsAndInterfaces.sysml`.
 
 ## Requirements
@@ -9,5 +9,5 @@ This requirement specification is a bottom-up reconstruction derived from `stand
 - REQ-MFI-003: The hull shall provide a typed MediumSlot interface to a shield hardener module.
 - REQ-MFI-004: The MediumSlot interface shall transfer power and activation command from the hull to the shield hardener module.
 
-## Design context
+## Structure Hints
 The architecture includes a hull, a mining laser module, and a shield hardener module.

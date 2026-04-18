@@ -1,9 +1,23 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/dont_panic_batmobile/output
-file_count: 1
+tool_jar: tools\MCSysMLv2.jar
+root: example\dont_panic_batmobile\output
+file_count: 3
 failure_count: 0
 results:
-- file: example/dont_panic_batmobile/output/dont_panic_batmobile_canonical.sysml
+- file: example\dont_panic_batmobile\output\dont_panic_batmobile_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for Batmobile was not set.
+
+    [WARN]  Defining symbol for ScalarValues.String was not set.
+
+    [WARN]  Defining symbol for ScalarValues.String was not set.'
+- file: example\dont_panic_batmobile\output\generated_default_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for Batmobile was not set.
+
+    [WARN]  Defining symbol for ScalarValues.String was not set.
+
+    [WARN]  Defining symbol for ScalarValues.String was not set.'
+- file: example\dont_panic_batmobile\output\generated_ja_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for Batmobile was not set.
 

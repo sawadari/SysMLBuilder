@@ -1,14 +1,14 @@
 document:
   document_id: GFSE-CASE01
   document_name: 車両の定量性能およびインタフェース要求
-  language: en
+  language: ja
   domain: vehicle_system
 contracts:
 - contract_id: C-VEH-001
   source_requirement_id: REQ-VEH-001
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 1
   trace_quality: direct_file_grounded
   classification:
@@ -17,18 +17,18 @@ contracts:
   subject:
     kind: system
     canonical_name: Vehicle
+  evidence:
+    quote: 車両の総質量は2000 kg以下でなければならない。
   measured_property: mass
   comparator: <=
   threshold_value: 2000
   threshold_unit: kg
   responsible_module: Vehicle
-  evidence:
-    quote: The vehicle shall have a total mass less than or equal to 2000 kg.
 - contract_id: C-VEH-002
   source_requirement_id: REQ-VEH-002
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 2
   trace_quality: direct_file_grounded
   classification:
@@ -37,6 +37,8 @@ contracts:
   subject:
     kind: system
     canonical_name: Vehicle
+  evidence:
+    quote: 車両は、想定貨物質量が少なくとも500 kgの通常市街地走行シナリオにおいて、平均市街地燃費を少なくとも25 mpg維持しなければならない。
   measured_property: fuelEconomy
   operating_contexts:
   - CityNominal
@@ -50,15 +52,11 @@ contracts:
     operator: '>='
     rhs: 500
     unit: kg
-  evidence:
-    quote: The vehicle shall maintain an average city fuel economy of at least 25
-      mpg in the nominal city driving scenario with an assumed cargo mass of at least
-      500 kg.
 - contract_id: C-VEH-003
   source_requirement_id: REQ-VEH-003
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 3
   trace_quality: direct_file_grounded
   classification:
@@ -67,6 +65,8 @@ contracts:
   subject:
     kind: system
     canonical_name: Vehicle
+  evidence:
+    quote: 車両は、想定貨物質量が少なくとも500 kgの通常高速走行シナリオにおいて、平均高速燃費を少なくとも30 mpg維持しなければならない。
   measured_property: fuelEconomy
   operating_contexts:
   - HighwayNominal
@@ -80,15 +80,11 @@ contracts:
     operator: '>='
     rhs: 500
     unit: kg
-  evidence:
-    quote: The vehicle shall maintain an average highway fuel economy of at least
-      30 mpg in the nominal highway driving scenario with an assumed cargo mass of
-      at least 500 kg.
 - contract_id: C-VEH-004
   source_requirement_id: REQ-VEH-004
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 4
   trace_quality: direct_file_grounded
   classification:
@@ -97,6 +93,8 @@ contracts:
   subject:
     kind: module
     canonical_name: Engine
+  evidence:
+    quote: エンジンはクラッチインタフェースを介して生成トルクをトランスミッションへ伝達しなければならない。
   interface_name: EngineToTransmissionInterface
   interface_ends:
   - role: p1
@@ -107,6 +105,3 @@ contracts:
   - item: Torque
     from: p1
     to: p2
-  evidence:
-    quote: The engine shall transfer generated torque to the transmission through
-      the clutch interface.

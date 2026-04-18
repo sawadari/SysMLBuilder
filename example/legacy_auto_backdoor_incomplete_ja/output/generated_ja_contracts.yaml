@@ -8,7 +8,7 @@ contracts:
   source_requirement_id: ABD-REQ-101
   source_anchor:
     document_id: LEGACY_ABD_INCOMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -22,7 +22,7 @@ contracts:
   source_requirement_id: ABD-REQ-103
   source_anchor:
     document_id: LEGACY_ABD_INCOMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -36,7 +36,7 @@ contracts:
   source_requirement_id: ABD-REQ-104
   source_anchor:
     document_id: LEGACY_ABD_INCOMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -50,7 +50,7 @@ contracts:
   source_requirement_id: ABD-REQ-105
   source_anchor:
     document_id: LEGACY_ABD_INCOMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -64,7 +64,7 @@ contracts:
   source_requirement_id: ABD-REQ-106
   source_anchor:
     document_id: LEGACY_ABD_INCOMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc

@@ -112,6 +112,43 @@ package LegacyAutoBackDoorCompleteJa {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* ABD-REQ-001: ShiftPos が P であり、VehSpd が 3 km/h 未満の場合にのみ、BackDoorOpenReq を開要求として受け付けなければならない。 */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* ABD-REQ-003: 開要求を受け付けた場合、100 ms 以内に駆動モータへ開方向駆動を指示しなければならない。 */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* ABD-REQ-004: BackDoorPos が 95 % 以上となった場合、駆動モータを停止し、状態を全開へ遷移しなければならない。 */
+        action requirementStep004 : RequirementActivityStep;
+        doc /* ABD-REQ-007: 閉動作中に PinchDetected = true を検知した場合、50 ms 以内に閉方向駆動を停止し、200 ms 以内に開方向へ反転しなければならない。 */
+        action requirementStep005 : RequirementActivityStep;
+        doc /* ABD-REQ-009: 異常停止状態へ遷移した場合、1 s 以内に BuzzerReq を true にしなければならない。 */
+        action requirementStep006 : RequirementActivityStep;
+        doc /* ABD-REQ-010: 開度センサ値が 500 ms 以上更新されない場合、異常停止状態へ遷移しなければならない。 */
+        action requirementStep007 : RequirementActivityStep;
+        doc /* ABD-REQ-012: 全閉状態で開要求を受け付けた場合、開動作中へ遷移しなければならない。 */
+        action requirementStep008 : RequirementActivityStep;
+        doc /* ABD-REQ-015: 閉動作中で挟み込み検知した場合、反転開へ遷移しなければならない。 */
+        action requirementStep009 : RequirementActivityStep;
+        doc /* ABD-VER-001: ShiftPos=P, VehSpd=0 km/h, BackDoorOpenReq=true のとき、100 ms 以内に開方向駆動が開始されることを確認する。 */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+        flow of ActivityToken from requirementStep003.outToken to requirementStep004.inToken;
+        flow of ActivityToken from requirementStep004.outToken to requirementStep005.inToken;
+        flow of ActivityToken from requirementStep005.outToken to requirementStep006.inToken;
+        flow of ActivityToken from requirementStep006.outToken to requirementStep007.inToken;
+        flow of ActivityToken from requirementStep007.outToken to requirementStep008.inToken;
+        flow of ActivityToken from requirementStep008.outToken to requirementStep009.inToken;
+    }
+
     part def BodyControlModule {
         port vehicleStatusPort : VehicleStatusPort;
         port requestPort : DoorRequestPort;
@@ -200,14 +237,29 @@ package LegacyAutoBackDoorCompleteJa {
     requirement requirement_008 : Req008;
     requirement requirement_009 : Req009;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose LegacyAutoBackDoorCompleteJa::systemUnderTest;
-            expose LegacyAutoBackDoorCompleteJa::systemUnderTest::bodyControl;
-            expose LegacyAutoBackDoorCompleteJa::systemUnderTest::powerBackDoorSystem;
-        }
+package LegacyAutoBackDoorCompleteJaStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose LegacyAutoBackDoorCompleteJa::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose LegacyAutoBackDoorCompleteJa::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose LegacyAutoBackDoorCompleteJa::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose LegacyAutoBackDoorCompleteJa::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose LegacyAutoBackDoorCompleteJa::**;
     }
 }

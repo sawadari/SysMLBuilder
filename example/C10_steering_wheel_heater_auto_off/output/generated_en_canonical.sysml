@@ -44,6 +44,25 @@ package C10SteeringWheelHeaterAutoOff {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C10-RQ-001: The system shall reject a steering wheel heater request when ambient temperature is above 20 degC. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C10-RQ-002: The system shall turn the steering wheel heater OFF after 30 min of continuous heating. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C10-RQ-003: The system shall restore the heater to OFF after every ignition cycle. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def SteeringWheelHeaterController {
         port tempIn : AmbientTemperaturePort;
         port requestIn : HeatingRequestPort;
@@ -65,14 +84,29 @@ package C10SteeringWheelHeaterAutoOff {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C10SteeringWheelHeaterAutoOff::systemUnderTest;
-            expose C10SteeringWheelHeaterAutoOff::systemUnderTest::controller;
-            expose C10SteeringWheelHeaterAutoOff::systemUnderTest::element;
-        }
+package C10SteeringWheelHeaterAutoOffStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C10SteeringWheelHeaterAutoOff::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C10SteeringWheelHeaterAutoOff::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C10SteeringWheelHeaterAutoOff::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C10SteeringWheelHeaterAutoOff::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C10SteeringWheelHeaterAutoOff::**;
     }
 }

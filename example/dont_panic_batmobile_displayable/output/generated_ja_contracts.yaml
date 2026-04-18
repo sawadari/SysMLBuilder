@@ -1,0 +1,101 @@
+document:
+  document_id: BATMOBILE-DP-002
+  document_name: Don't Panic バットモービル表示可能 symbolic view
+  language: ja
+  domain: public_reference
+contracts:
+- contract_id: C-BAT-D-001
+  source_requirement_id: REQ-BAT-D-001
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: 要求
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_structure_core
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: Batmobile
+  evidence:
+    quote: 公開サンプルに含まれる Batmobile の構造、振る舞い、要求、ユースケース、occurrence、concern、バリアビリティ要素を維持すること。
+- contract_id: C-BAT-D-002
+  source_requirement_id: REQ-BAT-D-002
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: 要求
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_tabular_and_symbolic_views
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: batmobileParts
+  evidence:
+    quote: '`batmobileParts` tabular view を維持し、非標準ライブラリ要素でフィルタしつつ package 内容を expose
+      すること。'
+- contract_id: C-BAT-D-003
+  source_requirement_id: REQ-BAT-D-003
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: 要求
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_structural_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: structural Modeling
+  evidence:
+    quote: definition and usage、subclassification、subsetting、redefinition、`structural
+      Modeling`、`default value`、`timeslice modelling` に対して非標準ライブラリフィルタと明示的な `expose`
+      対象を追加し、構造系 symbolic view を表示可能にすること。
+- contract_id: C-BAT-D-004
+  source_requirement_id: REQ-BAT-D-004
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: 要求
+    sentence_index: 4
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_behavioral_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: behavioral modelling
+  evidence:
+    quote: '`Drive Batmobile` と `ActivateRocketBooster` に対する filtering と `expose`
+      対象を追加し、behavioral symbolic view を表示可能にすること。'
+- contract_id: C-BAT-D-005
+  source_requirement_id: REQ-BAT-D-005
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: 要求
+    sentence_index: 5
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_use_case_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: use cases modelling
+  evidence:
+    quote: '`Activate rocket booster` に対する filtering と `expose` 対象を追加し、use case symbolic
+      view を表示可能にすること。'
+- contract_id: C-BAT-D-006
+  source_requirement_id: REQ-BAT-D-006
+  source_anchor:
+    document_id: BATMOBILE-DP-002
+    section: 要求
+    sentence_index: 6
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_requirement_symbolic_view
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: requirements modelling
+  evidence:
+    quote: requirement symbolic view と最上位 `index` に filtering と明示的な `expose` 対象を追加し、表示可能にすること。

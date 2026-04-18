@@ -1,9 +1,9 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/case01_vehicle_explicit_high/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\case01_vehicle_explicit_high\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/case01_vehicle_explicit_high/output/expected_en_canonical.sysml
+- file: example\case01_vehicle_explicit_high\output\case01_vehicle_explicit_high_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 
@@ -34,7 +34,7 @@ results:
     [WARN]  Defining symbol for DomainDefinitions.Engine was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Transmission was not set.'
-- file: example/case01_vehicle_explicit_high/output/expected_ja_canonical.sysml
+- file: example\case01_vehicle_explicit_high\output\expected_en_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 
@@ -65,7 +65,7 @@ results:
     [WARN]  Defining symbol for DomainDefinitions.Engine was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Transmission was not set.'
-- file: example/case01_vehicle_explicit_high/output/generated_en_canonical.sysml
+- file: example\case01_vehicle_explicit_high\output\expected_ja_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 
@@ -96,7 +96,38 @@ results:
     [WARN]  Defining symbol for DomainDefinitions.Engine was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Transmission was not set.'
-- file: example/case01_vehicle_explicit_high/output/generated_ja_canonical.sysml
+- file: example\case01_vehicle_explicit_high\output\generated_en_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Engine was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Engine was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Engine was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Transmission was not set.'
+- file: example\case01_vehicle_explicit_high\output\generated_ja_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 

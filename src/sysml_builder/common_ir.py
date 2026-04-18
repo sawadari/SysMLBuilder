@@ -114,9 +114,34 @@ class CommonIrModel:
 
 
 def build_common_ir(parsed: ParsedDocument, contracts: dict[str, Any], projection_manifest: dict[str, Any] | None) -> CommonIrModel:
+    if parsed.metadata.get("structured_model"):
+        return _build_structured_model_ir(parsed, contracts)
     if parsed.metadata.get("generic_case"):
         return _build_generic_case_ir(parsed, contracts, projection_manifest)
     return _build_profile_case_ir(parsed, contracts, projection_manifest)
+
+
+def _build_structured_model_ir(parsed: ParsedDocument, contracts: dict[str, Any]) -> CommonIrModel:
+    structured_model = parsed.metadata["structured_model"]
+    requirements = [
+        RequirementIR(
+            id=contract["contract_id"],
+            source_contract=contract["contract_id"],
+            source_requirement_id=contract["source_requirement_id"],
+            subject=contract["subject"]["canonical_name"],
+            pattern=contract["classification"]["pattern_id"],
+            text=contract["evidence"]["quote"],
+        )
+        for contract in contracts.get("contracts", [])
+    ]
+    return CommonIrModel(
+        schema_version=SCHEMA_VERSION,
+        case_id=parsed.case_id,
+        package_name=structured_model.get("package_name", parsed.case_id),
+        source_document=parsed.document,
+        requirements=requirements,
+        metadata={"completeness": "structured_model", "source": "case.yaml"},
+    )
 
 
 def _build_generic_case_ir(parsed: ParsedDocument, contracts: dict[str, Any], projection_manifest: dict[str, Any] | None) -> CommonIrModel:

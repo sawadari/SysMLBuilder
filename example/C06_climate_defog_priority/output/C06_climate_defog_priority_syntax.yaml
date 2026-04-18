@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C06_climate_defog_priority/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C06_climate_defog_priority\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C06_climate_defog_priority/output/expected_en.sysml
+- file: example\C06_climate_defog_priority\output\C06_climate_defog_priority_canonical.sysml
   status: ok
   output: ''
-- file: example/C06_climate_defog_priority/output/expected_ja.sysml
+- file: example\C06_climate_defog_priority\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C06_climate_defog_priority/output/generated_en_canonical.sysml
+- file: example\C06_climate_defog_priority\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C06_climate_defog_priority/output/generated_ja_canonical.sysml
+- file: example\C06_climate_defog_priority\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C06_climate_defog_priority\output\generated_ja_canonical.sysml
   status: ok
   output: ''

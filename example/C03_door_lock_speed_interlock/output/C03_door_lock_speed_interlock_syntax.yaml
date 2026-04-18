@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C03_door_lock_speed_interlock/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C03_door_lock_speed_interlock\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C03_door_lock_speed_interlock/output/expected_en.sysml
+- file: example\C03_door_lock_speed_interlock\output\C03_door_lock_speed_interlock_canonical.sysml
   status: ok
   output: ''
-- file: example/C03_door_lock_speed_interlock/output/expected_ja.sysml
+- file: example\C03_door_lock_speed_interlock\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C03_door_lock_speed_interlock/output/generated_en_canonical.sysml
+- file: example\C03_door_lock_speed_interlock\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C03_door_lock_speed_interlock/output/generated_ja_canonical.sysml
+- file: example\C03_door_lock_speed_interlock\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C03_door_lock_speed_interlock\output\generated_ja_canonical.sysml
   status: ok
   output: ''

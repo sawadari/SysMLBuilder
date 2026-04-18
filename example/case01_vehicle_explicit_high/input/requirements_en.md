@@ -1,6 +1,6 @@
 # Case 01: Vehicle quantitative and interface requirements
 
-## Scope
+## Context
 This requirement specification is a bottom-up reconstruction derived from the structure and requirement style seen in `VehicleModel.sysml`.
 
 ## Requirements
@@ -9,5 +9,5 @@ This requirement specification is a bottom-up reconstruction derived from the st
 - REQ-VEH-003: The vehicle shall maintain an average highway fuel economy of at least 30 mpg in the nominal highway driving scenario with an assumed cargo mass of at least 500 kg.
 - REQ-VEH-004: The engine shall transfer generated torque to the transmission through the clutch interface.
 
-## Design context
+## Structure Hints
 The system includes a vehicle, an engine, and a transmission.

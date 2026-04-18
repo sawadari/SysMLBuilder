@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C15_child_lock_shift_interlock/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C15_child_lock_shift_interlock\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C15_child_lock_shift_interlock/output/expected_en.sysml
+- file: example\C15_child_lock_shift_interlock\output\C15_child_lock_shift_interlock_canonical.sysml
   status: ok
   output: ''
-- file: example/C15_child_lock_shift_interlock/output/expected_ja.sysml
+- file: example\C15_child_lock_shift_interlock\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C15_child_lock_shift_interlock/output/generated_en_canonical.sysml
+- file: example\C15_child_lock_shift_interlock\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C15_child_lock_shift_interlock/output/generated_ja_canonical.sysml
+- file: example\C15_child_lock_shift_interlock\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C15_child_lock_shift_interlock\output\generated_ja_canonical.sysml
   status: ok
   output: ''

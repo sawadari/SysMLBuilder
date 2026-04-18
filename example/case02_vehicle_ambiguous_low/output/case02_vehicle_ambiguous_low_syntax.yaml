@@ -1,30 +1,52 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/case02_vehicle_ambiguous_low/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\case02_vehicle_ambiguous_low\output
+file_count: 10
 failure_count: 0
 results:
-- file: example/case02_vehicle_ambiguous_low/output/expected_en_review_overlay.sysml
+- file: example\case02_vehicle_ambiguous_low\output\case02_vehicle_ambiguous_low_canonical.sysml
+  status: ok
+  output: ''
+- file: example\case02_vehicle_ambiguous_low\output\case02_vehicle_ambiguous_low_review_overlay.sysml
   status: ok
   output: '[WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Engine was not set.'
-- file: example/case02_vehicle_ambiguous_low/output/expected_ja_review_overlay.sysml
+- file: example\case02_vehicle_ambiguous_low\output\expected_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\case02_vehicle_ambiguous_low\output\expected_en_review_overlay.sysml
   status: ok
   output: '[WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Engine was not set.'
-- file: example/case02_vehicle_ambiguous_low/output/generated_en_review_overlay.sysml
+- file: example\case02_vehicle_ambiguous_low\output\expected_ja_canonical.sysml
+  status: ok
+  output: ''
+- file: example\case02_vehicle_ambiguous_low\output\expected_ja_review_overlay.sysml
   status: ok
   output: '[WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.Engine was not set.'
-- file: example/case02_vehicle_ambiguous_low/output/generated_ja_review_overlay.sysml
+- file: example\case02_vehicle_ambiguous_low\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\case02_vehicle_ambiguous_low\output\generated_en_review_overlay.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.Engine was not set.'
+- file: example\case02_vehicle_ambiguous_low\output\generated_ja_canonical.sysml
+  status: ok
+  output: ''
+- file: example\case02_vehicle_ambiguous_low\output\generated_ja_review_overlay.sysml
   status: ok
   output: '[WARN]  Defining symbol for DomainDefinitions.Vehicle was not set.
 

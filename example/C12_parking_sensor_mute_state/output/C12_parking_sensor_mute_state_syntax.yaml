@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C12_parking_sensor_mute_state/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C12_parking_sensor_mute_state\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C12_parking_sensor_mute_state/output/expected_en.sysml
+- file: example\C12_parking_sensor_mute_state\output\C12_parking_sensor_mute_state_canonical.sysml
   status: ok
   output: ''
-- file: example/C12_parking_sensor_mute_state/output/expected_ja.sysml
+- file: example\C12_parking_sensor_mute_state\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C12_parking_sensor_mute_state/output/generated_en_canonical.sysml
+- file: example\C12_parking_sensor_mute_state\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C12_parking_sensor_mute_state/output/generated_ja_canonical.sysml
+- file: example\C12_parking_sensor_mute_state\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C12_parking_sensor_mute_state\output\generated_ja_canonical.sysml
   status: ok
   output: ''

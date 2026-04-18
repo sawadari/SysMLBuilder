@@ -44,6 +44,25 @@ package C14KeylessEntryUnlock {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C14-RQ-001: When a valid key is within 1 m and the driver door handle is touched, the system shall unlock the driver door within 300 ms. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C14-RQ-002: The system shall reject unlock requests from invalid keys. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C14-RQ-003: When 5 invalid key attempts occur within 60 s, the system shall inhibit further keyless unlock processing for 5 min. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def AccessController {
         state def AccessStates {
             entry; then ready;
@@ -87,15 +106,29 @@ package C14KeylessEntryUnlock {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C14KeylessEntryUnlock::systemUnderTest;
-            expose C14KeylessEntryUnlock::systemUnderTest::controller;
-            expose C14KeylessEntryUnlock::systemUnderTest::receiver;
-            expose C14KeylessEntryUnlock::systemUnderTest::actuator;
-        }
+package C14KeylessEntryUnlockStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C14KeylessEntryUnlock::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C14KeylessEntryUnlock::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C14KeylessEntryUnlock::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C14KeylessEntryUnlock::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C14KeylessEntryUnlock::**;
     }
 }

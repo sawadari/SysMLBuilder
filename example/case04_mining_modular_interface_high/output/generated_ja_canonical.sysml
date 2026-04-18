@@ -119,3 +119,28 @@ package ViewDefinitions {
 }
 
 }
+
+package Case04MiningModularInterfaceHighExpectedStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose Case04MiningModularInterfaceHighExpected::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose Case04MiningModularInterfaceHighExpected::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose Case04MiningModularInterfaceHighExpected::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose Case04MiningModularInterfaceHighExpected::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose Case04MiningModularInterfaceHighExpected::**;
+    }
+}

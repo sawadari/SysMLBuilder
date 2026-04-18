@@ -31,7 +31,7 @@ def transform_markdown(path: Path) -> TransformResult:
     parsed = parse_markdown(path)
     contracts = build_contracts(parsed)
     canonical = render_canonical(parsed.case_id, contracts)
-    projection_manifest = render_projection_manifest(parsed.case_id)
+    projection_manifest = render_projection_manifest(parsed.case_id, contracts)
     common_ir = build_common_ir(parsed, contracts, projection_manifest)
     v1_projection = project_to_sysml_v1(common_ir)
     sysml_v1_xmi = {}
@@ -43,7 +43,7 @@ def transform_markdown(path: Path) -> TransformResult:
         contracts=contracts,
         canonical=canonical,
         overlay=render_overlay(parsed.case_id, contracts),
-        cameo_display_guide=render_cameo_display_guide(parsed.case_id),
+        cameo_display_guide=render_cameo_display_guide(parsed.case_id, contracts),
         projection_manifest=projection_manifest,
         common_ir=common_ir,
         v1_projection=v1_projection,

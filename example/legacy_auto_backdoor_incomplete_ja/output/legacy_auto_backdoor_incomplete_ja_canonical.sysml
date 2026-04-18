@@ -78,6 +78,31 @@ package LegacyAutoBackDoorIncompleteJa {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* ABD-REQ-101: ShiftPos が P であり、車両が低速時のみ、BackDoorOpenReq を開要求として受け付けなければならない。 */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* ABD-REQ-103: 開要求を受け付けた場合、所定時間以内に駆動モータへ開方向駆動を指示しなければならない。 */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* ABD-REQ-104: バックドアがほぼ全開となった場合、駆動モータを停止し、状態を全開へ遷移しなければならない。 */
+        action requirementStep004 : RequirementActivityStep;
+        doc /* ABD-REQ-105: 短時間で閉方向駆動を停止し、その後に開方向へ反転しなければならない。 */
+        action requirementStep005 : RequirementActivityStep;
+        doc /* ABD-REQ-106: センサ異常を検知した場合、異常停止状態へ遷移しなければならない。 */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+        flow of ActivityToken from requirementStep003.outToken to requirementStep004.inToken;
+        flow of ActivityToken from requirementStep004.outToken to requirementStep005.inToken;
+    }
+
     part def BodyControlModule {
         port vehicleStatusPort : VehicleStatusPort;
         port requestPort : DoorRequestPort;
@@ -156,14 +181,29 @@ package LegacyAutoBackDoorIncompleteJa {
     requirement requirement_004 : Req004;
     requirement requirement_005 : Req005;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose LegacyAutoBackDoorIncompleteJa::systemUnderTest;
-            expose LegacyAutoBackDoorIncompleteJa::systemUnderTest::bodyControl;
-            expose LegacyAutoBackDoorIncompleteJa::systemUnderTest::powerBackDoorSystem;
-        }
+package LegacyAutoBackDoorIncompleteJaStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose LegacyAutoBackDoorIncompleteJa::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose LegacyAutoBackDoorIncompleteJa::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose LegacyAutoBackDoorIncompleteJa::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose LegacyAutoBackDoorIncompleteJa::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose LegacyAutoBackDoorIncompleteJa::**;
     }
 }

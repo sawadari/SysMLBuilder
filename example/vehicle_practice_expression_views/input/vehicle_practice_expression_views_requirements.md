@@ -1,16 +1,41 @@
 # Vehicle Practice Expression Views
 
 ## Context
-This Markdown document is a deterministic requirement specification for a Cameo-oriented SysML v2 text-first practice model.
-It is designed to output requirement, structure, action, and state-transition examples together with symbolic views that can be opened in Cameo.
+This document is a human-authored requirement specification for a small SysML v2 practice model that is easy to inspect in Cameo.
+The model should stay simple and deterministic. The goal is not a production architecture but a compact sample that demonstrates requirement, structure, action, and state views from one text-first source.
 
-## Source Trace
-- Goal: use expression-based symbolic views where they reduce noise for text-first modeling
-- Complementary goal: keep one interconnection view, one action-flow view, and one state-transition view for connector-oriented rendering
+## Goal
+The sample should give a beginner a single `.sysml` file that can be imported into Cameo and used to inspect:
+
+- a small requirement hierarchy
+- a small structural model with one explicit connection
+- a small action flow
+- a small state machine
+- several symbolic views that match those concerns
+
+## Context
+- Requirements
+  The sample should include one requirement definition for mass checking and one requirement hierarchy that applies it to a vehicle and an engine.
+- Structure
+  The sample should include a small vehicle structure with an engine, a transmission, one drive power port type, and one engine-to-transmission interface.
+- Behavior (actions)
+  The sample should include one action flow that generates torque and transfers it.
+- Behavior (states)
+  The sample should include one controller with a simple off/on state machine driven by start and off signals.
+
+## Authoring Notes
+- The package and view names are fixed by the companion `case.yaml`.
+- The Markdown should explain intent in plain language.
+- The Markdown does not need to restate every SysML token as long as the desired model content is clear.
 
 ## Requirements
-- REQ-VPV-001: Define a requirement package with a mass requirement and a requirements tree view that recursively exposes the requirement package.
-- REQ-VPV-002: Define a structure package with parts, ports, an interface connection, parts tree views, and a parts-and-ports nested view that recursively exposes the structure package.
-- REQ-VPV-003: Define an action behavior package with action definitions, an action usage with flow, and nested or tree action views that recursively expose the action package.
-- REQ-VPV-004: Define a state behavior package with start and off signals, a controller state machine, and a states nested view that recursively exposes the state package.
-- REQ-VPV-005: Define complementary render-based views for interconnection, action flow, and state transitions so the same model can be opened with connector-oriented renderers in Cameo.
+- [REQ-VPV-001] The sample shall provide a requirement package that checks actual mass against limit mass for both a vehicle and an engine.
+- [REQ-VPV-002] The sample shall provide a structural package with a vehicle, an engine, a transmission, one drive-power port type, and one explicit engine-to-transmission interface.
+- [REQ-VPV-003] The structural package shall also include a concrete vehicle part usage so that tree, nested, and interconnection views have something to expose.
+- [REQ-VPV-004] The sample shall provide an action package in which torque is generated and then transferred through one explicit flow.
+- [REQ-VPV-005] The sample shall provide a state package in which a controller moves between `off` and `on` in response to start and off signals.
+- [REQ-VPV-006] The sample shall provide a requirements tree view for the requirements package.
+- [REQ-VPV-007] The sample shall provide structural views for parts tree, parts nested, parts and ports nested, and system interconnection.
+- [REQ-VPV-008] The sample shall provide action views for actions nested, actions tree, and action flow.
+- [REQ-VPV-009] The sample shall provide state views for states nested and state transition.
+- [REQ-VPV-010] The sample shall remain Cameo-oriented, so the views should be useful after `Display > Display Exposed Elements`, and connector-focused views should also work with `Display > Display Connectors` when needed.

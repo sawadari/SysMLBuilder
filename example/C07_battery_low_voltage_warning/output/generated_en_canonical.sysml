@@ -50,6 +50,25 @@ package C07BatteryLowVoltageWarning {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C07-RQ-001: When battery voltage is below 11.5 V for 5 s, the system shall turn on the low-voltage warning lamp. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C07-RQ-002: The system shall send a low-voltage status message on the vehicle network within 100 ms after the warning lamp is turned on. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C07-RQ-003: The system shall clear the warning after battery voltage is above 12.1 V for 10 s. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def BatteryMonitor {
         port voltageIn : VoltageInputPort;
         port lampOut : LampCommandPort;
@@ -76,15 +95,29 @@ package C07BatteryLowVoltageWarning {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C07BatteryLowVoltageWarning::systemUnderTest;
-            expose C07BatteryLowVoltageWarning::systemUnderTest::monitor;
-            expose C07BatteryLowVoltageWarning::systemUnderTest::lamp;
-            expose C07BatteryLowVoltageWarning::systemUnderTest::publisher;
-        }
+package C07BatteryLowVoltageWarningStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C07BatteryLowVoltageWarning::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C07BatteryLowVoltageWarning::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C07BatteryLowVoltageWarning::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C07BatteryLowVoltageWarning::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C07BatteryLowVoltageWarning::**;
     }
 }

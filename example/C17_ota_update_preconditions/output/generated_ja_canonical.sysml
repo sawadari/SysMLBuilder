@@ -49,6 +49,25 @@ package C17OtaUpdatePreconditions {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C17-RQ-001: OTA更新システムは、車両が駐車状態でドアが施錠され、かつバッテリ残量が40%以上の場合にのみ更新を開始すること。 */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C17-RQ-002: システムは、更新中にイグニッションがONになった場合、1 s以内に更新を中断すること。 */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C17-RQ-003: システムは、更新中にいずれかのドアが解錠された場合、1 s以内に更新を中断すること。 */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def UpdateManager {
         port updateControlOut : UpdateControlPort;
     }
@@ -94,14 +113,29 @@ package C17OtaUpdatePreconditions {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C17OtaUpdatePreconditions::systemUnderTest;
-            expose C17OtaUpdatePreconditions::systemUnderTest::manager;
-            expose C17OtaUpdatePreconditions::systemUnderTest::monitor;
-        }
+package C17OtaUpdatePreconditionsStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C17OtaUpdatePreconditions::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C17OtaUpdatePreconditions::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C17OtaUpdatePreconditions::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C17OtaUpdatePreconditions::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C17OtaUpdatePreconditions::**;
     }
 }

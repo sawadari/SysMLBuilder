@@ -1,57 +1,57 @@
-root: .
+root: C:\Users\sawad\OneDrive\ドキュメント\dev\SysMLBuilder
 yaml_parse:
-- file: profiles/automotive_control_profile_v3.yaml
+- file: profiles\automotive_control_profile_v3.yaml
   status: ok
   type: dict
-- file: profiles/benchmark_lints.yaml
+- file: profiles\benchmark_lints.yaml
   status: ok
   type: dict
-- file: profiles/domain_vocabulary_automotive_control.yaml
+- file: profiles\domain_vocabulary_automotive_control.yaml
   status: ok
   type: dict
-- file: profiles/example_retrieval.yaml
+- file: profiles\example_retrieval.yaml
   status: ok
   type: dict
-- file: profiles/gfse_reference_benchmark_profile.yaml
+- file: profiles\gfse_reference_benchmark_profile.yaml
   status: ok
   type: dict
-- file: profiles/model_lints.yaml
+- file: profiles\model_lints.yaml
   status: ok
   type: dict
-- file: profiles/projection_profiles.yaml
+- file: profiles\projection_profiles.yaml
   status: ok
   type: dict
-- file: profiles/reference_model_trace.yaml
+- file: profiles\reference_model_trace.yaml
   status: ok
   type: dict
-- file: profiles/requirement_contract.yaml
+- file: profiles\requirement_contract.yaml
   status: ok
   type: dict
-- file: profiles/requirement_patterns.yaml
+- file: profiles\requirement_patterns.yaml
   status: ok
   type: dict
-- file: profiles/review_overlay.yaml
+- file: profiles\review_overlay.yaml
   status: ok
   type: dict
-- file: profiles/satisfiability_model.yaml
+- file: profiles\satisfiability_model.yaml
   status: ok
   type: dict
-- file: example/case_manifest.yaml
+- file: example\case_manifest.yaml
   status: ok
   type: dict
-- file: example/scoring_rubric.yaml
+- file: example\scoring_rubric.yaml
   status: ok
   type: dict
 docs_present:
 - file: README.md
   status: ok
-- file: docs/developer_design_rationale.md
+- file: docs\developer_design_rationale.md
   status: ok
-- file: docs/gfse_testdata_design_feedback.md
+- file: docs\gfse_testdata_design_feedback.md
   status: ok
-- file: docs/benchmark_scoring_guide.md
+- file: docs\benchmark_scoring_guide.md
   status: ok
-- file: docs/customization_map.md
+- file: docs\customization_map.md
   status: ok
 case_files_exist:
 - case_id: case01_vehicle_explicit_high
@@ -164,6 +164,20 @@ canonical_checks:
 - case_id: case01_vehicle_explicit_high
   rule: must_not_use_arrow_placeholders
   status: ok
+- case_id: case02_vehicle_ambiguous_low
+  rule: must_not_contain_draft_packages
+  status: ok
+- case_id: case02_vehicle_ambiguous_low
+  rule: requirement_defs_must_have_subject
+  status: ok
+  failures: []
+- case_id: case02_vehicle_ambiguous_low
+  rule: all_ports_must_be_typed
+  status: ok
+  failures: []
+- case_id: case02_vehicle_ambiguous_low
+  rule: must_not_use_arrow_placeholders
+  status: ok
 - case_id: case03_mining_contextual_performance_high
   rule: must_not_contain_draft_packages
   status: ok
@@ -210,6 +224,20 @@ canonical_checks:
   rule: use_case_defs_must_have_subject_and_objective
   status: ok
   failures: []
+- case_id: case06_mining_usecase_ambiguous_low
+  rule: must_not_contain_draft_packages
+  status: ok
+- case_id: case06_mining_usecase_ambiguous_low
+  rule: requirement_defs_must_have_subject
+  status: ok
+  failures: []
+- case_id: case06_mining_usecase_ambiguous_low
+  rule: all_ports_must_be_typed
+  status: ok
+  failures: []
+- case_id: case06_mining_usecase_ambiguous_low
+  rule: must_not_use_arrow_placeholders
+  status: ok
 overlay_checks:
 - case_id: case02_vehicle_ambiguous_low
   rule: overlay_packages_exist

@@ -49,6 +49,25 @@ package C01PowerTailgateConditions {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C01-RQ-001: パワーバックドアシステムは、車速が3 km/h未満かつシフト位置がPの場合にのみ開要求を受け付けること。 */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C01-RQ-002: システムは、有効な閉要求の後、200 ms以内に閉動作を開始すること。 */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C01-RQ-003: システムは、閉動作中に障害物を検知した場合、50 ms以内に停止し、少なくとも200 msは反転動作すること。 */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def TailgateController {
         state def TailgateMotionStates {
             entry; then idle;
@@ -99,15 +118,29 @@ package C01PowerTailgateConditions {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C01PowerTailgateConditions::systemUnderTest;
-            expose C01PowerTailgateConditions::systemUnderTest::controller;
-            expose C01PowerTailgateConditions::systemUnderTest::actuator;
-            expose C01PowerTailgateConditions::systemUnderTest::sensor;
-        }
+package C01PowerTailgateConditionsStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C01PowerTailgateConditions::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C01PowerTailgateConditions::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C01PowerTailgateConditions::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C01PowerTailgateConditions::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C01PowerTailgateConditions::**;
     }
 }

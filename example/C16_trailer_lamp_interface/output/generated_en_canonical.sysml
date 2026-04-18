@@ -59,6 +59,25 @@ package C16TrailerLampInterface {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C16-RQ-001: The trailer lamp controller shall output left-turn, right-turn, and stop-lamp commands on the trailer connector interface. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C16-RQ-002: The system shall detect trailer disconnect within 500 ms after connector continuity is lost. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C16-RQ-003: The system shall suppress trailer-lamp commands when no trailer is detected. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def TrailerLampController {
         port trailerPresenceIn : TrailerPresencePort;
         port leftOut : LeftTurnLampPort;
@@ -83,14 +102,29 @@ package C16TrailerLampInterface {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C16TrailerLampInterface::systemUnderTest;
-            expose C16TrailerLampInterface::systemUnderTest::controller;
-            expose C16TrailerLampInterface::systemUnderTest::connector;
-        }
+package C16TrailerLampInterfaceStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C16TrailerLampInterface::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C16TrailerLampInterface::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C16TrailerLampInterface::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C16TrailerLampInterface::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C16TrailerLampInterface::**;
     }
 }

@@ -1,0 +1,34 @@
+requirements:
+- sysml_name: highSlotInterfaceRequirement
+  source_contract: C-MFI-001|C-MFI-002
+  pattern: HighSlotInterfaceRequirement
+- sysml_name: mediumSlotInterfaceRequirement
+  source_contract: C-MFI-003|C-MFI-004
+  pattern: MediumSlotInterfaceRequirement
+interfaces:
+- id: IF-MFI-001
+  name: miningLaserIf
+  type: HighSlotInterface
+  from: frigate_ref.hull.highSlot1
+  to: frigate_ref.miningLaser.modulePort
+- id: IF-MFI-002
+  name: shieldIf
+  type: MediumSlotInterface
+  from: frigate_ref.hull.mediumSlot1
+  to: frigate_ref.shieldHardener.modulePort
+allocations:
+- id: ALLOC-MFI-001
+  contract: C-MFI-001
+  allocated_to: Structure::frigate_ref::hull
+- id: ALLOC-MFI-003
+  contract: C-MFI-003
+  allocated_to: Structure::frigate_ref::hull
+satisfy_claims:
+- requirement: Requirements::architectureSpecification::highSlotInterfaceRequirement
+  by: Structure::frigate_ref::hull
+- requirement: Requirements::architectureSpecification::mediumSlotInterfaceRequirement
+  by: Structure::frigate_ref::hull
+views:
+- id: VIEW-MFI-001
+  target: Structure::frigate_ref
+  rendering: interconnection

@@ -13,7 +13,7 @@ from .profile_runtime import load_case_profiles
 def infer_case_id(path: Path, text: str) -> str:
     stem = path.stem
     case_profiles = load_case_profiles()
-    for case_id in case_profiles:
+    for case_id in sorted(case_profiles, key=len, reverse=True):
         if stem.startswith(case_id):
             return case_id
     case_metadata_path = path.with_name("case.yaml")
@@ -30,11 +30,15 @@ def infer_case_id(path: Path, text: str) -> str:
 
 def _parse_requirement_bullets(text: str, section: str) -> list[RequirementEntry]:
     entries: list[RequirementEntry] = []
-    for match in re.finditer(r"^\s*-\s+([A-Z0-9\-]+):\s+(.+?)\s*$", text, re.M):
+    pattern = re.compile(
+        r"^\s*(?:-|\d+\.)\s+(?:\[(?P<bracket>[A-Z0-9\-]+)\]|(?P<plain>[A-Z0-9\-]+):)\s+(?P<body>.+?)\s*$",
+        re.M,
+    )
+    for match in pattern.finditer(text):
         entries.append(
             RequirementEntry(
-                identifier=match.group(1).strip(),
-                text=match.group(2).strip(),
+                identifier=(match.group("bracket") or match.group("plain")).strip(),
+                text=match.group("body").strip(),
                 section=section,
             )
         )
@@ -80,12 +84,56 @@ def _extract_section_text(text: str, headings: tuple[str, ...]) -> str:
     return text[section_start:section_end].strip()
 
 
-def _parse_generic_case(path: Path, text: str, case_id: str) -> ParsedDocument:
-    metadata = yaml.safe_load(path.with_name("case.yaml").read_text(encoding="utf-8"))
+def _first_present_section(text: str, section_groups: tuple[tuple[str, ...], ...]) -> str:
+    for headings in section_groups:
+        section_text = _extract_section_text(text, headings)
+        if section_text:
+            return section_text
+    return ""
+
+
+def _load_case_metadata(path: Path) -> dict[str, Any] | None:
+    case_metadata_path = path.with_name("case.yaml")
+    if not case_metadata_path.is_file():
+        return None
+    payload = yaml.safe_load(case_metadata_path.read_text(encoding="utf-8"))
+    return payload if isinstance(payload, dict) else None
+
+
+def _parse_structured_model_case(path: Path, text: str, case_id: str, metadata: dict[str, Any]) -> ParsedDocument:
+    language = "ja" if path.name.endswith("_ja.md") else "en"
+    title = metadata["title_ja"] if language == "ja" else metadata["title_en"]
+    section_name = "要求" if language == "ja" else "Requirements"
+    requirements_text = _extract_section_text(text, ("Requirements", "要求"))
+    requirements = _parse_requirement_bullets(requirements_text, section_name)
+    return ParsedDocument(
+        path=path,
+        case_id=case_id,
+        title=title,
+        document={
+            "document_id": metadata["id"],
+            "document_name": title,
+            "language": language,
+            "domain": metadata["category"],
+        },
+        requirements=requirements,
+        metadata={"structured_model": metadata["structured_model"]},
+    )
+
+
+def _parse_generic_case(path: Path, text: str, case_id: str, metadata: dict[str, Any]) -> ParsedDocument:
     language = "ja" if path.name.endswith("_ja.md") else "en"
     title = metadata["title_ja"] if language == "ja" else metadata["title_en"]
     context = _extract_section_text(text, ("Context", "背景")).strip()
-    requirements = _parse_requirement_bullets(text, "Functional Requirements")
+    section_name = "要求" if language == "ja" else "Requirements"
+    requirements_text = _first_present_section(
+        text,
+        (
+            ("Requirements", "要求"),
+            ("Functional Requirements", "機能要求"),
+        ),
+    )
+    requirements = _parse_requirement_bullets(requirements_text, section_name)
 
     document: dict[str, Any] = {
         "document_id": metadata["id"],
@@ -119,9 +167,14 @@ def _parse_generic_case(path: Path, text: str, case_id: str) -> ParsedDocument:
 def parse_markdown(path: Path) -> ParsedDocument:
     text = path.read_text(encoding="utf-8")
     case_id = infer_case_id(path, text)
+    case_metadata = _load_case_metadata(path)
+    if case_metadata and case_metadata.get("profile_type") == "structured_model_v1":
+        return _parse_structured_model_case(path, text, case_id, case_metadata)
     case_profiles = load_case_profiles()
     if case_id not in case_profiles:
-        return _parse_generic_case(path, text, case_id)
+        if case_metadata:
+            return _parse_generic_case(path, text, case_id, case_metadata)
+        raise ValueError(f"Unsupported input document: {path}")
     title_match = re.search(r"^#\s+(.+)$", text, re.M)
     title = title_match.group(1).strip() if title_match else case_id
     meta = case_profiles[case_id]["document"]
@@ -136,11 +189,18 @@ def parse_markdown(path: Path) -> ParsedDocument:
         document["language"] = "ja"
     requirements = []
     use_cases = []
-    if "## Requirements" in text or "## 要求" in text:
-        requirements = _parse_requirement_bullets(text, "Requirements")
-    elif "## Narrative requirements" in text or "## 記述要求" in text:
-        requirements = _parse_requirement_bullets(text, "Narrative requirements")
-    elif "## Operational objectives" in text or "## 運用目的" in text:
+    requirements_text = _first_present_section(
+        text,
+        (
+            ("Requirements", "要求"),
+            ("Functional Requirements", "機能要求"),
+            ("Narrative requirements", "記述要求"),
+        ),
+    )
+    if requirements_text:
+        section_name = "要求" if document["language"] == "ja" else "Requirements"
+        requirements = _parse_requirement_bullets(requirements_text, section_name)
+    elif _first_present_section(text, (("Use Cases", "ユースケース"), ("Operational objectives", "運用目的"))):
         use_cases = _parse_use_cases(text)
     return ParsedDocument(
         path=path,

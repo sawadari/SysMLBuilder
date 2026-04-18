@@ -49,6 +49,25 @@ package C11LaneDepartureWarning {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C11-RQ-001: システムは、車速60 km/h以上かつ方向指示器OFFの状態で車線逸脱を検知した場合、150 ms以内に可聴警報を生成すること。 */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C11-RQ-002: システムは、方向指示器が有効な間、警報を抑止すること。 */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C11-RQ-003: システムは、車線逸脱条件が解消された後300 ms以内に可聴警報を停止すること。 */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def LaneMonitor {
         port speedIn : VehicleSpeedPort;
         port turnSignalIn : TurnSignalPort;
@@ -71,14 +90,29 @@ package C11LaneDepartureWarning {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C11LaneDepartureWarning::systemUnderTest;
-            expose C11LaneDepartureWarning::systemUnderTest::monitor;
-            expose C11LaneDepartureWarning::systemUnderTest::buzzer;
-        }
+package C11LaneDepartureWarningStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C11LaneDepartureWarning::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C11LaneDepartureWarning::**;
     }
 }

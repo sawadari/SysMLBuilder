@@ -1,14 +1,14 @@
 document:
   document_id: GFSE-CASE04
   document_name: 採掘フリゲートのモジュラーインタフェース要求
-  language: en
+  language: ja
   domain: space_system
 contracts:
 - contract_id: C-MFI-001
   source_requirement_id: REQ-MFI-001
   source_anchor:
     document_id: GFSE-CASE04
-    section: Requirements
+    section: 要求
     sentence_index: 1
   trace_quality: direct_file_grounded
   classification:
@@ -17,6 +17,8 @@ contracts:
   subject:
     kind: module
     canonical_name: MiningFrigateHull
+  evidence:
+    quote: 船体は採掘レーザーモジュールに対して型付きHighSlotインタフェースを提供しなければならない。
   slot_type: HighSlot
   interface_name: HighSlotInterface
   interface_ends:
@@ -33,13 +35,11 @@ contracts:
   - item: HighSlotCommand
     from: hullPort.control
     to: modulePort.control
-  evidence:
-    quote: 船体は採掘レーザーモジュールに対して型付きHighSlotインタフェースを提供しなければならない。
 - contract_id: C-MFI-002
   source_requirement_id: REQ-MFI-002
   source_anchor:
     document_id: GFSE-CASE04
-    section: Requirements
+    section: 要求
     sentence_index: 2
   trace_quality: direct_file_grounded
   classification:
@@ -48,6 +48,8 @@ contracts:
   subject:
     kind: interface
     canonical_name: HighSlotInterface
+  evidence:
+    quote: HighSlotインタフェースは船体から採掘レーザーモジュールへ電力と起動コマンドを伝達しなければならない。
   interface_name: HighSlotInterface
   interface_ends:
   - role: hullPort
@@ -61,14 +63,11 @@ contracts:
   - item: HighSlotCommand
     from: hullPort.control
     to: modulePort.control
-  evidence:
-    quote: The HighSlot interface shall transfer power and activation command from
-      the hull to the mining laser module.
 - contract_id: C-MFI-003
   source_requirement_id: REQ-MFI-003
   source_anchor:
     document_id: GFSE-CASE04
-    section: Requirements
+    section: 要求
     sentence_index: 3
   trace_quality: direct_file_grounded
   classification:
@@ -77,6 +76,8 @@ contracts:
   subject:
     kind: module
     canonical_name: MiningFrigateHull
+  evidence:
+    quote: 船体はシールドハードナーモジュールに対して型付きMediumSlotインタフェースを提供しなければならない。
   slot_type: MediumSlot
   interface_name: MediumSlotInterface
   interface_ends:
@@ -93,14 +94,11 @@ contracts:
   - item: MediumSlotCommand
     from: hullPort.control
     to: modulePort.control
-  evidence:
-    quote: The hull shall provide a typed MediumSlot interface to a shield hardener
-      module.
 - contract_id: C-MFI-004
   source_requirement_id: REQ-MFI-004
   source_anchor:
     document_id: GFSE-CASE04
-    section: Requirements
+    section: 要求
     sentence_index: 4
   trace_quality: direct_file_grounded
   classification:
@@ -109,6 +107,8 @@ contracts:
   subject:
     kind: interface
     canonical_name: MediumSlotInterface
+  evidence:
+    quote: MediumSlotインタフェースは船体からシールドハードナーモジュールへ電力と起動コマンドを伝達しなければならない。
   interface_name: MediumSlotInterface
   interface_ends:
   - role: hullPort
@@ -122,6 +122,3 @@ contracts:
   - item: MediumSlotCommand
     from: hullPort.control
     to: modulePort.control
-  evidence:
-    quote: The MediumSlot interface shall transfer power and activation command from
-      the hull to the shield hardener module.

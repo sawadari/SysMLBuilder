@@ -45,8 +45,8 @@ package OpenQuestions {
 
 package BehaviorCandidates {
   doc /* 候補となる振る舞い分解:
-         MineAsteroids -> target selection / mining activation / ore transfer / suspend on full cargo
-         OffloadOreAndResupply -> docking / cargo transfer / resupply / abort on failure */
+         MineAsteroids -> ターゲット選択 / 採掘起動 / 鉱石移送 / 貨物満杯で中断
+         OffloadOreAndResupply -> ドッキング / 貨物移送 / 補給 / 失敗時中止 */
 }
 
 package ReviewGuide {

@@ -44,6 +44,25 @@ package C04HeadlampAutoOffDelay {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C04-RQ-001: When ignition turns OFF and the driver door is closed, the system shall turn off the headlamps after 30 s. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C04-RQ-002: The system shall cancel the auto-off timer when the user manually switches the headlamps ON again. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C04-RQ-003: The system shall keep the headlamps ON while the driver door is open. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def HeadlampController {
         state def HeadlampTimerStates {
             entry; then active;
@@ -88,14 +107,29 @@ package C04HeadlampAutoOffDelay {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C04HeadlampAutoOffDelay::systemUnderTest;
-            expose C04HeadlampAutoOffDelay::systemUnderTest::controller;
-            expose C04HeadlampAutoOffDelay::systemUnderTest::relay;
-        }
+package C04HeadlampAutoOffDelayStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C04HeadlampAutoOffDelay::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C04HeadlampAutoOffDelay::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C04HeadlampAutoOffDelay::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C04HeadlampAutoOffDelay::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C04HeadlampAutoOffDelay::**;
     }
 }

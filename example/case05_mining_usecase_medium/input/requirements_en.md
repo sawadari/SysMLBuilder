@@ -1,9 +1,9 @@
 # Case 05: Mining frigate operational use cases
 
-## Scope
+## Context
 This requirement specification is a bottom-up reconstruction derived from `UseCasesFrigate.sysml`.
 
-## Operational objectives
+## Use Cases
 ### UC-MF-001 Mine Asteroids
 Main Flow:
 1. Identify an asteroid target.
@@ -25,5 +25,5 @@ Exception Flows:
 - If docking fails, notify the pilot and abort the offload sequence.
 - If cargo transfer fails, suspend operations and keep the ore on board.
 
-## Note
+## Authoring Notes
 This input intentionally leaves quantitative success thresholds unspecified.

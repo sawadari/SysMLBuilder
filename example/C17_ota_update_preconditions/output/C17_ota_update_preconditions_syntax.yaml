@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C17_ota_update_preconditions/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C17_ota_update_preconditions\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C17_ota_update_preconditions/output/expected_en.sysml
+- file: example\C17_ota_update_preconditions\output\C17_ota_update_preconditions_canonical.sysml
   status: ok
   output: ''
-- file: example/C17_ota_update_preconditions/output/expected_ja.sysml
+- file: example\C17_ota_update_preconditions\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C17_ota_update_preconditions/output/generated_en_canonical.sysml
+- file: example\C17_ota_update_preconditions\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C17_ota_update_preconditions/output/generated_ja_canonical.sysml
+- file: example\C17_ota_update_preconditions\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C17_ota_update_preconditions\output\generated_ja_canonical.sysml
   status: ok
   output: ''

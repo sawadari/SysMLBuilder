@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C01_power_tailgate_conditions/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C01_power_tailgate_conditions\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C01_power_tailgate_conditions/output/expected_en.sysml
+- file: example\C01_power_tailgate_conditions\output\C01_power_tailgate_conditions_canonical.sysml
   status: ok
   output: ''
-- file: example/C01_power_tailgate_conditions/output/expected_ja.sysml
+- file: example\C01_power_tailgate_conditions\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C01_power_tailgate_conditions/output/generated_en_canonical.sysml
+- file: example\C01_power_tailgate_conditions\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C01_power_tailgate_conditions/output/generated_ja_canonical.sysml
+- file: example\C01_power_tailgate_conditions\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C01_power_tailgate_conditions\output\generated_ja_canonical.sysml
   status: ok
   output: ''

@@ -1,9 +1,9 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/case03_mining_contextual_performance_high/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\case03_mining_contextual_performance_high\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/case03_mining_contextual_performance_high/output/expected_en_canonical.sysml
+- file: example\case03_mining_contextual_performance_high\output\case03_mining_contextual_performance_high_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 
@@ -24,7 +24,7 @@ results:
     [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'
-- file: example/case03_mining_contextual_performance_high/output/expected_ja_canonical.sysml
+- file: example\case03_mining_contextual_performance_high\output\expected_en_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 
@@ -45,7 +45,7 @@ results:
     [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'
-- file: example/case03_mining_contextual_performance_high/output/generated_en_canonical.sysml
+- file: example\case03_mining_contextual_performance_high\output\expected_ja_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 
@@ -66,7 +66,28 @@ results:
     [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
 
     [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'
-- file: example/case03_mining_contextual_performance_high/output/generated_ja_canonical.sysml
+- file: example\case03_mining_contextual_performance_high\output\generated_en_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.
+
+    [WARN]  Defining symbol for DomainDefinitions.MiningFrigate was not set.'
+- file: example\case03_mining_contextual_performance_high\output\generated_ja_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 

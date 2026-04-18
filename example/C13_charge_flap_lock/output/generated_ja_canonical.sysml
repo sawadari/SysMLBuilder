@@ -44,6 +44,25 @@ package C13ChargeFlapLockControl {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C13-RQ-001: システムは、車両走行中に充電フラップを施錠すること。 */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C13-RQ-002: システムは、充電中に充電フラップを施錠すること。 */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C13-RQ-003: システムは、車両が駐車状態で充電完了時、または有効なユーザー解錠要求を受信した場合、充電フラップを解錠すること。 */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def ChargeFlapController {
         port motionIn : VehicleMotionPort;
         port chargingIn : ChargingStatusPort;
@@ -65,14 +84,29 @@ package C13ChargeFlapLockControl {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C13ChargeFlapLockControl::systemUnderTest;
-            expose C13ChargeFlapLockControl::systemUnderTest::controller;
-            expose C13ChargeFlapLockControl::systemUnderTest::actuator;
-        }
+package C13ChargeFlapLockControlStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C13ChargeFlapLockControl::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C13ChargeFlapLockControl::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C13ChargeFlapLockControl::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C13ChargeFlapLockControl::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C13ChargeFlapLockControl::**;
     }
 }

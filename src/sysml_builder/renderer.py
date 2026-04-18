@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from .profile_runtime import get_canonical_profile, get_case_profile, load_generic_case_profile, load_review_overlay_profile
@@ -117,6 +118,409 @@ def _render_state_machine(definition: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _join_blocks(blocks: list[str]) -> str:
+    return "\n\n".join(block for block in blocks if block)
+
+
+def _sysml_name(name: str) -> str:
+    if name.startswith("'") and name.endswith("'"):
+        return name
+    if name and (name[0].isalpha() or name[0] == "_") and all(char.isalnum() or char == "_" for char in name[1:]):
+        return name
+    return f"'{name}'"
+
+
+def _structured_literal(value: Any) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return str(value)
+
+
+def _render_doc_statement(doc: str, indent_level: int = 1) -> str:
+    indent = "    " * indent_level
+    return f"{indent}doc /* {doc} */"
+
+
+def _render_structured_requirement_def(definition: dict[str, Any]) -> str:
+    lines = [f"requirement def {_sysml_name(definition['name'])} {{"]
+    if definition.get("doc"):
+        lines.append(_render_doc_statement(definition["doc"]))
+    for attribute in definition.get("attributes", []):
+        lines.append(f"    attribute {attribute['name']} : {attribute['type']};")
+    if definition.get("constraint"):
+        lines.append(f"    require constraint {{ {definition['constraint']} }}")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_requirement_group(group: dict[str, Any]) -> str:
+    lines = [f"requirement {_sysml_name(group['name'])} {{"]
+    nested = group.get("nested_requirements", [])
+    for index, requirement in enumerate(nested):
+        lines.append(f"    requirement {_sysml_name(requirement['name'])} : {requirement['type']} {{")
+        for attribute in requirement.get("attributes", []):
+            lines.append(f"        attribute :>> {attribute['name']} = {_structured_literal(attribute['value'])};")
+        lines.append("    }")
+        if index != len(nested) - 1:
+            lines.append("")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_item_def(definition: dict[str, Any]) -> str:
+    attributes = definition.get("attributes", [])
+    if not attributes:
+        return f"item def {_sysml_name(definition['name'])};"
+    lines = [f"item def {_sysml_name(definition['name'])} {{"]
+    for attribute in attributes:
+        lines.append(f"    attribute {attribute['name']} : {attribute['type']};")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_attribute_def(definition: dict[str, Any]) -> str:
+    if isinstance(definition, str):
+        return f"attribute def {definition};"
+    return f"attribute def {definition['name']};"
+
+
+def _render_structured_port_def(definition: dict[str, Any]) -> str:
+    lines = [f"port def {_sysml_name(definition['name'])} {{"]
+    for item in definition.get("items", []):
+        lines.append(f"    {item['direction']} item {item['name']} : {item['type']};")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_interface_def(definition: dict[str, Any]) -> str:
+    lines = [f"interface def {_sysml_name(definition['name'])} {{"]
+    for end in definition.get("ends", []):
+        lines.append(f"    end {end['name']} : {end['type']};")
+    if definition.get("ends") and definition.get("flows"):
+        lines.append("")
+    for flow in definition.get("flows", []):
+        lines.append(f"    flow of {flow['item_type']} from {flow['source']} to {flow['target']};")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_state_machine(machine: dict[str, Any]) -> str:
+    modifier = f" {machine['modifier']}" if machine.get("modifier") else ""
+    lines = [f"exhibit state {_sysml_name(machine['name'])}{modifier} {{"]
+    composites = machine.get("composites", [])
+    for composite_index, composite in enumerate(composites):
+        lines.append(f"    state {_sysml_name(composite['name'])} {{")
+        if composite.get("entry_action"):
+            lines.append(f"        entry action {composite['entry_action']};")
+            lines.append("")
+        for state_name in composite.get("states", []):
+            lines.append(f"        state {_sysml_name(state_name)};")
+        if composite.get("states"):
+            lines.append("")
+        transitions = composite.get("transitions", [])
+        for transition_index, transition in enumerate(transitions):
+            if transition.get("inline"):
+                lines.append(f"        transition {transition['name']} then {transition['then']};")
+            else:
+                lines.append(f"        transition {transition['name']}")
+                if transition.get("first"):
+                    lines.append(f"            first {transition['first']}")
+                if transition.get("accept"):
+                    lines.append(f"            accept {transition['accept']}")
+                lines.append(f"            then {transition['then']};")
+            if transition_index != len(transitions) - 1:
+                lines.append("")
+        lines.append("    }")
+        if composite_index != len(composites) - 1:
+            lines.append("")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_part_def(definition: dict[str, Any]) -> str:
+    lines = [f"part def {_sysml_name(definition['name'])} {{"]
+    for attribute in definition.get("attributes", []):
+        lines.append(f"    attribute {attribute['name']} : {attribute['type']};")
+    for port in definition.get("ports", []):
+        lines.append(f"    port {port['name']} : {port['type']};")
+    for part in definition.get("parts", []):
+        lines.append(f"    part {part['name']} : {part['type']};")
+    for interface in definition.get("interfaces", []):
+        lines.append(f"    interface {interface['name']} : {interface['type']}")
+        lines.append(f"    connect {interface['from']} to {interface['to']};")
+    for machine in definition.get("state_machines", []):
+        lines.append(_indent(_render_structured_state_machine(machine), 1))
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_part_usage(usage: dict[str, Any]) -> str:
+    return f"part {usage['name']} : {usage['type']};"
+
+
+def _render_structured_action_def(definition: dict[str, Any]) -> str:
+    lines = [f"action def {_sysml_name(definition['name'])} {{"]
+    for input_item in definition.get("inputs", []):
+        lines.append(f"    in item {input_item['name']} : {input_item['type']};")
+    for output_item in definition.get("outputs", []):
+        lines.append(f"    out item {output_item['name']} : {output_item['type']};")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_action_usage(usage: dict[str, Any]) -> str:
+    header = f"action {_sysml_name(usage['name'])}"
+    if usage.get("type"):
+        header += f" : {usage['type']}"
+    lines = [f"{header} {{"]
+    nested_actions = usage.get("nested_actions", [])
+    for action in nested_actions:
+        lines.append(f"    action {action['name']} : {action['type']};")
+    if nested_actions and usage.get("flows"):
+        lines.append("")
+    for flow in usage.get("flows", []):
+        lines.append(f"    flow of {flow['item_type']} from {flow['source']} to {flow['target']};")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_view(view: dict[str, Any]) -> str:
+    lines: list[str] = []
+    if view.get("comment"):
+        comment = view["comment"]
+        if isinstance(comment, list):
+            lines.extend(f"// {line}" for line in comment)
+        else:
+            lines.append(f"// {comment}")
+    lines.append(f"view {_sysml_name(view['name'])} : {view['type']} {{")
+    for expose_path in view.get("expose", []):
+        lines.append(f"    expose {expose_path};")
+    if view.get("render"):
+        lines.append(f"    render {view['render']};")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _render_structured_package_body(package: dict[str, Any]) -> str:
+    blocks: list[str] = []
+    imports = package.get("imports", [])
+    if imports:
+        blocks.append("\n".join(f"private import {import_name};" for import_name in imports))
+    for collection_name, renderer in (
+        ("requirement_defs", _render_structured_requirement_def),
+        ("requirement_groups", _render_structured_requirement_group),
+        ("item_defs", _render_structured_item_def),
+        ("attribute_defs", _render_structured_attribute_def),
+        ("port_defs", _render_structured_port_def),
+        ("interface_defs", _render_structured_interface_def),
+        ("part_defs", _render_structured_part_def),
+        ("part_usages", _render_structured_part_usage),
+        ("action_defs", _render_structured_action_def),
+        ("action_usages", _render_structured_action_usage),
+        ("views", _render_structured_view),
+    ):
+        for definition in package.get(collection_name, []):
+            blocks.append(renderer(definition))
+    return _join_blocks(blocks)
+
+
+def _render_structured_model(structured_model: dict[str, Any]) -> str:
+    package_blocks: list[str] = []
+    for package in structured_model.get("packages", []):
+        body = _render_structured_package_body(package)
+        package_blocks.append(
+            "\n".join(
+                [
+                    f"    package {package['name']} {{",
+                    _indent(body, 2),
+                    "    }",
+                ]
+            )
+        )
+    return "\n".join(
+        [
+            f"package {structured_model['package_name']} {{",
+            "",
+            "\n\n".join(package_blocks),
+            "}",
+            "",
+        ]
+    )
+
+
+def _extract_root_package_name(sysml_text: str) -> str | None:
+    match = re.search(r"^\s*package\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{", sysml_text, re.M)
+    return match.group(1) if match else None
+
+
+def _render_standard_views_package(root_package: str) -> str:
+    package_name = f"{root_package}StandardViews"
+    return "\n".join(
+        [
+            f"package {package_name} {{",
+            "    private import DS_Views::*;",
+            "",
+            "    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.",
+            "    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {",
+            f"        expose {root_package}::**;",
+            "    }",
+            "",
+            "    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {",
+            f"        expose {root_package}::**;",
+            "    }",
+            "",
+            "    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {",
+            f"        expose {root_package}::**;",
+            "    }",
+            "",
+            "    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {",
+            f"        expose {root_package}::**;",
+            "    }",
+            "",
+            "    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {",
+            f"        expose {root_package}::**;",
+            "    }",
+            "}",
+        ]
+    )
+
+
+def _append_standard_views(sysml_text: str) -> str:
+    if "view 'Requirements View'" in sysml_text:
+        return sysml_text if sysml_text.endswith("\n") else sysml_text + "\n"
+    root_package = _extract_root_package_name(sysml_text)
+    if not root_package:
+        return sysml_text if sysml_text.endswith("\n") else sysml_text + "\n"
+    stripped = sysml_text.rstrip()
+    return stripped + "\n\n" + _render_standard_views_package(root_package) + "\n"
+
+
+def _render_generic_activity(requirements: list[dict[str, Any]]) -> str:
+    lines = [
+        "item def ActivityToken;",
+        "",
+        "action def RequirementActivityStep {",
+        "    in item inToken : ActivityToken;",
+        "    out item outToken : ActivityToken;",
+        "}",
+        "",
+        "action systemActivity {",
+    ]
+    for index, requirement in enumerate(requirements, start=1):
+        lines.append(f"    action requirementStep{index:03d} : RequirementActivityStep;")
+        lines.append(f"    doc /* {requirement['source_requirement_id']}: {requirement['evidence']['quote']} */")
+    if requirements:
+        lines.append("")
+    for index in range(1, len(requirements)):
+        lines.append(
+            f"    flow of ActivityToken from requirementStep{index:03d}.outToken to requirementStep{index + 1:03d}.inToken;"
+        )
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def _pascal_case(value: str) -> str:
+    parts = re.split(r"[^A-Za-z0-9]+", value)
+    return "".join(part[:1].upper() + part[1:] for part in parts if part)
+
+
+def _safe_identifier(value: str, suffix: str = "") -> str:
+    candidate = re.sub(r"[^A-Za-z0-9_]", "_", value).strip("_")
+    if not candidate:
+        candidate = "GeneratedElement"
+    if candidate[0].isdigit():
+        candidate = f"_{candidate}"
+    return candidate + suffix
+
+
+def _render_contract_backed_case(case_id: str, contracts: dict[str, Any]) -> str:
+    package_name = f"{_pascal_case(case_id)}Expected"
+    document = contracts["document"]
+    contract_items = contracts["contracts"]
+    subject_names: list[str] = []
+    for contract in contract_items:
+        canonical_name = contract.get("subject", {}).get("canonical_name")
+        if canonical_name and canonical_name not in subject_names:
+            subject_names.append(canonical_name)
+    if not subject_names:
+        subject_names = ["SystemUnderStudy"]
+
+    context_parts = []
+    needs_interaction = len(subject_names) >= 2 or any(
+        contract.get("classification", {}).get("pattern_id") == "interface_transfer" for contract in contract_items
+    )
+
+    lines = [
+        f"package {package_name} {{",
+        f"    doc /* Generated canonical model for {document['document_name']}. */",
+        "",
+    ]
+
+    if needs_interaction:
+        lines.extend(
+            [
+                "    item def InteractionToken;",
+                "",
+                "    port def InteractionPort {",
+                "        out item token : InteractionToken;",
+                "    }",
+                "",
+                "    interface def InteractionLink {",
+                "        end source : InteractionPort;",
+                "        end target : ~InteractionPort;",
+                "        flow source.token to target.token;",
+                "    }",
+                "",
+            ]
+        )
+
+    for subject_name in subject_names:
+        subject_identifier = _safe_identifier(subject_name)
+        lines.append(f"    part def {subject_identifier} {{")
+        if needs_interaction:
+            lines.append("        port interactionPort : InteractionPort;")
+        lines.append("    }")
+        lines.append("")
+        context_parts.append((subject_identifier[:1].lower() + subject_identifier[1:], subject_identifier))
+
+    for index, contract in enumerate(contract_items, start=1):
+        requirement_def = _safe_identifier(contract["source_requirement_id"], "Requirement")
+        subject_type = _safe_identifier(contract.get("subject", {}).get("canonical_name", subject_names[0]))
+        lines.extend(
+            [
+                f"    requirement def {requirement_def} {{",
+                f"        subject subjectRef : {subject_type};",
+                "        doc /*",
+                f"        {contract['source_requirement_id']}: {contract['evidence']['quote']}",
+                "        */",
+                "    }",
+                "",
+            ]
+        )
+
+    lines.extend([_indent(_render_generic_activity(contract_items), 1), ""])
+
+    lines.append("    part def SystemContext {")
+    for child_name, child_type in context_parts:
+        lines.append(f"        part {child_name} : {child_type};")
+    if needs_interaction and len(context_parts) >= 2:
+        lines.append("        interface subjectInteraction : InteractionLink")
+        lines.append(f"        connect {context_parts[0][0]}::interactionPort to {context_parts[1][0]}::interactionPort;")
+    lines.append("    }")
+    lines.append("")
+    lines.append("    part systemContext : SystemContext;")
+    lines.append("")
+    lines.append("    requirement extractedRequirements {")
+    for index, contract in enumerate(contract_items, start=1):
+        requirement_def = _safe_identifier(contract["source_requirement_id"], "Requirement")
+        requirement_usage = _safe_identifier(contract["source_requirement_id"].lower(), "")
+        lines.append(f"        requirement {requirement_usage} : {requirement_def};")
+    lines.append("    }")
+    lines.append("")
+    lines.append("}")
+    return _append_standard_views("\n".join(lines) + "\n")
+
+
 def _generic_state_machine_owners(case_id: str, generic_case: dict[str, Any], rendering_profile: dict[str, Any]) -> set[str]:
     if not generic_case.get("state_machine"):
         return set()
@@ -188,6 +592,8 @@ def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
             ]
         )
 
+    lines.extend([_indent(_render_generic_activity(contracts["contracts"]), 1), ""])
+
     subparts = generic_case["subparts"]
     part_ports = generic_case["part_ports"]
     part_order = [name for name in generic_case["structure"] if name != top_level] + [top_level]
@@ -211,25 +617,17 @@ def _render_generic_case(case_id: str, contracts: dict[str, Any]) -> str:
             f"{rendering['requirement_definition_prefix']}{index:03d};"
         )
     lines.append("")
-    expose_paths = [f"{generic_case['package']}::{rendering['system_under_test_name']}"]
-    for child_name, _child_type in subparts.get(top_level, []):
-        expose_paths.append(f"{generic_case['package']}::{rendering['system_under_test_name']}::{child_name}")
-    lines.extend(
-        _render_view_package(
-            viewpoint_name="systemContextPerspective",
-            view_name=rendering["view_name"],
-            expose_paths=expose_paths,
-            frame_name="system breakdown",
-            package_name=rendering["view_package_name"],
-            imports=rendering["view_imports"],
-            rendering_type=rendering["view_rendering"],
-        )
-    )
     lines.append("}")
-    return "\n".join(lines) + "\n"
+    return _append_standard_views("\n".join(lines) + "\n")
 
 
 def render_canonical(case_id: str, contracts: dict[str, Any]) -> str | None:
+    structured_model = contracts.get("structured_model")
+    if structured_model:
+        canonical_sysml = structured_model.get("canonical_sysml")
+        if canonical_sysml:
+            return _append_standard_views(canonical_sysml if canonical_sysml.endswith("\n") else canonical_sysml + "\n")
+        return _append_standard_views(_render_structured_model(structured_model))
     if contracts.get("generic_case"):
         return _render_generic_case(case_id, contracts)
     case_profile = get_case_profile(case_id)
@@ -237,11 +635,11 @@ def render_canonical(case_id: str, contracts: dict[str, Any]) -> str | None:
         return None
     canonical_profile_id = case_profile.get("canonical_profile_id")
     if not canonical_profile_id:
-        return None
+        return _render_contract_backed_case(case_id, contracts)
     canonical_profile = get_canonical_profile(canonical_profile_id)
     if not canonical_profile:
-        return None
-    return _localize(_render_canonical_profile(canonical_profile), contracts)
+        return _render_contract_backed_case(case_id, contracts)
+    return _append_standard_views(_localize(_render_canonical_profile(canonical_profile), contracts))
 
 
 def _render_canonical_profile(canonical_profile: dict[str, Any]) -> str:
@@ -484,7 +882,10 @@ package ReviewGuide {
     return _localize(template, contracts) if template else None
 
 
-def render_projection_manifest(case_id: str) -> dict[str, Any] | None:
+def render_projection_manifest(case_id: str, contracts: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    structured_model = (contracts or {}).get("structured_model")
+    if structured_model:
+        return structured_model.get("projection_manifest")
     case_profile = get_case_profile(case_id)
     if case_profile:
         return case_profile.get("projection_manifest")
@@ -523,16 +924,108 @@ def render_projection_manifest(case_id: str) -> dict[str, Any] | None:
     return manifests.get(case_id)
 
 
-def render_cameo_display_guide(case_id: str) -> str | None:
+def render_cameo_display_guide(case_id: str, contracts: dict[str, Any] | None = None) -> str | None:
+    structured_model = (contracts or {}).get("structured_model")
+    if structured_model:
+        guide = structured_model.get("cameo_display_guide")
+        if isinstance(guide, dict):
+            return _render_cameo_guide_payload(guide)
+        if guide:
+            return guide if guide.endswith("\n") else guide + "\n"
+        return _render_standard_cameo_guide(case_id, contracts, canonical_expected=True)
+    if (contracts or {}).get("generic_case"):
+        return _render_standard_cameo_guide(case_id, contracts, canonical_expected=True)
     case_profile = get_case_profile(case_id)
     if not case_profile:
-        return None
+        return _render_standard_cameo_guide(case_id, contracts, canonical_expected=True)
     guide = case_profile.get("cameo_display_guide")
     if not guide:
-        return None
+        return _render_standard_cameo_guide(case_id, contracts, canonical_expected=True)
     if isinstance(guide, str):
         return guide if guide.endswith("\n") else guide + "\n"
+    return _render_cameo_guide_payload(guide)
 
+
+def _render_standard_cameo_guide(case_id: str, contracts: dict[str, Any] | None, canonical_expected: bool) -> str:
+    lines = [f"# {case_id} Cameo Display Guide", ""]
+    if canonical_expected:
+        lines.extend(
+            [
+                "このケースでは、標準 View セットを canonical `.sysml` に含めています。",
+                "まず `*_canonical.sysml` を読み込み、`Display > Display Exposed Elements` を起点に確認してください。",
+                "",
+                "## 基本操作",
+                "",
+                "- Textual Editor で `.sysml` を読み込んだ後、`Synchronize` を実行する。",
+                "- まず各 view で `Display > Display Exposed Elements` を実行する。",
+                "- 線や接続が足りない場合は `Display > Display Connectors` を追加実行する。",
+                "- ポートが不足する場合は `Display > Display Ports` を使う。",
+                "- 状態や内部要素が足りない場合は対象シンボルに対して `Display > Display Features` を使う。",
+                "",
+                "## View ごとの使い分け",
+                "",
+                "### Requirements View",
+                "",
+                "- 向いている用途: requirement 階層を最短で確認したいとき",
+                "- Cameo 操作: `Display > Display Exposed Elements`",
+                "- 補足: `RequirementsTreeView` が解決しない build では `RequirementTreeView` へ置き換えます。",
+                "",
+                "### Structural Context View",
+                "",
+                "- 向いている用途: システム全体と主要 part 階層を軽く確認したいとき",
+                "- Cameo 操作: `Display > Display Exposed Elements`",
+                "",
+                "### Internal Structure View",
+                "",
+                "- 向いている用途: part / port / interface を内部構造寄りに確認したいとき",
+                "- Cameo 操作: `Display > Display Exposed Elements`",
+                "- Cameo 操作: 必要なら `Display > Display Ports`",
+                "- Cameo 操作: 線が不足する場合は `Display > Display Connectors`",
+                "",
+                "### Behavior Activity View",
+                "",
+                "- 向いている用途: action の入れ子や簡易 activity を確認したいとき",
+                "- Cameo 操作: `Display > Display Exposed Elements`",
+                "- Cameo 操作: flow 線が不足する場合は `Display > Display Connectors`",
+                "",
+                "### Behavior State View",
+                "",
+                "- 向いている用途: state machine や状態階層を確認したいとき",
+                "- Cameo 操作: `Display > Display Exposed Elements`",
+                "- Cameo 操作: 必要なら `Display > Display Features`",
+                "",
+                "## 公式リンク",
+                "",
+                "- [Exposing elements for views](https://docs.nomagic.com/SYSML2P/2026x/exposing-elements-for-views-254423168.html)",
+                "- [Displaying elements in symbolic views](https://docs.nomagic.com/SYSML2P/2026x/displaying-elements-in-symbolic-views-254422731.html)",
+                "- [Filtering elements for views](https://docs.nomagic.com/SYSML2P/2026x/filtering-elements-for-views-254423172.html)",
+                "- [Rendering views](https://docs.nomagic.com/SYSML2P/2026x/rendering-views-254422759.html)",
+                "- [2026x Hot Fix 1](https://docs.nomagic.com/VN/latest/2026x-hot-fix-1-278725663.html)",
+            ]
+        )
+        return "\n".join(lines).rstrip() + "\n"
+
+    lines.extend(
+        [
+            "このケースでは canonical `.sysml` は出さず、review overlay を主に確認します。",
+            "まず `*_review_overlay.sysml` を開き、未解決スロットやレビュー方針を確認してください。",
+            "",
+            "## 基本操作",
+            "",
+            "- Textual Editor で `.sysml` を読み込んだ後、`Synchronize` を実行する。",
+            "- モデルブラウザで package、requirement、doc を確認する。",
+            "- review overlay は diagram よりもレビュー用テキストとして読む前提です。",
+            "",
+            "## 公式リンク",
+            "",
+            "- [Working with textual editor](https://docs.nomagic.com/SYSML2P/2026x/working-with-textual-editor-254422032.html)",
+            "- [Displaying elements in symbolic views](https://docs.nomagic.com/SYSML2P/2026x/displaying-elements-in-symbolic-views-254422731.html)",
+        ]
+    )
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _render_cameo_guide_payload(guide: dict[str, Any]) -> str:
     lines: list[str] = [f"# {guide['title']}", ""]
 
     intro = guide.get("intro", [])

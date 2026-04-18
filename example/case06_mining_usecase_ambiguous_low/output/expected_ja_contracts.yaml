@@ -1,14 +1,14 @@
 document:
   document_id: GFSE-CASE06
   document_name: 採掘フリゲートの曖昧な運用記述
-  language: en
+  language: ja
   domain: space_system
 contracts:
 - contract_id: C-UCL-001
   source_requirement_id: REQ-UC-L-001
   source_anchor:
     document_id: GFSE-CASE06
-    section: Narrative requirements
+    section: 要求
     sentence_index: 1
   trace_quality: direct_file_grounded
   classification:
@@ -17,6 +17,8 @@ contracts:
   subject:
     kind: system
     canonical_name: MiningFrigate
+  evidence:
+    quote: 採掘フリゲートは小惑星を効率的に採掘できるべきである。
   gaps:
   - actors
   - objective_text
@@ -27,14 +29,12 @@ contracts:
     missing_slot: actors
     proposed_value: PilotPod and AsteroidBelt
     confidence: 0.72
-    rationale: UseCasesFrigate pairs mining with pilot and asteroid belt actors.
-  evidence:
-    quote: The mining frigate should mine asteroids efficiently.
+    rationale: UseCasesFrigate の採掘ユースケースではパイロットと小惑星帯が組みになっている。
 - contract_id: C-UCL-002
   source_requirement_id: REQ-UC-L-002
   source_anchor:
     document_id: GFSE-CASE06
-    section: Narrative requirements
+    section: 要求
     sentence_index: 2
   trace_quality: direct_file_grounded
   classification:
@@ -43,6 +43,8 @@ contracts:
   subject:
     kind: system
     canonical_name: MiningFrigate
+  evidence:
+    quote: 採掘フリゲートは脅威を受けたとき自己防衛できるべきである。
   gaps:
   - actors
   - trigger_conditions
@@ -53,13 +55,11 @@ contracts:
     proposed_value: HostileShip and PilotPod
     confidence: 0.71
     rationale: 脅威対処ユースケースには敵対艦船とパイロットが含まれる。
-  evidence:
-    quote: The mining frigate should defend itself when threatened.
 - contract_id: C-UCL-003
   source_requirement_id: REQ-UC-L-003
   source_anchor:
     document_id: GFSE-CASE06
-    section: Narrative requirements
+    section: 要求
     sentence_index: 3
   trace_quality: direct_file_grounded
   classification:
@@ -68,6 +68,8 @@ contracts:
   subject:
     kind: system
     canonical_name: MiningFrigate
+  evidence:
+    quote: 採掘フリゲートは必要時に補給できるべきである。
   gaps:
   - actors
   - trigger_conditions
@@ -77,6 +79,4 @@ contracts:
     missing_slot: actors
     proposed_value: Station
     confidence: 0.7
-    rationale: Offload and resupply use cases involve a station actor.
-  evidence:
-    quote: The mining frigate should resupply when needed.
+    rationale: 荷下ろしと補給のユースケースにはステーションアクターが含まれる。

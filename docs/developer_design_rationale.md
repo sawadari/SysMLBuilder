@@ -20,6 +20,11 @@ SysMLBuilder は、次の考え方で作っています。
 4. 追跡可能な中間データを残す
 5. ケース差分はできるだけ `profiles/` で吸収する
 
+加えて現在は、入力仕様と出力 View に次の標準を置いています。
+
+- Markdown は自然文中心の標準要求仕様フォーマット
+- canonical `.sysml` は標準 5 View セットを共通で持つ
+
 このため、実装は「自然文を直接描画するツール」ではなく、
 「ケース定義済みの Markdown を、追跡可能な変換パイプラインへ通すツール」という位置づけです。
 
@@ -64,6 +69,7 @@ SysMLBuilder は、次の考え方で作っています。
 - 要求箇条書きの抽出
 - use case 形式の抽出
 - 汎用ケース向け `case.yaml` 参照
+- 構造化サンプル向け `case.yaml` 参照
 
 この層では、まだ SysML は作りません。
 「文書を構造化して読む」ことだけに責務を絞っています。
@@ -78,6 +84,7 @@ SysMLBuilder は、次の考え方で作っています。
 - 正規表現で必要スロットを抽出する
 - `contract_id`、`pattern_id`、`subject`、`evidence` を付ける
 - 汎用ケースなら generic profile ベースで簡易 contract を作る
+- 構造化サンプルなら local `case.yaml` ベースで簡易 contract を作る
 
 この層が「入力解釈の中心」です。
 
@@ -92,8 +99,11 @@ SysMLBuilder は、次の考え方で作っています。
 - projection manifest の出力
 - Cameo display guide の出力
 - generic case の簡易 SysML 生成
+- 構造化サンプル向け SysML / Cameo guide 生成
+- 標準 View セットの追記
+- canonical profile が無いケース向け簡易 canonical 生成
 
-今回のサンプル系では、`raw_sysml` を返す canonical profile もここを通ります。
+公開 roundtrip サンプルのように `raw_sysml` を返す canonical profile もここを通ります。
 
 ### `src/sysml_builder/common_ir.py`
 
@@ -151,6 +161,36 @@ SysML v1 XMI を生成します。
 - `common_ir`
 - `v1_projection`
 - `sysml_v1_xmi`
+
+## 標準入力フォーマット
+
+入力仕様の標準は
+[standard_requirement_spec_format.md](standard_requirement_spec_format.md)
+を参照してください。
+
+実装上は、少なくとも次を前提にしています。
+
+- `Context / 背景`
+- `Requirements / 要求`
+- `Use Cases / ユースケース`
+- `Structure Hints / 構造ヒント`
+- `Interface Hints / インタフェースヒント`
+- `Metadata / メタデータ`
+- `Authoring Notes / 記述方針`
+
+このうち必須なのは `Requirements` または `Use Cases` です。
+
+## 標準 View セット
+
+canonical `.sysml` には、原則として次の 5 View を揃えます。
+
+- `Requirements View`
+- `Structural Context View`
+- `Internal Structure View`
+- `Behavior Activity View`
+- `Behavior State View`
+
+ケース固有の view は追加できますが、この 5 つを共通入口にする方針です。
 
 ### `src/sysml_builder/sidecar_cli.py`
 
@@ -226,6 +266,9 @@ SysMLBuilder の振る舞いは、かなりの部分を `profiles/` で決めて
 `case_profiles.yaml`、`canonical_profiles.yaml`、`review_overlay.yaml`、`generic_case_profile.yaml` です。
 他の profile 群は設計ルールや周辺検証の根拠として使います。
 
+ただし、`example/<case>/input/case.yaml` を持つケースでは、まずローカル profile を優先します。
+これは、サンプル単位で完結した入力を作りやすくし、グローバル profile への hidden 依存を減らすためです。
+
 ## ファイル出力規約
 
 `write_result()` は、ケース ID を接頭辞にして出力を書きます。
@@ -247,12 +290,13 @@ SysMLBuilder の振る舞いは、かなりの部分を `profiles/` で決めて
 最小手順は次です。
 
 1. `example/<case>/input` に Markdown を置く
-2. `profiles/case_profiles.yaml` に case を追加する
-3. 必要なら `profiles/canonical_profiles.yaml` に canonical profile を追加する
-4. 必要なら Cameo guide を case profile に追加する
-5. `tests/` に roundtrip テストを追加する
-6. `python -m sysml_builder.cli ...` で `output` を生成する
-7. `validate_sysml_syntax.py` で構文確認する
+2. まずは `example/<case>/input/case.yaml` で完結できないかを検討する
+3. benchmark 的な共通抽出ルールが必要なときだけ `profiles/case_profiles.yaml` に case を追加する
+4. 公開 roundtrip のように固定 `.sysml` を返すときだけ `profiles/canonical_profiles.yaml` を使う
+5. 必要なら Cameo guide を local `case.yaml` または case profile に追加する
+6. `tests/` に roundtrip テストを追加する
+7. `python -m sysml_builder.cli ...` で `output` を生成する
+8. `validate_sysml_syntax.py` で構文確認する
 
 ## サンプル設計の考え方
 
@@ -263,7 +307,7 @@ SysMLBuilder の振る舞いは、かなりの部分を `profiles/` で決めて
 - `dont_panic_batmobile_displayable`
   表示確認向けの派生サンプル
 - `vehicle_practice_expression_views`
-  Cameo で view と display 操作を試すサンプル
+  自然文 Markdown + local `case.yaml` で Cameo の view と display 操作を試すサンプル
 
 サンプルを 1 か所に集めた理由は、
 「入力 Markdown」と「期待出力一式」を同じモデル単位で見られるようにするためです。
@@ -272,6 +316,8 @@ SysMLBuilder の振る舞いは、かなりの部分を `profiles/` で決めて
 
 拡張しやすい場所は次です。
 
+- サンプル単位で完結したケース追加:
+  `example/<case>/input/case.yaml`
 - 新しい case 追加:
   `profiles/case_profiles.yaml`
 - 新しい canonical 出力:

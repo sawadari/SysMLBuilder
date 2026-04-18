@@ -50,6 +50,25 @@ package C12ParkingSensorMuteState {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C12-RQ-001: Each valid mute-button press shall toggle the parking sensor audio alert state between MUTED and UNMUTED. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C12-RQ-002: The system shall reset the audio alert state to UNMUTED at every power cycle. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C12-RQ-003: The system shall preserve visual alerts while audio alerts are muted. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def ParkingSensorController {
         state def MuteStates {
             entry; then unmuted;
@@ -93,15 +112,29 @@ package C12ParkingSensorMuteState {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C12ParkingSensorMuteState::systemUnderTest;
-            expose C12ParkingSensorMuteState::systemUnderTest::controller;
-            expose C12ParkingSensorMuteState::systemUnderTest::buzzer;
-            expose C12ParkingSensorMuteState::systemUnderTest::display;
-        }
+package C12ParkingSensorMuteStateStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C12ParkingSensorMuteState::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C12ParkingSensorMuteState::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C12ParkingSensorMuteState::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C12ParkingSensorMuteState::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C12ParkingSensorMuteState::**;
     }
 }

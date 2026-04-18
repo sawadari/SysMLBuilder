@@ -16,6 +16,7 @@ SysMLBuilder は、Markdown で書いた要求仕様を、追跡しやすい Sys
 - SysML v1 XMI や sidecar payload を追加生成できる
 - Cameo 向けの `.sysml` サンプルと表示ガイドを一緒に管理できる
 - サンプルと expected output を `example/` で一元管理できる
+- 標準入力フォーマットと標準 View セットを example 全体へ再適用できる
 
 ## 処理の流れ
 
@@ -101,6 +102,27 @@ python -m sysml_builder.cli `
 
 出力結果は `example\vehicle_practice_expression_views\output\` に作られます。
 
+このサンプルでは、入力は次の 2 つです。
+
+- 人が読む要求仕様書:
+  `example\vehicle_practice_expression_views\input\vehicle_practice_expression_views_requirements.md`
+- そのケース専用のローカル rule/profile:
+  `example\vehicle_practice_expression_views\input\case.yaml`
+
+新しいサンプルを作るときも、この `requirements_*.md + input/case.yaml` の組み合わせを基本形として推奨します。
+
+入力仕様の標準形は
+[docs/standard_requirement_spec_format.md](docs/standard_requirement_spec_format.md)
+にまとめています。
+
+canonical `.sysml` には、標準として次の View セットを含めます。
+
+- `Requirements View`
+- `Structural Context View`
+- `Internal Structure View`
+- `Behavior Activity View`
+- `Behavior State View`
+
 主な出力:
 
 - `vehicle_practice_expression_views_contracts.yaml`
@@ -171,10 +193,18 @@ MontiCore による SysML 構文検証:
 python scripts\validate_sysml_syntax.py --tool-jar tools\MCSysMLv2.jar
 ```
 
+example 全体を再生成:
+
+```powershell
+python scripts\regenerate_examples.py
+```
+
 ## どの文書から読めばよいか
 
 - はじめて触る人:
   [docs/user_input_to_sysml_flow.md](docs/user_input_to_sysml_flow.md)
+- 入力書式の標準を知りたい人:
+  [docs/standard_requirement_spec_format.md](docs/standard_requirement_spec_format.md)
 - 想定ユースケースを先に知りたい人:
   [docs/use_cases.md](docs/use_cases.md)
 - ツールの内部設計を知りたい人:

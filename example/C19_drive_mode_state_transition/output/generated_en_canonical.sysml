@@ -44,6 +44,25 @@ package C19DriveModeStateTransition {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C19-RQ-001: The system shall support ECO, NORMAL, and SPORT drive modes. */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C19-RQ-002: The system shall accept a drive-mode change request only when accelerator pedal opening is less than 20 percent. */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C19-RQ-003: When a drive-mode fault is detected, the system shall return to NORMAL mode within 100 ms. */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def DriveModeController {
         state def DriveModes {
             entry; then eco;
@@ -87,13 +106,29 @@ package C19DriveModeStateTransition {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C19DriveModeStateTransition::systemUnderTest;
-            expose C19DriveModeStateTransition::systemUnderTest::controller;
-        }
+package C19DriveModeStateTransitionStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C19DriveModeStateTransition::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C19DriveModeStateTransition::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C19DriveModeStateTransition::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C19DriveModeStateTransition::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C19DriveModeStateTransition::**;
     }
 }

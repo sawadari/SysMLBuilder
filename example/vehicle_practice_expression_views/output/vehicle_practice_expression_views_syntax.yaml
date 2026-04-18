@@ -1,9 +1,23 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/vehicle_practice_expression_views/output
-file_count: 1
+tool_jar: tools\MCSysMLv2.jar
+root: example\vehicle_practice_expression_views\output
+file_count: 3
 failure_count: 0
 results:
-- file: example/vehicle_practice_expression_views/output/vehicle_practice_expression_views_canonical.sysml
+- file: example\vehicle_practice_expression_views\output\generated_default_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.'
+- file: example\vehicle_practice_expression_views\output\generated_ja_canonical.sysml
+  status: ok
+  output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.
+
+    [WARN]  Defining symbol for ScalarValues.Real was not set.'
+- file: example\vehicle_practice_expression_views\output\vehicle_practice_expression_views_canonical.sysml
   status: ok
   output: '[WARN]  Defining symbol for ScalarValues.Real was not set.
 

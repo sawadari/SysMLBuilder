@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C05_rear_wiper_reverse_link/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C05_rear_wiper_reverse_link\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C05_rear_wiper_reverse_link/output/expected_en.sysml
+- file: example\C05_rear_wiper_reverse_link\output\C05_rear_wiper_reverse_link_canonical.sysml
   status: ok
   output: ''
-- file: example/C05_rear_wiper_reverse_link/output/expected_ja.sysml
+- file: example\C05_rear_wiper_reverse_link\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C05_rear_wiper_reverse_link/output/generated_en_canonical.sysml
+- file: example\C05_rear_wiper_reverse_link\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C05_rear_wiper_reverse_link/output/generated_ja_canonical.sysml
+- file: example\C05_rear_wiper_reverse_link\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C05_rear_wiper_reverse_link\output\generated_ja_canonical.sysml
   status: ok
   output: ''

@@ -277,3 +277,28 @@ view index : DS_Views::SymbolicViews::gv {
     expose Dont_Panic_Batmobile::'use cases modelling';
     expose Dont_Panic_Batmobile::'requirements modelling';
 }
+
+package Dont_Panic_BatmobileStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose Dont_Panic_Batmobile::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose Dont_Panic_Batmobile::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose Dont_Panic_Batmobile::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose Dont_Panic_Batmobile::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose Dont_Panic_Batmobile::**;
+    }
+}

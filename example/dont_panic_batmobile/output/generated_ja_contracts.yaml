@@ -1,0 +1,135 @@
+document:
+  document_id: BATMOBILE-DP-001
+  document_name: Don't Panic バットモービル公開サンプル
+  language: ja
+  domain: public_reference
+contracts:
+- contract_id: C-BAT-001
+  source_requirement_id: REQ-BAT-001
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 1
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_structure_core
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: Batmobile
+  evidence:
+    quote: Vehicle、Wheel、BatmobileEngine、PowerInterface、PowerIP、Power、EngineCommand
+      を含む中核的な車両ドメインを定義すること。
+- contract_id: C-BAT-002
+  source_requirement_id: REQ-BAT-002
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 2
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_system_decomposition
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: Batmobile
+  evidence:
+    quote: seat、body、wheel、battery、engine、および `bat2eng` power interface 接続を含む Batmobile
+      システムを定義すること。
+- contract_id: C-BAT-003
+  source_requirement_id: REQ-BAT-003
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 3
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_specialization_and_variability
+    confidence: 1.0
+  subject:
+    kind: system
+    canonical_name: BatmobileConfigurations
+  evidence:
+    quote: BatmobileNG、EngineChoices、WheelChoices、BatmobileConfigurations、XBatmobile
+      を含む特殊化要素とバリアビリティ要素を定義すること。
+- contract_id: C-BAT-004
+  source_requirement_id: REQ-BAT-004
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 4
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_occurrence_and_timeslice
+    confidence: 1.0
+  subject:
+    kind: occurrence
+    canonical_name: bm1
+  evidence:
+    quote: Batman および Hero 関連の item と、走行および充電 timeslice を持つ `bm1` system occurrence
+      を定義すること。
+- contract_id: C-BAT-005
+  source_requirement_id: REQ-BAT-005
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 5
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_behavior
+    confidence: 1.0
+  subject:
+    kind: behavior
+    canonical_name: Drive Batmobile
+  evidence:
+    quote: '`Drive Batmobile`、`Activate rocket booster`、`ActivateRocketBooster` を含む運用振る舞いを定義すること。'
+- contract_id: C-BAT-006
+  source_requirement_id: REQ-BAT-006
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 6
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_requirements
+    confidence: 1.0
+  subject:
+    kind: requirement
+    canonical_name: batmobileSpecification
+  evidence:
+    quote: VehicleMaxSpeed requirement、batmobileSpecification requirements package、および
+      `batmobileDesignV23` 上の satisfy 関係を定義すること。
+- contract_id: C-BAT-007
+  source_requirement_id: REQ-BAT-007
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 7
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_viewpoint_and_tabular_view
+    confidence: 1.0
+  subject:
+    kind: viewpoint
+    canonical_name: system components
+  evidence:
+    quote: concern、viewpoint、tabular view、および非標準ライブラリ要素にフィルタされた `batmobileParts` exposed
+      view を定義すること。
+- contract_id: C-BAT-008
+  source_requirement_id: REQ-BAT-008
+  source_anchor:
+    document_id: BATMOBILE-DP-001
+    section: 要求
+    sentence_index: 8
+  trace_quality: direct_file_grounded
+  classification:
+    pattern_id: public_sample_symbolic_views
+    confidence: 1.0
+  subject:
+    kind: view
+    canonical_name: definition and usage
+  evidence:
+    quote: '`definition and usage`、`subclassification`、`subsetting`、`redefinition`、`structural
+      Modeling`、`default value`、`timeslice modelling`、`behavioral modelling`、`use
+      cases modelling`、`requirements modelling`、および最上位 `index` を含む汎用 symbolic view
+      を定義すること。'

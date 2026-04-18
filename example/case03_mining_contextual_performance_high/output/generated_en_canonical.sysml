@@ -65,3 +65,28 @@ package ViewDefinitions {
 }
 
 }
+
+package Case03MiningContextualPerformanceHighExpectedStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose Case03MiningContextualPerformanceHighExpected::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose Case03MiningContextualPerformanceHighExpected::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose Case03MiningContextualPerformanceHighExpected::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose Case03MiningContextualPerformanceHighExpected::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose Case03MiningContextualPerformanceHighExpected::**;
+    }
+}

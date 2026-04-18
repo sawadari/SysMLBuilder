@@ -1,17 +1,20 @@
-tool_jar: tools/MCSysMLv2.jar
-root: example/C04_headlamp_auto_off_delay/output
-file_count: 4
+tool_jar: tools\MCSysMLv2.jar
+root: example\C04_headlamp_auto_off_delay\output
+file_count: 5
 failure_count: 0
 results:
-- file: example/C04_headlamp_auto_off_delay/output/expected_en.sysml
+- file: example\C04_headlamp_auto_off_delay\output\C04_headlamp_auto_off_delay_canonical.sysml
   status: ok
   output: ''
-- file: example/C04_headlamp_auto_off_delay/output/expected_ja.sysml
+- file: example\C04_headlamp_auto_off_delay\output\expected_en.sysml
   status: ok
   output: ''
-- file: example/C04_headlamp_auto_off_delay/output/generated_en_canonical.sysml
+- file: example\C04_headlamp_auto_off_delay\output\expected_ja.sysml
   status: ok
   output: ''
-- file: example/C04_headlamp_auto_off_delay/output/generated_ja_canonical.sysml
+- file: example\C04_headlamp_auto_off_delay\output\generated_en_canonical.sysml
+  status: ok
+  output: ''
+- file: example\C04_headlamp_auto_off_delay\output\generated_ja_canonical.sysml
   status: ok
   output: ''

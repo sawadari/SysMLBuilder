@@ -1,6 +1,6 @@
 # Case 03: Mining frigate contextual performance requirements
 
-## Scope
+## Context
 This requirement specification is a bottom-up reconstruction derived from `MiningFrigateRequirementsDef.sysml`.
 
 ## Requirements
@@ -8,5 +8,5 @@ This requirement specification is a bottom-up reconstruction derived from `Minin
 - REQ-MF-002: The mining frigate shall withstand at least 200 DPS in High Sec operations.
 - REQ-MF-003: The mining frigate shall withstand at least 400 DPS in Low Sec, Null Sec, and Wormhole operations.
 
-## Design context
+## Structure Hints
 The subject is a mining frigate considered across multiple operating contexts.

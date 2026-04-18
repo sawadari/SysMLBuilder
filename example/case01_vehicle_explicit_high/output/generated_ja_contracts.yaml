@@ -8,7 +8,7 @@ contracts:
   source_requirement_id: REQ-VEH-001
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 1
   trace_quality: direct_file_grounded
   classification:
@@ -28,7 +28,7 @@ contracts:
   source_requirement_id: REQ-VEH-002
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 2
   trace_quality: direct_file_grounded
   classification:
@@ -56,7 +56,7 @@ contracts:
   source_requirement_id: REQ-VEH-003
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 3
   trace_quality: direct_file_grounded
   classification:
@@ -84,7 +84,7 @@ contracts:
   source_requirement_id: REQ-VEH-004
   source_anchor:
     document_id: GFSE-CASE01
-    section: Requirements
+    section: 要求
     sentence_index: 4
   trace_quality: direct_file_grounded
   classification:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -21,6 +22,8 @@ def _replacement_pairs() -> list[tuple[str, str]]:
 def _normalize_text(text: str) -> str:
     for source, target in _replacement_pairs():
         text = text.replace(source, target)
+    text = re.sub(r"(Generated canonical model for ).+?(\.)", r"\1<localized-title>\2", text)
+    text = re.sub(r"([A-Z]{2,}(?:-[A-Z0-9]+)+:\s).+", r"\1<localized-text>", text)
     return text.replace("\r\n", "\n").strip()
 
 
@@ -30,6 +33,13 @@ def _normalize_value(value: Any) -> Any:
         for key, item in value.items():
             if key == "language":
                 normalized[key] = "en"
+            elif key == "section":
+                section_map = {
+                    "要求": "Requirements",
+                    "ユースケース": "Use Cases",
+                    "背景": "Context",
+                }
+                normalized[key] = section_map.get(str(item), str(item))
             elif key in {"objective_text", "rationale"}:
                 normalized[key] = "<localized-text>"
             elif key == "evidence" and isinstance(item, dict):
@@ -37,7 +47,7 @@ def _normalize_value(value: Any) -> Any:
             elif key in {"main_flow_steps", "exception_flow_steps"} and isinstance(item, list):
                 normalized[key] = {"count": len(item)}
             elif key == "document_name":
-                normalized[key] = _normalize_text(str(item))
+                normalized[key] = "<localized-title>"
             else:
                 normalized[key] = _normalize_value(item)
         return normalized

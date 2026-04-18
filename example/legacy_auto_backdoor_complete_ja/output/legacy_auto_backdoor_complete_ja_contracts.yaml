@@ -8,7 +8,7 @@ contracts:
   source_requirement_id: ABD-REQ-001
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -22,7 +22,7 @@ contracts:
   source_requirement_id: ABD-REQ-003
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -36,7 +36,7 @@ contracts:
   source_requirement_id: ABD-REQ-004
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -50,7 +50,7 @@ contracts:
   source_requirement_id: ABD-REQ-007
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -64,7 +64,7 @@ contracts:
   source_requirement_id: ABD-REQ-009
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -78,7 +78,7 @@ contracts:
   source_requirement_id: ABD-REQ-010
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -92,7 +92,7 @@ contracts:
   source_requirement_id: ABD-REQ-012
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -106,7 +106,7 @@ contracts:
   source_requirement_id: ABD-REQ-015
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc
@@ -120,7 +120,7 @@ contracts:
   source_requirement_id: ABD-VER-001
   source_anchor:
     document_id: LEGACY_ABD_COMPLETE_JA
-    section: Functional Requirements
+    section: 要求
   trace_quality: direct_file_grounded
   classification:
     pattern_id: generic_requirement_doc

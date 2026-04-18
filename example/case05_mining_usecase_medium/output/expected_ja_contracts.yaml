@@ -1,7 +1,7 @@
 document:
   document_id: GFSE-CASE05
   document_name: 採掘フリゲートの運用ユースケース
-  language: en
+  language: ja
   domain: space_system
 contracts:
 - contract_id: C-UC-001
@@ -17,10 +17,6 @@ contracts:
   subject:
     kind: system
     canonical_name: MiningFrigate
-  actors:
-  - PilotPod
-  - AsteroidBelt
-  objective_text: 小惑星を採掘し貨物を管理する。
   main_flow_steps:
   - 小惑星ターゲットを特定する。
   - 採掘レーザーを起動する。
@@ -29,13 +25,16 @@ contracts:
   exception_flow_steps:
   - 採掘レーザーが故障した場合、採掘を停止してパイロットへ通知する。
   - 対象小惑星が枯渇した場合、ターゲットを再取得する。
+  evidence:
+    quote: 'メインフロー: 小惑星ターゲットを特定し、採掘レーザーを起動し、鉱石を採取し、貨物倉が満杯になったら採掘を中断する。'
+  actors:
+  - PilotPod
+  - AsteroidBelt
+  objective_text: 小惑星を採掘し貨物を管理する。
   gaps:
   - success_thresholds
   - time_limits
   - trigger_conditions
-  evidence:
-    quote: 'メインフロー: Identify an asteroid target, activate the mining laser, extract
-      ore, and suspend mining when the cargo hold becomes full.'
 - contract_id: C-UC-002
   source_requirement_id: UC-MF-002
   source_anchor:
@@ -49,9 +48,6 @@ contracts:
   subject:
     kind: system
     canonical_name: MiningFrigate
-  actors:
-  - Station
-  objective_text: 鉱石を荷下ろしし重要システムを補給する。
   main_flow_steps:
   - ステーションとのドッキング接続を確立する。
   - 鉱石をステーションへ移送する。
@@ -59,9 +55,11 @@ contracts:
   exception_flow_steps:
   - ドッキングに失敗した場合、パイロットへ通知して荷下ろし手順を中止する。
   - 貨物移送に失敗した場合、運用を中断して鉱石を船内に保持する。
+  evidence:
+    quote: 'メインフロー: ステーションとのドッキング接続を確立し、鉱石を移送し、重要システムを補給する。'
+  actors:
+  - Station
+  objective_text: 鉱石を荷下ろしし重要システムを補給する。
   gaps:
   - success_thresholds
   - completion_conditions
-  evidence:
-    quote: 'メインフロー: Establish a docking connection with a station, transfer ore,
-      and resupply essential systems.'

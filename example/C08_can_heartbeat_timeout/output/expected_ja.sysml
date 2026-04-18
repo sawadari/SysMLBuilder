@@ -50,6 +50,25 @@ package C08CanHeartbeatTimeout {
         */
     }
 
+    item def ActivityToken;
+
+    action def RequirementActivityStep {
+        in item inToken : ActivityToken;
+        out item outToken : ActivityToken;
+    }
+
+    action systemActivity {
+        action requirementStep001 : RequirementActivityStep;
+        doc /* C08-RQ-001: システムは、ブレーキコントローラのハートビートが100 ms欠落した場合、通信タイムアウト故障を設定すること。 */
+        action requirementStep002 : RequirementActivityStep;
+        doc /* C08-RQ-002: システムは、通信タイムアウト故障設定後50 ms以内にクルーズコントロールを無効化すること。 */
+        action requirementStep003 : RequirementActivityStep;
+        doc /* C08-RQ-003: システムは、100 ms以内に故障診断コードを保存し、故障状態メッセージを送信すること。 */
+
+        flow of ActivityToken from requirementStep001.outToken to requirementStep002.inToken;
+        flow of ActivityToken from requirementStep002.outToken to requirementStep003.inToken;
+    }
+
     part def HeartbeatMonitor {
         state def CommunicationStates {
             entry; then healthy;
@@ -122,15 +141,29 @@ package C08CanHeartbeatTimeout {
     requirement requirement_002 : Req002;
     requirement requirement_003 : Req003;
 
-    package ViewDefinitions {
-        private import Views::*;
-        private import DS_Views::*;
+}
 
-        view systemContextView : DS_Views::SymbolicViews::gv {
-            expose C08CanHeartbeatTimeout::systemUnderTest;
-            expose C08CanHeartbeatTimeout::systemUnderTest::monitor;
-            expose C08CanHeartbeatTimeout::systemUnderTest::gate;
-            expose C08CanHeartbeatTimeout::systemUnderTest::diagnostics;
-        }
+package C08CanHeartbeatTimeoutStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose C08CanHeartbeatTimeout::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose C08CanHeartbeatTimeout::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose C08CanHeartbeatTimeout::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose C08CanHeartbeatTimeout::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose C08CanHeartbeatTimeout::**;
     }
 }

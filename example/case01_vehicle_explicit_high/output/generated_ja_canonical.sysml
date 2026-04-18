@@ -118,3 +118,28 @@ package ViewDefinitions {
 }
 
 }
+
+package Case01VehicleExplicitHighExpectedStandardViews {
+    private import DS_Views::*;
+
+    // Replace RequirementsTreeView with RequirementTreeView if your Cameo build requires the singular form.
+    view 'Requirements View' : DS_Views::SymbolicViewsByExpression::RequirementsTreeView {
+        expose Case01VehicleExplicitHighExpected::**;
+    }
+
+    view 'Structural Context View' : DS_Views::SymbolicViewsByExpression::PartsTreeView {
+        expose Case01VehicleExplicitHighExpected::**;
+    }
+
+    view 'Internal Structure View' : DS_Views::SymbolicViewsByExpression::'Parts&PortsNestedView' {
+        expose Case01VehicleExplicitHighExpected::**;
+    }
+
+    view 'Behavior Activity View' : DS_Views::SymbolicViewsByExpression::ActionsNestedView {
+        expose Case01VehicleExplicitHighExpected::**;
+    }
+
+    view 'Behavior State View' : DS_Views::SymbolicViewsByExpression::StatesNestedView {
+        expose Case01VehicleExplicitHighExpected::**;
+    }
+}
